@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load static tailwind_tags %}
+{% block content %} 
+
+{% tailwind_css %}
+{% include 'layout/navbar.html' %}
+
+<section  class=" ml-1 mb-80 pt-32">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+   <form action="">
+    <div class="container">
+        <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
+            <div class="flex flex-wrap">
+                <div class="w-full self-center px-4 pt-8  lg:w-1/2">
+                    <label for="nama" class="block mb-3">
+                        <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Nama</span>
+                        <input id="nama" type="text" placeholder="Masukkan nama.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        invalid:text-pink-700 invalid:focus:ring-pink-700
+                        " required>
+                    </label>
+                    <label for="nohp" class="block mb-3">
+                        <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Nomor telepon</span>
+                        <input id="nohp" type="" placeholder="Masukkan no telepon.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        invalid:text-pink-700 invalid:focus:ring-pink-700
+                        " pattern="[0-9]{10,13}" maxlength="13" required>
+                    </label>
+                    <label for="nama" class="block mb-3">
+                        <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Alamat</span>
+                        <input id="nama" type="text" placeholder="Masukkan alamat.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        ">
+                    </label>
+                    <label for="latitude" class="block mb-3">
+                        <span  class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Latitude</span>
+                        <input id="latitudeA" type="text" placeholder="Masukkan latitude.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        invalid:text-pink-700 invalid:focus:ring-pink-700
+                        " name="latitudeA" value="">
+                    </label>
+                    <label for="latitude" class="block mb-3">
+                        <span  class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Longitude</span>
+                        <input id="longitudeB" type="text" placeholder="Masukkan longitude.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        invalid:text-pink-700 invalid:focus:ring-pink-700
+                        " name="longitudeB" value="">
+                    </label>
+                </div>
+                <div class="w-full self-center px-4 pt-16  mb-11 lg:w-1/2 lg:mb-24 lg:pt-24 relative z-10">
+                    <div id="map" class="h-[400px]  border-art border-4 rounded-xl lg:mb-9">
+                        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                        <script>
+                        var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
+        
+                            // Tambahkan layer peta
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                            }).addTo(myMap);
+
+                            function updateMarker(lat, lng) {
+                                if (marker) {
+                                    myMap.removeLayer(marker);
+                                }
+                                marker = L.marker([lat, lng]).addTo(myMap);
+                            }
+
+                            var marker;
+                            myMap.on('click', function (e) {
+                                if (marker) {
+                                    myMap.removeLayer(marker);
+                                }
+                                marker = L.marker(e.latlng).addTo(myMap);
+                                var latitude = e.latlng.lat.toFixed(6);
+                                var longitude = e.latlng.lng.toFixed(6);
+                            document.getElementById('latitudeA').value = latitude;
+                            document.getElementById('longitudeB').value = longitude;
+                            });
+                            var latitudeInput = document.getElementById('latitudeA');
+                            var longitudeInput = document.getElementById('longitudeB');
+                            latitudeInput.addEventListener('input', function () {
+                                var latitude = parseFloat(latitudeInput.value);
+                                var longitude = parseFloat(longitudeInput.value);
+
+                                if (!isNaN(latitude) && !isNaN(longitude)) {
+                                    updateMarker(latitude, longitude);
+                                    myMap.setView([latitude, longitude], 13);
+                                }
+                            });
+
+                            longitudeInput.addEventListener('input', function () {
+                                var latitude = parseFloat(latitudeInput.value);
+                                var longitude = parseFloat(longitudeInput.value);
+
+                                if (!isNaN(latitude) && !isNaN(longitude)) {
+                                    updateMarker(latitude, longitude);
+                                    myMap.setView([latitude, longitude], 13);
+                                }
+                            });
+
+
+                        </script>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        
+    </div>
+   </form>
+    
+</section>
+
+
+<script>
+    // Menangkap elemen-elemen yang diperlukan
+const dropdownButton = document.getElementById("dropdownDefaultButton");
+const dropdownMenu = document.getElementById("dropdown");
+
+// Mengatur event listener untuk toggle dropdown
+dropdownButton.addEventListener("click", function() {
+  dropdownMenu.classList.toggle("hidden");
+});
+
+// Menutup dropdown jika mengklik di luar dropdown
+window.addEventListener("click", function(event) {
+  if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+    dropdownMenu.classList.add("hidden");
+  }
+});
+
+
+
+</script>
+
+
+{% include 'layout/footer.html' %}
+{% endblock content %}

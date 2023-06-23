@@ -1,0 +1,14 @@
+{
+    "html.format.templating": false,
+    "prettier.bracketSameLine": true,
+    "prettier.useTabs": true,
+    "prettier.singleAttributePerLine": true,
+    "emmet.includeLanguages": {
+        "django-html": "html"
+    },
+    "django.snippets.exclude": [
+        "html",
+        "cms",
+        "wagtail"
+    ]
+}
