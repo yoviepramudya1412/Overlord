@@ -1,8 +1,18 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 
+#Admin
 
 
+class Admin(models.Model):
+    adminid = models.CharField(max_length=200, primary_key=True)
+    nama_admin = models.CharField(max_length=200)
+    divisi = models.CharField(max_length=200)
+    kedinasan = models.CharField(max_length=200)
+    
+# class User(AbstractUser):
+#     is_user = models.BooleanField(default=False)
 
 # Pemabagian inti dari core
 class Status(models.Model):
@@ -83,14 +93,7 @@ class Perencanaan(models.Model):
     location = models.OneToOneField(Location, on_delete=models.CASCADE)   
 
 # tabel skala/pendamping    
-class Admin(models.Model):
-    adminid = models.CharField(max_length=200 , primary_key=True)
-    nama_admin = models.CharField(max_length=200)
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
-    ditambahkan = models.DateField(auto_now_add=True)
-    divisi = models.CharField(max_length=200)
-    kedinasan = models.CharField(max_length=200)
+
     
     
 class Beranda(models.Model):        

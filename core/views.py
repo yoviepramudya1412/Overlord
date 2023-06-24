@@ -3,6 +3,8 @@ from requests import request
 from .forms import *
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
 
 
 # Masyarakat
@@ -27,9 +29,6 @@ def cadangan(request):
 
 
 
-# Admin
-def dashboardadmin(request):
-    return render(request, 'core/dashboard.html')
 
 
 # Peta admin
@@ -109,29 +108,30 @@ def pemandu(request):
 def penggunaan(request):
     return render(request, 'panduan/penggunaan.html')
 
+# def login(request):
+#     return render(request, 'core/login.html')
+
+# Admin
+@login_required(login_url='login')
+def dashboardadmin(request):
+    return render(request, 'core/dashboard.html')
+
+
+
+
+
 def login(request):
-    return render(request, 'core/login.html')
-
-
-
-
-def login_view(request):
     if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            
-            # Autentikasi pengguna
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                # Login berhasil, lakukan login dan redirect ke halaman yang diinginkan
-                login(request, user)
-                return redirect('dashboard')  # Ganti 'dashboard' dengan URL halaman dashboard Anda
-            else:
-                # Login gagal, tampilkan pesan error
-                messages.error(request, 'Username atau password salah')
+        username = request.POST['username']
+        password = request.POST['password']
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return redirect('dashboardadmin')
+        else:
+            error_message = "Invalid username or password"
+            return render(request, 'core/login.html', {'error_message': error_message})
     else:
-        form = LoginForm()
-
-    return render(request, 'login.html', {'form': form})
+        return render(request, 'core/login.html')

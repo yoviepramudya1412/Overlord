@@ -26,6 +26,9 @@ SECRET_KEY = 'django-insecure-edo-d-pc*=yeelf!nw6rp@h9o&y$m+r+f$a2db=%y(yv)9%g95
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#login
+LOGIN_URL = '/login/'
+
 ALLOWED_HOSTS = []
 
 
@@ -39,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    
+    'core.apps.CoreConfig',
     #penggunaan app installation
-    'core',
+    # 'core',
     'mazer',
     'tailwind',
     'theme',
@@ -119,6 +122,11 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# AUTH_USER_MODEL = 'core.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
