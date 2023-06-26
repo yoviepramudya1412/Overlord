@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-edo-d-pc*=yeelf!nw6rp@h9o&y$m+r+f$a2db=%y(yv)9%g95
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-#login
-LOGIN_URL = '/login/'
+
 
 ALLOWED_HOSTS = []
 
@@ -41,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core',
     
-    'core.apps.CoreConfig',
     #penggunaan app installation
     # 'core',
     'mazer',
@@ -57,11 +56,11 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -122,11 +121,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'core.Admin'
+
+#login
+LOGIN_URL = '/masuk'
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# AUTH_USER_MODEL = 'core.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

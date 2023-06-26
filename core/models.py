@@ -5,14 +5,18 @@ from django.contrib.auth.models import AbstractUser
 #Admin
 
 
-class Admin(models.Model):
-    adminid = models.CharField(max_length=200, primary_key=True)
-    nama_admin = models.CharField(max_length=200)
+class Admin(AbstractUser):
+    id = models.BigAutoField(primary_key=True)
+    nama_admin = models.CharField(unique=True,max_length=200)
     divisi = models.CharField(max_length=200)
     kedinasan = models.CharField(max_length=200)
     
-# class User(AbstractUser):
-#     is_user = models.BooleanField(default=False)
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ['nama_admin', 'kedinasan']
+        
+    def __str__(self):
+        return self.username
+
 
 # Pemabagian inti dari core
 class Status(models.Model):

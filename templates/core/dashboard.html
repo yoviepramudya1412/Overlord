@@ -3,7 +3,7 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
-
+{% if user.is_authenticated %}
 
 <div class="page-heading">
     <h3>Profile Statistics</h3>
@@ -308,5 +308,8 @@
     </section>
 </div>
 
-
+{% else %}
+    <!-- Arahkan pengguna ke halaman login -->
+    <p>Silakan <a href="{% url 'masuk' %}">login</a> untuk mengakses halaman ini.</p>
+{% endif %}
 {% endblock content %}

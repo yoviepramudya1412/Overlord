@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('',views.beranda,name='beranda'),
@@ -8,7 +9,7 @@ urlpatterns = [
     path('pengajuan/',views.pengajuan, name='pengajuan'),
     
     # dashboard
-    path('dashboard/',views.dashboardadmin, name='dashboardadmin'),
+    path('dashboard/',login_required(views.dashboardadmin), name='dashboardadmin'),
     
     # peta
     path('petaadkerusakan/',views.petaadkerusakan, name='petaadkerusakan'),
@@ -51,8 +52,9 @@ urlpatterns = [
     path('penggunaan/',views.penggunaan, name='penggunaan'),
     
     # login
-    path('login/',views.login, name='login'),
+    path('masuk/',views.login_view, name='masuk'),
     
     
     path('cadangan/',views.cadangan, name='cadangan'),
+    path('logout/',views.logout_view, name='logout'),
 ]

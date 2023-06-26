@@ -1,5 +1,6 @@
 from django.contrib import admin
 from core.models import *
+from django.contrib.auth.admin import UserAdmin
 # Register your models here.
 class Perencanaanadmin(admin.ModelAdmin):
     pass
@@ -25,8 +26,11 @@ class Adminadmin(admin.ModelAdmin):
     pass
 class BerandaAdmin(admin.ModelAdmin):
     pass
+class CustomUserAdmin(UserAdmin):
+    pass
 
 
+admin.site.register(Admin,CustomUserAdmin)
 admin.site.register(Fasilitas_perlengkapan,FasilitasAdmin)
 admin.site.register(Status,Statusadmin)
 admin.site.register(Location,LocationAdmin)
@@ -36,6 +40,6 @@ admin.site.register(Pengajuan,PengajuanAdmin)
 admin.site.register(Pembangunan,PembangunanAdmin)
 admin.site.register(Penyeleksian,PenyeleksianAdmin)
 admin.site.register(Perencanaan,PerencanaanAdmin)
-admin.site.register(Admin,Adminadmin)
+# admin.site.register(Admin,Adminadmin)
 admin.site.register(Beranda,BerandaAdmin)
 
