@@ -13,7 +13,7 @@
     <div class="container">
         <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
             <div class="flex flex-wrap">
-                <div class="w-full self-center px-4 pt-8  lg:w-1/2">
+                <div class="w-full self-center px-4 pt-5 lg:w-1/2">
                     <label for="nama" class="block mb-3">
                         <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
@@ -38,12 +38,12 @@
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " pattern="[0-9]{10,13}" maxlength="13" required>
                     </label>
-                    <label for="nama" class="block mb-3">
+                    <label for="alamat" class="block mb-3">
                         <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Alamat</span>
-                        <input id="nama" type="text" placeholder="Masukkan alamat.." class="
+                        <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
@@ -61,7 +61,7 @@
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " name="latitudeA" value="">
                     </label>
-                    <label for="latitude" class="block mb-3">
+                    <label for="longitude" class="block mb-3">
                         <span  class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
@@ -73,11 +73,27 @@
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " name="longitudeB" value="">
                     </label>
+                    <label for="alamat" class="block mb-3">
+                        <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Alamat</span>
+                        <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        ">
+                    </label>
+
                 </div>
-                <div class="w-full self-center px-4 pt-16  mb-11 lg:w-1/2 lg:mb-24 lg:pt-24 relative z-10">
-                    <div id="map" class="h-[400px]  border-art border-4 rounded-xl lg:mb-9">
+
+
+                <div class="w-full self-center px-4 mt-10  mb-32 lg:w-1/2 lg:mb-24 lg:pt-24 relative z-10">
+                
+                    <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
+                    
                         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                        <script>
+                    <script>
                         var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
         
                             // Tambahkan layer peta
@@ -125,9 +141,60 @@
                                 }
                             });
 
+                            function cariDaerah() {
+                        var inputDaerah = document.getElementById('daerah').value;
 
-                        </script>
+                            // Hapus marker sebelumnya
+                            if (marker) {
+                                myMap.removeLayer(marker);
+                            }
+
+                            // Gunakan API Nominatim untuk mencari koordinat daerah
+                            var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + inputDaerah;
+
+                            fetch(url)
+                                .then(response => response.json())
+                                .then(data => {
+                                if (data.length > 0) {
+                                    var lat = data[0].lat;
+                                    var lon = data[0].lon;
+
+                                    // Tampilkan marker di koordinat hasil pencarian
+                                    marker = L.marker([lat, lon]).addTo(myMap);
+                                    myMap.setView([lat, lon], 13);
+                                
+                                document.getElementById('latitudeA').value ;
+                                document.getElementById('longitudeB').value ;
+                                } else {
+                                    alert('Daerah tidak ditemukan.');
+                                }
+                                });
+                                
+                            }
+                                </script>
                     </div>
+                    <div class="pencarian flex flex-wrap">
+                        <label for="daerah" class="block mb-3">
+                        <span  class="block font-semibold
+                        mb-1 text-slate-700 
+                        ">Pencarian Daerah</span>
+                        <input id="daerah" type="text" placeholder="Masukkan nama daerah.." class=" 
+                        px-3 py-2 border shadow rounded w-full block 
+                        text-sm placeholder:text-slate-400 
+                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                        invalid:text-pink-700 invalid:focus:ring-pink-700
+                        " name="daerah" >
+
+                    </label>
+                    <button type="button" onclick="cariDaerah()" class="ml-5 mt-8 px-3 h-9 rounded-lg bg-red-700 hover:shadow-lg hover:opacity-60 transition duration-400 ease-in-out ">Cari</button>
+                    </div>
+                            
+
+
+                </div>
+
+                <div class="w-full">
+
                 </div>
             </div> 
         </div>
