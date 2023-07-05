@@ -2,10 +2,12 @@ from django.conf import settings
 from django.shortcuts import redirect, render
 from requests import request
 from .forms import *
+from .models import *
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from django.http import JsonResponse
 
 
 # Masyarakat
@@ -23,8 +25,21 @@ def jenisperlengkapan(request):
 
 
 def pengajuan(request):
-    return render(request, 'masyarakat/pengajuan.html')
+    qs = Perlengkapan_jalan.objects.all()
+    return render(request, 'masyarakat/pengajuan.html', {'qs': qs})
 
+def get_json_datafpj(request):
+    qs_val = list(Perlengkapan_jalan.objects.values())
+    return JsonResponse({'data': qs_val})
+
+def get_jenis_perlengkapan(request):
+    jenis_perlengkapan_list = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
+    return JsonResponse(list(jenis_perlengkapan_list), safe=False)
+
+def get_nama_fasilitas(request):
+    jenis_perlengkapan = request.GET.get('jenis_perlengkapan')
+    nama_fasilitas_list = Fasilitas_perlengkapan.objects.filter(jenis_perlengkapan__jenis_perlengkapan=jenis_perlengkapan).values_list('nama_fasilitas', flat=True)
+    return JsonResponse(list(nama_fasilitas_list), safe=False)
 
 # percobaan
 @login_required(login_url=settings.LOGIN_URL)

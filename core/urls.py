@@ -6,7 +6,11 @@ urlpatterns = [
     path('',views.beranda,name='beranda'),
     path('peta/',views.maps, name='maps'),
     path('jenisperlengkapan/',views.jenisperlengkapan, name='jenisperlengkapan'),
+    # khuusus baru
     path('pengajuan/',views.pengajuan, name='pengajuan'),
+    path('perlengkapanjalandata/',views.get_json_datafpj, name='perlengkapanjalandata'),
+    path('get_jenis_perlengkapan/', views.get_jenis_perlengkapan, name='get_jenis_perlengkapan'),
+    path('get_nama_fasilitas/', views.get_nama_fasilitas, name='get_nama_fasilitas'),
     
     # dashboard
     path('dashboard/',login_required(views.dashboardadmin), name='dashboardadmin'),

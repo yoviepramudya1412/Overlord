@@ -194,27 +194,25 @@
 
                 <div class="self-start px-4">
                     <div class="relative">
-                <button id="dropdownButton" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
-                    Pilih Opsi
-                </button>
-                <ul id="dropdownMenu" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 1</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 2</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 3</li>
-                </ul>
-                <input id="hiddenInput" type="hidden">
-                </div>
+                    <button id="dropdownButton" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
+                        Pilih Nama Fasilitas
+                    </button>
+                    <ul id="dropdownMenu" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
+                        <!-- Daftar opsi nama_fasilitas -->
+                    </ul>
+                    <input id="hiddenInput" type="hidden">
+                    </div>
 
                 </div>
-                <div class="self-start px-4">
+                <div class="self-start px-4 lg:w-1/2">
                     <div class="relative">
                 <button id="dropdownButton1" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
-                    Pilih Opsi
+                    Pilih Jenis Perlengkapan
                 </button>
-                <ul id="dropdownMenu1" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 1</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 2</li>
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 3</li>
+                <ul id="dropdownMenu1" class="hidden absolute bg-white mt-2 py-2 w-64 rounded-md shadow-lg">
+                    {% for jenis_perlengkapan in qs %}
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" datavalue= "jenis_perlengkapan">{{jenis_perlengkapan.jenis_perlengkapan}}</li>
+                    {% endfor %}
                 </ul>
                 <input id="hiddenInput0" type="hidden">
                 </div>
@@ -230,17 +228,17 @@
                         <button type="submit"
                             class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Kirim</button>
                     </div>
+
                 </div>
             </div>
         </div>
-        </div>
+    
 
 
     </form>
 
 </section>
 
-<script src="{% static 'assets/js/main.js' %}"></script>
 <script>
 
 </script>

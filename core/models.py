@@ -47,12 +47,12 @@ class Perlengkapan_jalan(models.Model):
     
 class Fasilitas_perlengkapan(models.Model):
     fasilitasid = models.BigAutoField(primary_key=True)
-    tipekhusus = models.CharField(max_length=200 , unique=True)
+    tipekhusus = models.CharField(max_length=200)
     nama_fasilitas = models.CharField(max_length=200)
     kondisi= models.CharField(max_length=200)
     volume= models.IntegerField()
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
-    gambar = models.ImageField(upload_to="fasilitas/",null=True)
+    gambar = models.ImageField(upload_to="fasilitas/%Y/%m/%d/")
     
     def __str__(self):
         return self.nama_fasilitas
