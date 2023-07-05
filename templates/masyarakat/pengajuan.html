@@ -1,228 +1,247 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load static tailwind_tags %}
-{% block content %} 
+{% block content %}
 
 {% tailwind_css %}
 {% include 'layout/navbar.html' %}
 
-<section  class=" ml-1 mb-80 pt-32">
-    
+<section class=" ml-1 mb-80 pt-32">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
-   <form action="">
-    <div class="container">
-        <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
-            <div class="flex flex-wrap">
-                <div class="w-full self-center px-4 pt-5 lg:w-1/2">
-                    <label for="nama" class="block mb-3">
-                        <span class="block font-semibold
+    <form action="">
+        
+        <div class="container">
+            <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
+                <div class="flex flex-wrap">
+                    <div class="w-full self-center px-4 pt-5 lg:w-1/2">
+                        <label for="nama" class="block mb-3">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Nama</span>
-                        <input id="nama" type="text" placeholder="Masukkan nama.." class="
+                            <input id="nama" type="text" placeholder="Masukkan nama.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " required>
-                    </label>
-                    <label for="nohp" class="block mb-3">
-                        <span class="block font-semibold
+                        </label>
+                        <label for="nohp" class="block mb-3">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Nomor telepon</span>
-                        <input id="nohp" type="" placeholder="Masukkan no telepon.." class="
+                            <input id="nohp" type="" placeholder="Masukkan no telepon.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " pattern="[0-9]{10,13}" maxlength="13" required>
-                    </label>
-                    <label for="alamat" class="block mb-3">
-                        <span class="block font-semibold
+                        </label>
+                        <label for="alamat" class="block mb-3">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Alamat</span>
-                        <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
+                            <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         ">
-                    </label>
-                    <label for="latitude" class="block mb-3">
-                        <span  class="block font-semibold
+                        </label>
+                        <label for="latitude" class="block mb-3">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Latitude</span>
-                        <input id="latitudeA" type="text" placeholder="Masukkan latitude.." class="
+                            <input id="latitudeA" type="text" placeholder="Masukkan latitude.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " name="latitudeA" value="">
-                    </label>
-                    <label for="longitude" class="block mb-3">
-                        <span  class="block font-semibold
+                        </label>
+                        <label for="longitude" class="block mb-3">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Longitude</span>
-                        <input id="longitudeB" type="text" placeholder="Masukkan longitude.." class="
+                            <input id="longitudeB" type="text" placeholder="Masukkan longitude.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " name="longitudeB" value="">
-                    </label>
-                    <label for="alamat" class="block mb-3">
-                        <span class="block font-semibold
+                        </label>
+                        <label for="alamat" class="block mb-6">
+                            <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Alamat</span>
-                        <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
+                            <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         ">
-                    </label>
+                        </label>
 
-                </div>
+                    </div>
 
 
-                <div class="w-full self-center px-4 mt-10  mb-32 lg:w-1/2 lg:mb-24 lg:pt-24 relative z-10">
-                
-                    <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
-                    
-                        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-                    <script>
-                        var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
-        
-                            // Tambahkan layer peta
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                            }).addTo(myMap);
+                    <div class="w-full self-center px-4 mt-10   lg:w-1/2  lg:pt-24 relative z-[8]">
 
-                            function updateMarker(lat, lng) {
-                                if (marker) {
-                                    myMap.removeLayer(marker);
+                        <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
+
+                            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                            <script>
+                                var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
+
+                                // Tambahkan layer peta
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                                }).addTo(myMap);
+
+                                function updateMarker(lat, lng) {
+                                    if (marker) {
+                                        myMap.removeLayer(marker);
+                                    }
+                                    marker = L.marker([lat, lng]).addTo(myMap);
                                 }
-                                marker = L.marker([lat, lng]).addTo(myMap);
-                            }
 
-                            var marker;
-                            myMap.on('click', function (e) {
-                                if (marker) {
-                                    myMap.removeLayer(marker);
-                                }
-                                marker = L.marker(e.latlng).addTo(myMap);
-                                var latitude = e.latlng.lat.toFixed(6);
-                                var longitude = e.latlng.lng.toFixed(6);
-                            document.getElementById('latitudeA').value = latitude;
-                            document.getElementById('longitudeB').value = longitude;
-                            });
-                            var latitudeInput = document.getElementById('latitudeA');
-                            var longitudeInput = document.getElementById('longitudeB');
-                            latitudeInput.addEventListener('input', function () {
-                                var latitude = parseFloat(latitudeInput.value);
-                                var longitude = parseFloat(longitudeInput.value);
-
-                                if (!isNaN(latitude) && !isNaN(longitude)) {
-                                    updateMarker(latitude, longitude);
-                                    myMap.setView([latitude, longitude], 13);
-                                }
-                            });
-
-                            longitudeInput.addEventListener('input', function () {
-                                var latitude = parseFloat(latitudeInput.value);
-                                var longitude = parseFloat(longitudeInput.value);
-
-                                if (!isNaN(latitude) && !isNaN(longitude)) {
-                                    updateMarker(latitude, longitude);
-                                    myMap.setView([latitude, longitude], 13);
-                                }
-                            });
-
-                            function cariDaerah() {
-                        var inputDaerah = document.getElementById('daerah').value;
-
-                            // Hapus marker sebelumnya
-                            if (marker) {
-                                myMap.removeLayer(marker);
-                            }
-
-                            // Gunakan API Nominatim untuk mencari koordinat daerah
-                            var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + inputDaerah;
-
-                            fetch(url)
-                                .then(response => response.json())
-                                .then(data => {
-                                if (data.length > 0) {
-                                    var lat = data[0].lat;
-                                    var lon = data[0].lon;
-
-                                    // Tampilkan marker di koordinat hasil pencarian
-                                    marker = L.marker([lat, lon]).addTo(myMap);
-                                    myMap.setView([lat, lon], 13);
-                                
-                                document.getElementById('latitudeA').value ;
-                                document.getElementById('longitudeB').value ;
-                                } else {
-                                    alert('Daerah tidak ditemukan.');
-                                }
+                                var marker;
+                                myMap.on('click', function (e) {
+                                    if (marker) {
+                                        myMap.removeLayer(marker);
+                                    }
+                                    marker = L.marker(e.latlng).addTo(myMap);
+                                    var latitude = e.latlng.lat.toFixed(6);
+                                    var longitude = e.latlng.lng.toFixed(6);
+                                    document.getElementById('latitudeA').value = latitude;
+                                    document.getElementById('longitudeB').value = longitude;
                                 });
-                                
-                            }
-                                </script>
-                    </div>
-                    <div class="pencarian flex flex-wrap">
-                        <label for="daerah" class="block mb-3">
-                        <span  class="block font-semibold
-                        mb-1 text-slate-700 
-                        ">Pencarian Daerah</span>
-                        <input id="daerah" type="text" placeholder="Masukkan nama daerah.." class=" 
-                        px-3 py-2 border shadow rounded w-full block 
-                        text-sm placeholder:text-slate-400 
-                        focus:outline-none focus:ring-1 focus:ring-art focus:border-art
-                        invalid:text-pink-700 invalid:focus:ring-pink-700
-                        " name="daerah" >
+                                var latitudeInput = document.getElementById('latitudeA');
+                                var longitudeInput = document.getElementById('longitudeB');
+                                latitudeInput.addEventListener('input', function () {
+                                    var latitude = parseFloat(latitudeInput.value);
+                                    var longitude = parseFloat(longitudeInput.value);
 
-                    </label>
-                    <button type="button" onclick="cariDaerah()" class="ml-5 mt-8 px-3 h-9 rounded-lg bg-red-700 hover:shadow-lg hover:opacity-60 transition duration-400 ease-in-out ">Cari</button>
-                    </div>
-                            
+                                    if (!isNaN(latitude) && !isNaN(longitude)) {
+                                        updateMarker(latitude, longitude);
+                                        myMap.setView([latitude, longitude], 13);
+                                    }
+                                });
 
+                                longitudeInput.addEventListener('input', function () {
+                                    var latitude = parseFloat(latitudeInput.value);
+                                    var longitude = parseFloat(longitudeInput.value);
+
+                                    if (!isNaN(latitude) && !isNaN(longitude)) {
+                                        updateMarker(latitude, longitude);
+                                        myMap.setView([latitude, longitude], 13);
+                                    }
+                                });
+
+                                function cariDaerah() {
+                                    var inputDaerah = document.getElementById('daerah').value;
+
+                                    // Hapus marker sebelumnya
+                                    if (marker) {
+                                        myMap.removeLayer(marker);
+                                    }
+
+                                    // Gunakan API Nominatim untuk mencari koordinat daerah
+                                    var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + inputDaerah;
+
+                                    fetch(url)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.length > 0) {
+                                                var lat = data[0].lat;
+                                                var lon = data[0].lon;
+
+                                                // Tampilkan marker di koordinat hasil pencarian
+                                                marker = L.marker([lat, lon]).addTo(myMap);
+                                                myMap.setView([lat, lon], 13);
+
+                                                document.getElementById('latitudeA').value;
+                                                document.getElementById('longitudeB').value;
+                                            } else {
+                                                alert('Daerah tidak ditemukan.');
+                                            }
+                                        });
+
+                                }
+                            </script>
+                        </div>
+                        <div class="pencarian flex flex-wrap">
+                            <label for="daerah" class="block mb-3">
+                                        <span class="block font-semibold
+                                mb-1 text-slate-700 
+                                ">Pencarian Daerah</span>
+                                        <input id="daerah" type="text" placeholder="Masukkan nama daerah.." class=" 
+                                px-3 py-2 border shadow rounded w-full block 
+                                text-sm placeholder:text-slate-400 
+                                focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                                invalid:text-pink-700 invalid:focus:ring-pink-700
+                                " name="daerah">
+
+                            </label>
+                            <button type="button" onclick="cariDaerah()"
+                                class="ml-5 mt-[26px] px-3 h-9 rounded-lg bg-white hover:shadow-lg hover:opacity-60 transition duration-400 ease-in-out ">Cari</button>
+                        </div>
+                    </div>
+
+                <div class="self-start px-4">
+                    <div class="relative">
+                <button id="dropdownButton" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
+                    Pilih Opsi
+                </button>
+                <ul id="dropdownMenu" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 1</li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 2</li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 3</li>
+                </ul>
+                <input id="hiddenInput" type="hidden">
+                </div>
+
+                </div>
+                <div class="self-start px-4">
+                    <div class="relative">
+                <button id="dropdownButton1" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
+                    Pilih Opsi
+                </button>
+                <ul id="dropdownMenu1" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 1</li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 2</li>
+                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Opsi 3</li>
+                </ul>
+                <input id="hiddenInput0" type="hidden">
+                </div>
 
                 </div>
 
-                <div class="w-full">
 
+
+
+
+
+                    <div class="self-end px-4 lg:w-1/2  lg:mt-24">
+                        <button type="submit"
+                            class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Kirim</button>
+                    </div>
                 </div>
-            </div> 
+            </div>
         </div>
-        
-    </div>
-   </form>
-    
+        </div>
+
+
+    </form>
+
 </section>
 
-
+<script src="{% static 'assets/js/main.js' %}"></script>
 <script>
-    // Menangkap elemen-elemen yang diperlukan
-const dropdownButton = document.getElementById("dropdownDefaultButton");
-const dropdownMenu = document.getElementById("dropdown");
-
-// Mengatur event listener untuk toggle dropdown
-dropdownButton.addEventListener("click", function() {
-  dropdownMenu.classList.toggle("hidden");
-});
-
-// Menutup dropdown jika mengklik di luar dropdown
-window.addEventListener("click", function(event) {
-  if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-    dropdownMenu.classList.add("hidden");
-  }
-});
-
-
 
 </script>
 
