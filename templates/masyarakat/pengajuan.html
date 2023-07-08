@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
     <form action="">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
         
         <div class="container">
             <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
@@ -74,18 +75,25 @@
                         invalid:text-pink-700 invalid:focus:ring-pink-700
                         " name="longitudeB" value="">
                         </label>
-                        <label for="alamat" class="block mb-6">
+                        <label for="fasilitaskhusus" class="block mb-6">
                             <span class="block font-semibold
-                        mb-1 text-slate-700 after:content-['*']
-                        after:text-pink-500 after:ml-0.5
-                        ">Alamat</span>
-                            <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
+                        mb-1 text-slate-700 
+                        ">Fasilitas Khusus</span>
+                            <input id="fasilitaskhusus" type="text" placeholder="Masukkan permintaan fasilitas khusus.." class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         ">
                         </label>
-
+                        
+                        
+                        <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
+                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
+                        </label>
+                        <script>
+                            
+                        </script>
+                        
                     </div>
 
 
@@ -94,53 +102,98 @@
                         <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
 
                             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+
                             <script>
                                 var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
+var marker;
 
-                                // Tambahkan layer peta
-                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-                                }).addTo(myMap);
+// Tambahkan layer peta
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+}).addTo(myMap);
 
-                                function updateMarker(lat, lng) {
-                                    if (marker) {
-                                        myMap.removeLayer(marker);
-                                    }
-                                    marker = L.marker([lat, lng]).addTo(myMap);
-                                }
+// Fungsi untuk memperbarui marker pada peta
+function updateMarker(lat, lng) {
+  if (marker) {
+    myMap.removeLayer(marker);
+  }
+  marker = L.marker([lat, lng]).addTo(myMap);
+}
 
-                                var marker;
-                                myMap.on('click', function (e) {
-                                    if (marker) {
-                                        myMap.removeLayer(marker);
-                                    }
-                                    marker = L.marker(e.latlng).addTo(myMap);
-                                    var latitude = e.latlng.lat.toFixed(6);
-                                    var longitude = e.latlng.lng.toFixed(6);
-                                    document.getElementById('latitudeA').value = latitude;
-                                    document.getElementById('longitudeB').value = longitude;
-                                });
-                                var latitudeInput = document.getElementById('latitudeA');
-                                var longitudeInput = document.getElementById('longitudeB');
-                                latitudeInput.addEventListener('input', function () {
-                                    var latitude = parseFloat(latitudeInput.value);
-                                    var longitude = parseFloat(longitudeInput.value);
+// Event listener saat mengklik pada peta
+myMap.on('click', function (e) {
+  var latitude = e.latlng.lat.toFixed(6);
+  var longitude = e.latlng.lng.toFixed(6);
+  document.getElementById('latitudeA').value = latitude;
+  document.getElementById('longitudeB').value = longitude;
+  updateMarker(latitude, longitude);
+});
 
-                                    if (!isNaN(latitude) && !isNaN(longitude)) {
-                                        updateMarker(latitude, longitude);
-                                        myMap.setView([latitude, longitude], 13);
-                                    }
-                                });
+// Event listener saat nilai latitude dan longitude berubah
+document.getElementById('latitudeA').addEventListener('input', function () {
+  var latitude = parseFloat(document.getElementById('latitudeA').value);
+  var longitude = parseFloat(document.getElementById('longitudeB').value);
+  if (!isNaN(latitude) && !isNaN(longitude)) {
+    updateMarker(latitude, longitude);
+    myMap.setView([latitude, longitude], 13);
+  }
+});
 
-                                longitudeInput.addEventListener('input', function () {
-                                    var latitude = parseFloat(latitudeInput.value);
-                                    var longitude = parseFloat(longitudeInput.value);
+document.getElementById('longitudeB').addEventListener('input', function () {
+  var latitude = parseFloat(document.getElementById('latitudeA').value);
+  var longitude = parseFloat(document.getElementById('longitudeB').value);
+  if (!isNaN(latitude) && !isNaN(longitude)) {
+    updateMarker(latitude, longitude);
+    myMap.setView([latitude, longitude], 13);
+  }
+});
 
-                                    if (!isNaN(latitude) && !isNaN(longitude)) {
-                                        updateMarker(latitude, longitude);
-                                        myMap.setView([latitude, longitude], 13);
-                                    }
-                                });
+const photoUpload = document.getElementById('file_input');
+const latitudeInput = document.getElementById('latitudeA');
+const longitudeInput = document.getElementById('longitudeB');
+
+photoUpload.addEventListener('change', function (event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function (event) {
+    const image = new Image();
+    image.src = event.target.result;
+
+    image.onload = function () {
+      EXIF.getData(image, function () {
+        const latitude = EXIF.getTag(this, 'GPSLatitude');
+        const longitude = EXIF.getTag(this, 'GPSLongitude');
+
+        if (latitude && longitude) {
+          const latitudeDecimal = convertDMSToDecimal(latitude);
+          const longitudeDecimal = convertDMSToDecimal(longitude);
+
+          latitudeInput.value = latitudeDecimal;
+          longitudeInput.value = longitudeDecimal;
+          updateMarker(latitudeDecimal, longitudeDecimal);
+          myMap.setView([latitudeDecimal, longitudeDecimal], 13);
+        } else {
+          console.log('Metadata koordinat tidak ditemukan.');
+        }
+      });
+    };
+  };
+
+  reader.readAsDataURL(file);
+});
+
+function convertDMSToDecimal(coordinate) {
+  const degrees = coordinate[0].numerator;
+  const minutes = coordinate[1].numerator;
+  const seconds = coordinate[2].numerator / coordinate[2].denominator;
+
+  var decimal = degrees + minutes / 60 + seconds / 3600;
+  return decimal.toFixed(6);
+}
+
+
 
                                 function cariDaerah() {
                                     var inputDaerah = document.getElementById('daerah').value;
@@ -172,6 +225,12 @@
                                         });
 
                                 }
+                                
+                            </script>
+                            <script src="{% static 'assets/js/cuai.js' %}"></script>
+
+                            <script>
+                            
                             </script>
                         </div>
                         <div class="pencarian flex flex-wrap">

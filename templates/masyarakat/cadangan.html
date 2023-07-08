@@ -2,6 +2,62 @@
 {% load static %}
 
 {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
+<section>
+  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file
+                <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
+                </label>
+</section>
+
+<section>
+  <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
+                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
+                        
+                        </label>
+                        <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+                        <script>
+            const photoUpload = document.getElementById('file_input');
+            const latitudeInput = document.getElementById('latitudeA');
+            const longitudeInput = document.getElementById('longitudeB');
+
+            photoUpload.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(event) {
+                const image = new Image();
+                image.src = event.target.result;
+
+                image.onload = function() {
+                    EXIF.getData(image, function() {
+                    const latitude = EXIF.getTag(this, 'GPSLatitude');
+                    const longitude = EXIF.getTag(this, 'GPSLongitude');
+
+                    if (latitude && longitude) {
+                        const latitudeDecimal = convertDMSToDecimal(latitude);
+                        const longitudeDecimal = convertDMSToDecimal(longitude);
+
+                        latitudeInput.value = latitudeDecimal;
+                        longitudeInput.value = longitudeDecimal;
+                    } else {
+                        console.log('Metadata koordinat tidak ditemukan.');
+                    }
+                    });
+                };
+                };
+
+                reader.readAsDataURL(file);
+            });
+
+            function convertDMSToDecimal(coordinate) {
+                const degrees = coordinate[0].numerator;
+                const minutes = coordinate[1].numerator;
+                const seconds = coordinate[2].numerator / coordinate[2].denominator;
+
+                return degrees + minutes / 60 + seconds / 3600;
+            }
+            </script>
+</section>
 
 <section>
 <label for="nama" class="block mb-3">

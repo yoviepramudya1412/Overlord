@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
-
+from datetime import datetime
+import os
+import uuid
 #Admin
 
 
@@ -44,15 +45,21 @@ class Perlengkapan_jalan(models.Model):
     
     def __str__(self):
         return self.jenis_perlengkapan
-    
+
+
+def upload_to(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    return f"fasilitas/{unique_filename}"
+   
 class Fasilitas_perlengkapan(models.Model):
     fasilitasid = models.BigAutoField(primary_key=True)
     tipekhusus = models.CharField(max_length=200)
-    nama_fasilitas = models.CharField(max_length=200)
+    nama_fasilitas = models.CharField(max_length=200,unique=True)
     kondisi= models.CharField(max_length=200)
     volume= models.IntegerField()
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
-    gambar = models.ImageField(upload_to="fasilitas/%Y/%m/%d/")
+    gambar = models.ImageField(upload_to=upload_to,blank=True)
     
     def __str__(self):
         return self.nama_fasilitas
@@ -64,23 +71,37 @@ class Masyarakat(models.Model):
     notelepon= models.IntegerField()
     alamat= models.CharField(max_length=200)
     
+
+def mirage(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    return f"pengajuan/{unique_filename}"
+
 class Pengajuan(models.Model):
     pengajuanid = models.BigAutoField(primary_key=True)
     masyarakatid = models.ManyToManyField(Masyarakat)
-    perlengkapanid = models.ManyToManyField(Perlengkapan_jalan)
-    nama_fasilitas = models.ManyToManyField(Fasilitas_perlengkapan)
+    nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas")
+    jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
+    Fasilitas_khusus=models.CharField(max_length=200,blank=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE)
-    statuspengajuan = models.ForeignKey(Status,on_delete=models.CASCADE)
-    
+    statuspengajuan = models.OneToOneField(Status,on_delete=models.CASCADE)
+    gambar = models.ImageField(upload_to=mirage,blank=True)
     
     
 # tabel function users   
+def cringe(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    return f"pembangunan/{unique_filename}"
+
 class Pembangunan(models.Model):
     pembangunanid = models.BigAutoField(primary_key=True)
     tanggal_bangun = models.DateField()
     konstruksi_selesai = models.DateField()
     deskripsi = models.TextField(blank=True,null=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE)
+    status = models.OneToOneField(Status, on_delete=models.CASCADE) 
+    gambar = models.ImageField(upload_to=cringe,blank=True)
     
 class Penyeleksian(models.Model):
     penyeleksianid = models.BigAutoField(primary_key=True)
@@ -88,19 +109,26 @@ class Penyeleksian(models.Model):
     adminid = models.CharField(max_length=200)
     pengajuanid = models.CharField(max_length=200)
     perencanaanid = models.CharField(max_length=200)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE, to_field="tipestatus") 
+    status = models.OneToOneField(Status, on_delete=models.CASCADE) 
     location = models.OneToOneField(Location, on_delete=models.CASCADE)   
     tggl_terima = models.DateTimeField()
     
-    
+
+def demonslayer(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    return f"perencanaan/{unique_filename}" 
+
 class Perencanaan(models.Model):
     perencanaanid = models.BigAutoField(primary_key=True)
     pembangunanid = models.ForeignKey(Pembangunan, on_delete=models.CASCADE, to_field="pembangunanid")    
     fasilitasid = models.ForeignKey(Fasilitas_perlengkapan, on_delete=models.CASCADE, to_field="fasilitasid")    
     nama_perencanaan = models.CharField(max_length=200)
-    status_pengajuan = models.ForeignKey(Status, on_delete=models.CASCADE, to_field="tipestatus") 
+    status_pengajuan = models.OneToOneField(Status, on_delete=models.CASCADE) 
     location = models.OneToOneField(Location, on_delete=models.CASCADE)   
-
+    gambar = models.ImageField(upload_to=demonslayer,blank=True)
+    
+    
 # tabel skala/pendamping    
 
     
