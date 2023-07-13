@@ -12,7 +12,7 @@
         <div class="sidebar-header position-relative">
         <div class="d-flex justify-content-between align-items-center">
             <div class="logo ">
-            <a href="{% url 'logout' %}"
+            <a href="{% url 'beranda' %}"
                 ><img 
                 src="{% static 'assets/compiled/svg/LogoDinas.svg' %}"
                 alt="Logo"
@@ -205,6 +205,44 @@
                 
             </ul>
             </li>
+            <li class="sidebar-item has-sub
+            {% if request.resolver_match.url_name == 'masukdatapembangunan' %}active{% endif %}
+            {% if request.resolver_match.url_name == 'masukdataperlengkapan' %}active{% endif %}
+            {% if request.resolver_match.url_name == 'masukdataperencanaan' %}active{% endif %}
+            {% if request.resolver_match.url_name == 'masukdatapengajuan' %}active{% endif %}
+            ">
+            <a href="#" class="sidebar-link">
+                <i class="bi bi-ui-checks"></i>
+                <span>Masukkan Data</span>
+            </a>
+
+            <ul class="submenu">
+                <li class="submenu-item {% if request.resolver_match.url_name == 'masukdatapembangunan' %}active{% endif %}">
+                <a href="{% url 'masukdatapembangunan' %}" class="submenu-link"
+                    >Pembangunan</a
+                >
+                </li>
+
+                <li class="submenu-item {% if request.resolver_match.url_name == 'masukdataperencanaan' %}active{% endif %}">
+                <a href="{% url 'masukdataperencanaan' %}" class="submenu-link"
+                    >Perencanaan</a
+                >
+                </li>
+
+                <li class="submenu-item {% if request.resolver_match.url_name == 'masukdatapengajuan' %}active{% endif %}">
+                <a href="{% url 'masukdatapengajuan' %}" class="submenu-link"
+                    >Pengajuan</a
+                >
+                </li>
+
+                <li class="submenu-item {% if request.resolver_match.url_name == 'masukdataperlengkapan' %}active{% endif %}">
+                <a href="{% url 'masukdataperlengkapan' %}" class="submenu-link"
+                    >Perlengkapan Jalan</a
+                >
+                </li>
+                
+            </ul>
+            </li>
 
             <li class="sidebar-title">Pengajuan &amp; Pelaporan</li>
 
@@ -324,7 +362,12 @@
             
             </ul>
             </li>
-
+            <li class="sidebar-item {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
+            <a href="{% url 'logout' %}" class="sidebar-link">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Logout</span>
+            </a>
+            </li>
             
 
         </ul>

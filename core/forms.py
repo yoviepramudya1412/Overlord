@@ -1,6 +1,16 @@
 from django import forms
 from . models import *
 
+
+class PengajuanForm(forms.ModelForm):
+    masyarakatid = forms.ModelChoiceField(queryset=Masyarakat.objects.all(), required=False)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), required=False)
+    statuspengajuan = forms.ModelChoiceField(queryset=Status.objects.all(), required=False)
+
+    class Meta:
+        model = Pengajuan
+        fields = [ 'nama_fasilitas', 'jenis_perlengkapan', 'Fasilitas_khusus', 'gambar', 'masyarakatid', 'location', 'statuspengajuan']
+
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=200)
     password = forms.CharField(max_length=200, widget=forms.PasswordInput)

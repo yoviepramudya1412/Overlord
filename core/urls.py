@@ -7,10 +7,11 @@ urlpatterns = [
     path('peta/',views.maps, name='maps'),
     path('jenisperlengkapan/',views.jenisperlengkapan, name='jenisperlengkapan'),
     # khuusus baru
-    path('pengajuan/',views.pengajuan, name='pengajuan'),
+    # path('pengajuan/',views.pengajuan, name='pengajuan'),
     path('perlengkapanjalandata/',views.get_json_datafpj, name='perlengkapanjalandata'),
     path('get_jenis_perlengkapan/', views.get_jenis_perlengkapan, name='get_jenis_perlengkapan'),
     path('get_nama_fasilitas/', views.get_nama_fasilitas, name='get_nama_fasilitas'),
+    path('create_pengajuan/', views.create_pengajuan, name='create_pengajuan'),
     
     # dashboard
     path('dashboard/',login_required(views.dashboardadmin), name='dashboardadmin'),
@@ -34,6 +35,13 @@ urlpatterns = [
     path('datapembangunan/',views.datapembangunan, name='datapembangunan'),
     path('datapengajuan/',views.datapengajuan, name='datapengajuan'),
     path('dataperencanaan/',views.dataperencanaan, name='dataperencanaan'),
+    
+    # masukkan data admin
+    path('masukdatapembangunan/',views.masukdatapembangunan, name='masukdatapembangunan'),
+    path('masukdatapengajuan/',views.masukdatapengajuan, name='masukdatapengajuan'),
+    path('masukdataperencanaan/',views.masukdataperencanaan, name='masukdataperencanaan'),
+    path('masukdataperlengkapan/',views.masukdataperlengkapan, name='masukdataperlengkapan'),
+    
     
     # seleksi
     path('seleksidibawah/',views.seleksidibawah, name='seleksidibawah'),

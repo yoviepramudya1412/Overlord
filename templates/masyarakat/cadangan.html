@@ -4,6 +4,51 @@
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.7.0/flowbite.min.css" rel="stylesheet" />
 <section>
+  <form method="post" action="{% url 'create_pengajuan' %}" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div>
+    <label for="nama">Nama</label>
+    <input type="text" id="nama" name="nama" required>
+  </div>
+  <div>
+    <label for="notelepon">No Telepon</label>
+    <input type="text" id="notelepon" name="notelepon" required>
+  </div>
+  <div>
+    <label for="alamat">Alamat</label>
+    <textarea id="alamat" name="alamat" required></textarea>
+  </div>
+  <div>
+    <label for="latitude">Latitude</label>
+    <input type="text" id="latitude" name="latitude" required>
+  </div>
+  <div>
+    <label for="longitude">Longitude</label>
+    <input type="text" id="longitude" name="longitude" required>
+  </div>
+  <div>
+    <label for="nama_fasilitas">Nama Fasilitas</label>
+    <input type="text" id="nama_fasilitas" name="nama_fasilitas" required>
+  </div>
+  <div>
+    <label for="jenis_perlengkapan">Jenis Perlengkapan</label>
+    <input type="text" id="jenis_perlengkapan" name="jenis_perlengkapan" required>
+  </div>
+  <div>
+    <label for="Fasilitas_khusus">Fasilitas Khusus</label>
+    <input type="text" id="Fasilitas_khusus" name="Fasilitas_khusus" required>
+  </div>
+  
+  <div>
+    <label for="gambar">Gambar</label>
+    <input type="file" id="gambar" name="gambar" required>
+  </div>
+  <button type="submit">Submit</button>
+</form>
+</section>
+
+
+<section>
   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload file
                 <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
                 </label>
