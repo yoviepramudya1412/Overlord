@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.core.serializers import serialize
-
+from django.shortcuts import get_object_or_404
 
 # Masyarakat
 
@@ -64,7 +64,8 @@ def create_pengajuan(request):
             pengajuan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
             pengajuan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
             pengajuan.Fasilitas_khusus = request.POST['Fasilitas_khusus']
-            pengajuan.gambar = request.FILES['gambar']
+            if 'gambar' in request.FILES:
+                pengajuan.gambar = request.FILES['gambar']
 
             # Simpan objek pengajuan
             pengajuan.save()
@@ -227,11 +228,60 @@ def permasalahan(request):
 # masukkan data buat admin
 @login_required(login_url=settings.LOGIN_URL)
 def masukdatapembangunan(request):
-    return render(request, 'create/Pembangunan.html')
+    kondisi_choices = Kondisi.KONDISI_CHOICES
+    status_choices = Status.STATUS_CHOICES
 
-@login_required(login_url=settings.LOGIN_URL)
-def masukdatapengajuan(request):
-    return render(request, 'create/Pengajuan.html')
+    if request.method == 'POST':
+        pembangunan_form = PembangunanForm(request.POST, request.FILES)
+        
+        if pembangunan_form.is_valid():
+            pembangunan = pembangunan_form.save(commit=False)
+            pembangunan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
+            pembangunan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
+            pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
+            pembangunan.volume = request.POST['volume']
+            pembangunan.deskripsi = request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                pembangunan.gambar = request.FILES['gambar']
+            
+            tipe_kondisi = request.POST['kondisi_id']
+            tipe_status = request.POST['status_id']
+            
+            kondisi = Kondisi.objects.create(tipekondisi=tipe_kondisi)
+            status = Status.objects.create(tipestatus=tipe_status)
+            
+            pembangunan.kondisi = kondisi
+            pembangunan.status = status
+            
+            location = Location.objects.create(
+                latitude=request.POST['latitude'],
+                longitude=request.POST['longitude'],
+            )
+            pembangunan.location = location
+
+            pembangunan.save()
+            
+            messages.success(request, 'Data berhasil ditambahkan')
+            return redirect('masukdatapembangunan')  # Ganti 'masukdatapembangunan' dengan URL yang sesuai
+            
+        else:
+            errors = pembangunan_form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan dalam menambahkan data.')
+    else:
+        pembangunan_form = PembangunanForm()
+    
+    context = {
+        'pembangunan_form': pembangunan_form,
+        'kondisi_choices': kondisi_choices,
+        'status_choices': status_choices,
+    }
+    
+    return render(request, 'create/Pembangunan.html', context)
+
+
+
 
 @login_required(login_url=settings.LOGIN_URL)
 def masukdataperencanaan(request):
@@ -239,7 +289,38 @@ def masukdataperencanaan(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def masukdataperlengkapan(request):
-    return render(request, 'create/Perlengkapan jalan.html')
+    perlengkapan_list = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
+    if request.method == 'POST':
+        fasilitas_form = FasilitasForm(request.POST, request.FILES)
+        if fasilitas_form.is_valid():
+            fasilitas = fasilitas_form.save(commit=False)
+            fasilitas.nama_fasilitas = request.POST['nama_fasilitas']
+            fasilitas.tipekhusus =request.POST['tipekhusus']
+            fasilitas.namakhusus =request.POST['namakhusus']
+            fasilitas.tanggal_ditambahkan =request.POST['tanggal_bangun']
+            fasilitas.volume =request.POST['volume']
+            fasilitas.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            fasilitas.deskripsi =request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                fasilitas.gambar = request.FILES['gambar']
+            
+            fasilitas.save()
+            messages.success(request, 'Data berhasil ditambahkan')
+            return redirect('masukdataperlengkapan')  # Ganti 'masukdatapembangunan' dengan URL yang sesuai
+            
+        else:
+            errors = fasilitas_form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan dalam menambahkan data.')
+    else:
+        fasilitas_form = FasilitasForm()
+            
+        
+    context = {
+        'fasilitas_form': fasilitas_form,
+        'perlengkapan_list': perlengkapan_list,
+    }
+    return render(request, 'create/Perlengkapan jalan.html',context)
 
 
 

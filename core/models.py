@@ -72,11 +72,14 @@ def upload_to(instance, filename):
    
 class Fasilitas_perlengkapan(models.Model):
     fasilitasid = models.BigAutoField(primary_key=True)
-    tipekhusus = models.CharField(max_length=200)
-    nama_fasilitas = models.CharField(max_length=200,unique=True)
+    tipekhusus = models.CharField(max_length=200,blank=True,null=True)
+    namakhusus = models.CharField(max_length=200,blank=True,null=True)
+    nama_fasilitas = models.CharField(max_length=200,unique=True,blank=True,null=True)
+    tanggal_ditambahkan = models.CharField(max_length=200,blank=True,null=True)
     volume= models.IntegerField(blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
-    gambar = models.ImageField(upload_to=upload_to,blank=True)
+    gambar = models.ImageField(upload_to=upload_to,blank=True,null=True)
+    deskrpsi = models.TextField(blank=True,null=True)
     
     def __str__(self):
         return self.nama_fasilitas
@@ -102,7 +105,7 @@ class Pengajuan(models.Model):
     Fasilitas_khusus=models.CharField(max_length=200,blank=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
     statuspengajuan = models.OneToOneField(Status,on_delete=models.CASCADE,null=True,blank=True)
-    gambar = models.ImageField(upload_to=mirage,blank=True)
+    gambar = models.ImageField(upload_to=mirage,blank=True,null=True)
     
     # Menyimpan objek Pengajuan
     
@@ -123,7 +126,7 @@ class Pembangunan(models.Model):
     deskripsi = models.TextField(blank=True,null=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
-    gambar = models.ImageField(upload_to=cringe,blank=True)
+    gambar = models.ImageField(upload_to=cringe,blank=True,null=True)
     
 class Penyeleksian(models.Model):
     penyeleksianid = models.BigAutoField(primary_key=True)
@@ -152,7 +155,7 @@ class Perencanaan(models.Model):
     deskripsi = models.TextField(blank=True,null=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
     status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
-    gambar = models.ImageField(upload_to=demonslayer,blank=True)
+    gambar = models.ImageField(upload_to=demonslayer,blank=True,null=True)
     
     
 # tabel skala/pendamping    
