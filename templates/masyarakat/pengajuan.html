@@ -7,9 +7,12 @@
 {% include 'layout/navbar.html' %}
 
 <section class=" ml-1 mb-80 pt-32">
-
+    <script src="{% static 'assets/js/drop.js' %}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
-    <form action="">
+    <form action="{% url 'create_pengajuan' %}" method="POST"  enctype="multipart/form-data">
+
+        {% csrf_token %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
         
         <div class="container">
@@ -21,42 +24,42 @@
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Nama</span>
-                            <input id="nama" type="text" placeholder="Masukkan nama.." class="
+                            <input id="nama"  type="text" name="nama" placeholder="Masukkan nama.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
-                        " required>
+                        " required >
                         </label>
                         <label for="nohp" class="block mb-3">
                             <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Nomor telepon</span>
-                            <input id="nohp" type="" placeholder="Masukkan no telepon.." class="
+                            <input id="nohp" type="text" name="notelepon" placeholder="Masukkan no telepon.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
                         invalid:text-pink-700 invalid:focus:ring-pink-700
-                        " pattern="[0-9]{10,13}" maxlength="13" required>
+                        " pattern="[0-9]{10,13}" maxlength="13" required >
                         </label>
                         <label for="alamat" class="block mb-3">
                             <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Alamat</span>
-                            <input id="alamat" type="text" placeholder="Masukkan alamat.." class="
+                            <input id="alamat" type="text" name="alamat" placeholder="Masukkan alamat.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
-                        ">
+                        " required>
                         </label>
                         <label for="latitude" class="block mb-3">
                             <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Latitude</span>
-                            <input id="latitudeA" type="text" placeholder="Masukkan latitude.." class="
+                            <input id="latitudeA" type="text"  placeholder="Masukkan latitude.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
@@ -68,7 +71,7 @@
                         mb-1 text-slate-700 after:content-['*']
                         after:text-pink-500 after:ml-0.5
                         ">Longitude</span>
-                            <input id="longitudeB" type="text" placeholder="Masukkan longitude.." class="
+                            <input id="longitudeB" type="text" placeholder="Masukkan longitude.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
@@ -79,7 +82,7 @@
                             <span class="block font-semibold
                         mb-1 text-slate-700 
                         ">Fasilitas Khusus</span>
-                            <input id="fasilitaskhusus" type="text" placeholder="Masukkan permintaan fasilitas khusus.." class="
+                            <input id="fasilitaskhusus" type="text" name="Fasilitas_khusus" placeholder="Masukkan permintaan fasilitas khusus.."  class="
                         px-3 py-2 border shadow rounded w-full block 
                         text-sm placeholder:text-slate-400 
                         focus:outline-none focus:ring-1 focus:ring-art focus:border-art
@@ -88,7 +91,7 @@
                         
                         
                         <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
-                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" type="file">
+                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="gambar" type="file">
                         </label>
                         <script>
                             
@@ -226,9 +229,28 @@
 
                                 }
                                 
+                                {% if messages %}
+                                {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    Swal.fire({
+                                    icon: 'success',
+                                    title: '{{ message }}',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                    });
+                                {% elif message.tags == 'error' %}
+                                    Swal.fire({
+                                    icon: 'error',
+                                    title: '{{ message }}',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                    });
+                                {% endif %}
+                                {% endfor %}
+                            {% endif %}
                             </script>
                             <script src="{% static 'assets/js/cuai.js' %}"></script>
-
+                            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
                             <script>
                             
                             </script>
@@ -250,33 +272,38 @@
                                 class="ml-5 mt-[26px] px-3 h-9 rounded-lg bg-white hover:shadow-lg hover:opacity-60 transition duration-400 ease-in-out ">Cari</button>
                         </div>
                     </div>
+                    
+               
+                <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                <div class="dropdown">
+                <button id="dropdownButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                    Pilih Nama Fasilitas
+                </button>
+                <ul id="dropdownMenu" class="dropdown-menu">
+                    
+                </ul>
+                <input id="hiddenInput" name="nama_fasilitas" type="hidden">
+                </div>
 
-                <div class="self-start px-4">
-                    <div class="relative">
-                    <button id="dropdownButton" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
-                        Pilih Nama Fasilitas
-                    </button>
-                    <ul id="dropdownMenu" class="hidden absolute bg-white mt-2 py-2 w-40 rounded-md shadow-lg">
-                        <!-- Daftar opsi nama_fasilitas -->
-                    </ul>
-                    <input id="hiddenInput" type="hidden">
-                    </div>
 
                 </div>
-                <div class="self-start px-4 lg:w-1/2">
-                    <div class="relative">
-                <button id="dropdownButton1" class="bg-blue-500 text-white font-semibold py-2 px-4 rounded">
+                <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                    <div class="dropdown">
+                <button id="dropdownButton1" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                     Pilih Jenis Perlengkapan
                 </button>
-                <ul id="dropdownMenu1" class="hidden absolute bg-white mt-2 py-2 w-64 rounded-md shadow-lg">
-                    {% for jenis_perlengkapan in qs %}
-                    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" datavalue= "jenis_perlengkapan">{{jenis_perlengkapan.jenis_perlengkapan}}</li>
-                    {% endfor %}
+                <ul id="dropdownMenu1" class="dropdown-menu">
+                
                 </ul>
-                <input id="hiddenInput0" type="hidden">
+                <input id="hiddenInput0" name="jenis_perlengkapan" type="hidden">
                 </div>
+                </div>
+            </div>
 
+        
+                
                 </div>
+                
 
 
 
@@ -284,7 +311,7 @@
 
 
                     <div class="self-end px-4 lg:w-1/2  lg:mt-24">
-                        <button type="submit"
+                        <button type="submit" name="submit" value="Submit"
                             class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Kirim</button>
                     </div>
 
@@ -293,8 +320,45 @@
         </div>
     
 
-
     </form>
+    
+    <!-- Modal Sukses -->
+<div class="modal" id="successModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Sukses</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Pengajuan berhasil disimpan.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Gagal -->
+<div class="modal" id="errorModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Gagal</h5>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Pengajuan gagal disimpan.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 </section>
 

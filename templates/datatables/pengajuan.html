@@ -3,4 +3,69 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
+<link rel="stylesheet" href="{% static 'assets/compiled/css/table-datatable.css' %}" />
+
+<div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Data Pengajuan</h3>
+                    <p class="text-subtitle text-muted">
+                    Diharapkan untuk memeriksa kelengkapan lokasi
+                    pengajuan sebelum memindahkan status pengajuan
+                    </p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav
+                    aria-label="breadcrumb"
+                    class="breadcrumb-header float-start float-lg-end"
+                    >
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                        <a href="index.html">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                        DataTable
+                        </li>
+                    </ol>
+                    </nav>
+                </div>
+                </div>
+            </div>
+            <section class="section">
+                <div class="card">
+                <div class="card-header">Masyarakat yang mengajukan titik fasilitas</div>
+                <div class="card-body">
+                    <table class="table table-striped" id="table1">
+                    <thead>
+                        <tr>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>No Telepon</th>
+                        <th>Nama Fasilitas</th>
+                        <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pengajuan in pengajuan_data %}
+                        <tr>
+                            <td>{{ pengajuan.masyarakatid.nama }}</td>
+                            <td>{{ pengajuan.masyarakatid.alamat }}</td>
+                            <td>{{ pengajuan.masyarakatid.notelepon }}</td>
+                            <td>{{ pengajuan.nama_fasilitas }}</td>
+                            <td>
+                                <span class="badge bg-success">{{ pengajuan.statuspengajuan.tipestatus }}</td></span>
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </section>
+        </div>
+
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %} "></script>
+<script src="{% static 'assets/js/pages/simple-datatables.js' %} "></script>
+{% include 'layout/footeradmin.html' %}
 {% endblock content %}
