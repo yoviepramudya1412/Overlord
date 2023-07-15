@@ -30,11 +30,30 @@ class Status(models.Model):
     statusid = models.BigAutoField(primary_key=True)
     tipestatus = models.CharField(max_length=50, choices=STATUS_CHOICES,default='DIAJUKAN')
     
+class Kondisi(models.Model):
+    KONDISI_CHOICES = (
+        ('BAIK', 'Kondisi Baik'),
+        ('BURUK','Kondisi Buruk'),
+    )
+    
+    Kondisiid = models.BigAutoField(primary_key=True)
+    tipekondisi = models.CharField(max_length=50, choices=KONDISI_CHOICES,default='BAIK')
+    
 class Location(models.Model):
     locationid= models.BigAutoField(primary_key=True)
     latitude= models.FloatField()
     longitude= models.FloatField()
     
+    
+class Kerusakan(models.Model):
+    RUSAK_CHOICES = (
+        ('RUSAK BERAT','Kerusakan Berat'),
+        ('RUSAK SEDANG', 'Kerusakan Sedang'), 
+        ('RUSAK RINGAN','Kerusakan Ringan'),
+    )    
+    rusakid= models.BigAutoField(primary_key=True)
+    tiperusak= models.CharField(max_length=50, choices=RUSAK_CHOICES,default='RUSAK RINGAN')
+    deskrpsi = models.TextField(blank=True,null=True)
     
 # Bagan khusus.
 class Perlengkapan_jalan(models.Model):
@@ -55,7 +74,6 @@ class Fasilitas_perlengkapan(models.Model):
     fasilitasid = models.BigAutoField(primary_key=True)
     tipekhusus = models.CharField(max_length=200)
     nama_fasilitas = models.CharField(max_length=200,unique=True)
-    kondisi= models.CharField(max_length=200,blank=True)
     volume= models.IntegerField(blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
     gambar = models.ImageField(upload_to=upload_to,blank=True)
@@ -96,15 +114,15 @@ def cringe(instance, filename):
 
 class Pembangunan(models.Model):
     pembangunanid = models.BigAutoField(primary_key=True)
-    tanggal_bangun = models.DateField()
-    konstruksi_selesai = models.DateField()
+    tanggal_bangun = models.CharField(max_length=200,null=True,blank=True)
+    konstruksi_selesai = models.CharField(max_length=200,null=True,blank=True)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
-    kondisi= models.CharField(max_length=200,blank=True)
-    volume= models.IntegerField(blank=True)
+    kondisi= models.ForeignKey(Kondisi, on_delete=models.CASCADE,blank=True) 
+    volume= models.IntegerField(null=True,blank=True)
     deskripsi = models.TextField(blank=True,null=True)
-    location = models.OneToOneField(Location, on_delete=models.CASCADE)
-    status = models.OneToOneField(Status, on_delete=models.CASCADE) 
+    location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
     gambar = models.ImageField(upload_to=cringe,blank=True)
     
 class Penyeleksian(models.Model):
@@ -125,11 +143,15 @@ def demonslayer(instance, filename):
 
 class Perencanaan(models.Model):
     perencanaanid = models.BigAutoField(primary_key=True)
-    pembangunanid = models.ForeignKey(Pembangunan, on_delete=models.CASCADE, to_field="pembangunanid")    
-    fasilitasid = models.ForeignKey(Fasilitas_perlengkapan, on_delete=models.CASCADE, to_field="fasilitasid")    
-    nama_perencanaan = models.CharField(max_length=200)
-    status_pengajuan = models.OneToOneField(Status, on_delete=models.CASCADE) 
-    location = models.OneToOneField(Location, on_delete=models.CASCADE)   
+    tanggal_bangun = models.CharField(max_length=200,null=True,blank=True)
+    konstruksi_selesai = models.CharField(max_length=200,null=True,blank=True)
+    nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
+    jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
+    kondisi= models.ForeignKey(Kondisi, on_delete=models.CASCADE,blank=True) 
+    volume= models.IntegerField(null=True,blank=True)
+    deskripsi = models.TextField(blank=True,null=True)
+    location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
     gambar = models.ImageField(upload_to=demonslayer,blank=True)
     
     
