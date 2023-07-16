@@ -3,4 +3,127 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
+<link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
+
+
+<div class="page-heading">
+    <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+            <h3>Peta Perencanaan</h3>
+            <p class="text-subtitle text-muted">
+                Menampilkan peta pengajuan dari masyarakat
+            </p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+            <nav
+                aria-label="breadcrumb"
+                class="breadcrumb-header float-start float-lg-end"
+            >
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="index.html">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Google Map
+                </li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+        </div>
+        <section class="section">
+        <div class="row">
+            <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                <h5 class="card-title">Pengajuan Provinsi Aceh</h5>
+                </div>
+                <div class="card-body">
+                <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
+                <div class="layer-selector">
+        <label for="layer-select">Select Layer:</label>
+        <select id="layer-select">
+            <option value="streets">Google Streets</option>
+            <option value="hybrid">Google Hybrid</option>
+            <option value="satellite">Google Satellite</option>
+            <option value="terrain">Google Terrain</option>
+        </select>                    
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
+                <script>
+                    // Inisialisasi peta
+                    var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
+                    
+            
+        var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleHybrid = L.tileLayer('http://{s}.google.com/vt?lyrs=s,h&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleSatellite = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleTerrain = L.tileLayer('http://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var baseLayers = {
+            'Google Streets': googleStreets,
+            'Google Hybrid': googleHybrid,
+            'Google Satellite': googleSatellite,
+            'Google Terrain': googleTerrain
+        };
+
+        
+
+        var layerSelect = document.getElementById('layer-select');
+        layerSelect.addEventListener('change', function () {
+            var selectedLayer = layerSelect.value;
+            if (selectedLayer === 'streets') {
+                map.addLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'hybrid') {
+                map.addLayer(googleHybrid);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'satellite') {
+                map.addLayer(googleSatellite);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'terrain') {
+                map.addLayer(googleTerrain);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+            }
+        });
+        map.addLayer(googleStreets);
+
+
+                </script>
+                
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </section>
+    </div>
+
+
+{% include 'layout/footeradmin.html' %}
+
 {% endblock content %}

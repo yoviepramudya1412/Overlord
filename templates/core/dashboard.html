@@ -2,11 +2,12 @@
 {% load static %}
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
+<link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
 
 {% if user.is_authenticated %}
 
 <div class="page-heading">
-    <h3>Profile Statistics</h3>
+    <h3>Dashboard</h3>
 </div>
 <div class="page-content">
     <section class="row">
@@ -20,12 +21,12 @@
                     class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
                 >
                     <div class="stats-icon purple mb-2">
-                    <i class="iconly-boldShow"></i>
+                    <i class="fa-solid fa-bolt" style="color: #ffffff;"></i>
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
                     <h6 class="text-muted font-semibold">
-                    Profile Views
+                    Kerusakan
                     </h6>
                     <h6 class="font-extrabold mb-0">112.000</h6>
                 </div>
@@ -45,7 +46,7 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Followers</h6>
+                    <h6 class="text-muted font-semibold">Pengajuan</h6>
                     <h6 class="font-extrabold mb-0">183.000</h6>
                 </div>
                 </div>
@@ -60,11 +61,11 @@
                     class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
                 >
                     <div class="stats-icon green mb-2">
-                    <i class="iconly-boldAdd-User"></i>
+                    <i class="fa-solid fa-file-invoice" style="color: #fff;"></i>
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Following</h6>
+                    <h6 class="text-muted font-semibold">Perencanaan</h6>
                     <h6 class="font-extrabold mb-0">80.000</h6>
                 </div>
                 </div>
@@ -79,11 +80,11 @@
                     class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start"
                 >
                     <div class="stats-icon red mb-2">
-                    <i class="iconly-boldBookmark"></i>
+                    <i class="fa-solid fa-building-lock" style="color: #ffffff;"></i>
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Saved Post</h6>
+                    <h6 class="text-muted font-semibold">Pembangunan</h6>
                     <h6 class="font-extrabold mb-0">112</h6>
                 </div>
                 </div>
@@ -95,9 +96,87 @@
         <div class="col-12">
             <div class="card">
             <div class="card-header">
-                <h4>Profile Visit</h4>
+                <h4>Manajemen Peta</h4>
             </div>
             <div class="card-body">
+                <div id="map" class="h-[480px] rounded-xl relative z-10   ">   
+                <div class="layer-selector">
+        <label for="layer-select">Select Layer:</label>
+        <select id="layer-select">
+            <option value="streets">Google Streets</option>
+            <option value="hybrid">Google Hybrid</option>
+            <option value="satellite">Google Satellite</option>
+            <option value="terrain">Google Terrain</option>
+        </select>  
+
+                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
+
+                <script>
+        // Inisialisasi peta
+        var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
+                    
+            
+        var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleHybrid = L.tileLayer('http://{s}.google.com/vt?lyrs=s,h&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleSatellite = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleTerrain = L.tileLayer('http://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var baseLayers = {
+            'Google Streets': googleStreets,
+            'Google Hybrid': googleHybrid,
+            'Google Satellite': googleSatellite,
+            'Google Terrain': googleTerrain
+        };
+
+        
+
+        var layerSelect = document.getElementById('layer-select');
+        layerSelect.addEventListener('change', function () {
+            var selectedLayer = layerSelect.value;
+            if (selectedLayer === 'streets') {
+                map.addLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'hybrid') {
+                map.addLayer(googleHybrid);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'satellite') {
+                map.addLayer(googleSatellite);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'terrain') {
+                map.addLayer(googleTerrain);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+            }
+        });
+        map.addLayer(googleStreets);
+          // Gantikan dengan data marker yang diteruskan dari Django
+
+        </script>
+        </div>
+                </div>
             </div>
         </div>
     </div>
@@ -108,8 +187,11 @@
             <div class="card">
             <div class="card-header">
                 <h4>Profile Visit</h4>
+
             </div>
-            
+            <div class="card-body">
+                <h2>halo</h2>
+            </div>
             </div>
         </div>
         
