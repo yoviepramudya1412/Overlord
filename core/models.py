@@ -5,15 +5,20 @@ import os
 import uuid
 #Admin
 
+def common(instance, filename):
+    _, file_extension = os.path.splitext(filename)
+    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    return f"akunadmin/{unique_filename}"
 
 class Admin(AbstractUser):
     id = models.BigAutoField(primary_key=True)
-    nama_admin = models.CharField(unique=True,max_length=200)
+    nama_admin = models.CharField(max_length=200)
     divisi = models.CharField(max_length=200)
     kedinasan = models.CharField(max_length=200)
-    
+    email = models.EmailField(("Email Admin"), max_length=254)
+    gambar = models.ImageField(upload_to=common,blank=True,null=True)
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ['nama_admin', 'kedinasan']
+    
         
     def __str__(self):
         return self.username

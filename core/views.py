@@ -111,7 +111,28 @@ def cadangan(request):
 # percobaan
 
 
+# khusus akun
+@login_required(login_url=settings.LOGIN_URL)
+def Account(request):
+    admin = Admin.objects.get(username=request.user.username)
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Profil berhasil diperbarui.')
+            return redirect('Account')
+        else:
+            errors = form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan pada sistem')
+    else:
+        form = EditProfileForm(instance=admin)
 
+    context = {
+        'form': form
+    }
+    return render(request, 'core/Akun.html',context)
+# khusus akun
 
 
 # Peta admin

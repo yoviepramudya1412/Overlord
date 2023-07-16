@@ -44,7 +44,7 @@
                         <div class="card-body">
 
 
-                        <form method="POST" class="form" action="{% url 'masukdatapembangunan' %}"   enctype="multipart/form-data">
+                        <form method="POST" class="form" action="{% url 'masukdatapembangunan' %}"   enctype="multipart/form-data" autocomplete="off">
                             {% csrf_token %}
                             
                             <div class="row">
@@ -360,24 +360,24 @@
                                         return decimal.toFixed(6);
                                         }
                                         {% if messages %}
-                                {% for message in messages %}
-                                {% if message.tags == 'success' %}
-                                    Swal.fire({
-                                    icon: 'success',
-                                    title: '{{ message }}',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                    });
-                                {% elif message.tags == 'error' %}
-                                    Swal.fire({
-                                    icon: 'error',
-                                    title: '{{ message }}',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                    });
-                                {% endif %}
-                                {% endfor %}
-                            {% endif %}
+                                        {% for message in messages %}
+                                        {% if message.tags == 'success' %}
+                                            Swal.fire({
+                                            icon: 'success',
+                                            title: '{{ message }}',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                            });
+                                        {% elif message.tags == 'error' %}
+                                            Swal.fire({
+                                            icon: 'error',
+                                            title: '{{ message }}',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                            });
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
 
                                     </script>
                                 </div>

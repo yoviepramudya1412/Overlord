@@ -2,6 +2,13 @@ from django import forms
 from . models import *
 
 
+class EditProfileForm(forms.ModelForm):
+    gambar = forms.ImageField(required=False)
+    nama_admin = forms.CharField(required=False)
+    class Meta:
+        model = Admin
+        fields = ['nama_admin', 'divisi', 'kedinasan','email','gambar']
+
 class FasilitasForm(forms.ModelForm):
     gambar = forms.ImageField(required=False)
     class Meta:

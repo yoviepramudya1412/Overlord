@@ -25,7 +25,7 @@
                         <a href="index.html">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                        DataTable
+                        Data Pengajuan Masyarakat
                         </li>
                     </ol>
                     </nav>
@@ -44,6 +44,7 @@
                         <th>No Telepon</th>
                         <th>Nama Fasilitas</th>
                         <th>Status</th>
+                        <th>Apa iya</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,6 +56,7 @@
                             <td>{{ pengajuan.nama_fasilitas }}</td>
                             <td>
                                 <span class="badge bg-success">{{ pengajuan.statuspengajuan.tipestatus }}</td></span>
+                                <td>apa iya</td>
                         </tr>
                         {% endfor %}
                         

@@ -15,6 +15,7 @@ urlpatterns = [
     
     # dashboard
     path('dashboard/',login_required(views.dashboardadmin), name='dashboardadmin'),
+    path('Account/',views.Account, name='Account'),
     
     # peta
     path('petaadkerusakan/',views.petaadkerusakan, name='petaadkerusakan'),

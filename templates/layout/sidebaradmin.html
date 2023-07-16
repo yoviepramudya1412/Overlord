@@ -357,6 +357,14 @@
             
             </ul>
             </li>
+            <li class="sidebar-item {% if request.resolver_match.url_name == 'Account' %}active{% endif %}">
+            <a href="{% url 'Account' %}" class="sidebar-link">
+                <i class="bi bi-person-gear"></i>
+                <span>Account</span>
+            </a>
+            </li>
+            
+            </li>
             <li class="sidebar-item {% if request.resolver_match.url_name == 'logout' %}active{% endif %}">
             <a href="{% url 'logout' %}" class="sidebar-link">
                 <i class="bi bi-box-arrow-right"></i>
