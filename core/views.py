@@ -201,10 +201,46 @@ def datapembangunan(request):
 @login_required(login_url=settings.LOGIN_URL)
 def datapengajuan(request):
     pengajuan_data = Pengajuan.objects.all()
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
     context = {
-        'pengajuan_data': pengajuan_data
+        'pengajuan_data': pengajuan_data,
+        'success_message': success_message,
+        'error_message': error_message,
     }
     return render(request, 'datatables/pengajuan.html',context)
+
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_pengajuan(request, pengajuan_id):
+    pengajuan = Pengajuan.objects.get(pk=pengajuan_id)
+    
+    # Menampilkan SweetAlert konfirmasi penghapusan
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            pengajuan.location.delete()
+            pengajuan.statuspengajuan.delete()
+            pengajuan.masyarakatid.delete()
+            
+            # Hapus objek Pengajuan
+            pengajuan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('datapengajuan')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+    
+    context = {
+        'pengajuan': pengajuan
+    }
+    return render(request, 'datatables/pengajuan.html', context)
+
+
 
 @login_required(login_url=settings.LOGIN_URL)
 def dataperencanaan(request):
@@ -363,7 +399,12 @@ def penggunaan(request):
 # Admin
 @login_required(login_url=settings.LOGIN_URL)
 def dashboardadmin(request):
-    context = {'user': request.user}
+    jumlah_data = Pengajuan.objects.count()
+    admin = request.user
+    context = {
+        'jumlah_data': jumlah_data,
+        'admin': admin,
+        }
     return render(request, 'core/dashboard.html',context)
 
 def login_view(request):

@@ -35,6 +35,7 @@ urlpatterns = [
     path('datafpj/',views.datafpj, name='datafpj'),
     path('datapembangunan/',views.datapembangunan, name='datapembangunan'),
     path('datapengajuan/',views.datapengajuan, name='datapengajuan'),
+    path('delete_pengajuan/<int:pengajuan_id>/',views.delete_pengajuan, name='delete_pengajuan'),
     path('dataperencanaan/',views.dataperencanaan, name='dataperencanaan'),
     
     # masukkan data admin

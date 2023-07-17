@@ -47,7 +47,7 @@
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
                     <h6 class="text-muted font-semibold">Pengajuan</h6>
-                    <h6 class="font-extrabold mb-0">183.000</h6>
+                    <h6 class="font-extrabold mb-0">{{jumlah_data}}</h6>
                 </div>
                 </div>
             </div>
@@ -201,10 +201,15 @@
         <div class="card">
         <div class="card-body py-4 px-4">
             <div class="d-flex align-items-center">
-        
+                <div class="avatar avatar-xl">
+                    {% if admin.gambar %}
+                        <img src="{{ admin.gambar.url }}" style="max-width: 70%; max-height: 100%;" alt="Gambar Admin">
+                    {% endif %}
+                    </div>
             <div class="ms-3 name">
-                <h5 class="font-bold">{{ request.user.username }}</h5>
-                <h6 class="text-muted mb-0">@yoviepramudya</h6>
+                <h5 class="font-bold mb-1">{{ admin.nama_admin }}</h5>
+                
+                <h7 class="text-muted mb-0">{{ admin.divisi }}</h7>
             </div>
             </div>
         </div>
