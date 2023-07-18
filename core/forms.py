@@ -34,10 +34,14 @@ class PembangunanForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.all(), required=False)
     kondisi = forms.ModelChoiceField(queryset=Kondisi.objects.all(), required=False)
     status = forms.ModelChoiceField(queryset=Status.objects.all(), required=False)
+    latitude = forms.CharField(required=False)
+    longitude = forms.CharField(required=False)
+    nama = forms.CharField(required=False)
+    notelepon = forms.CharField(required=False)
     
     class Meta:
         model = Pembangunan
-        fields = ['nama_fasilitas', 'jenis_perlengkapan', 'tanggal_bangun', 'konstruksi_selesai', 'kondisi', 'volume', 'deskripsi', 'location', 'status', 'gambar']
+        fields = ['notelepon','nama','latitude','longitude','nama_fasilitas', 'jenis_perlengkapan', 'tanggal_bangun', 'konstruksi_selesai', 'kondisi', 'volume', 'deskripsi', 'location', 'status', 'gambar']
     
     
 

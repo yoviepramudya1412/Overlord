@@ -7,9 +7,9 @@
         <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Masukkan Data Perencanaan</h3>
+            <h3>Edit Data Perencanaan</h3>
             <p class="text-subtitle text-muted">
-                Pastikan anda memasukkan data yang tersurvei dan tervalid untuk dimasukkan kedalam perencanaan
+                Pastikan anda mensurvei pengajuan yang telah diajukan dan memilih data sesuai ketentuan
             </p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
@@ -22,7 +22,7 @@
                     <a href="index.html">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Perencanaan Form
+                    <span>{{ form.nama.value }}</span>
                 </li>
                 </ol>
             </nav>
@@ -39,12 +39,18 @@
                     <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Perencanaan Form</h4>
+<pre>
+
+<h7>Nama yang mengajukan : <span>{{ form.nama.value }}</span></h7>
+<h7>No telepon           : <span>{{ form.notelepon.value }}</span></h7>
+</pre>
                     </div>
+                    
                     <div class="card-content">
                         <div class="card-body">
 
 
-                        <form method="POST" class="form" action="{% url 'masukdatapembangunan' %}"   enctype="multipart/form-data" autocomplete="off">
+                        <form method="POST" class="form" action="{% url 'tambahdataperencanaan' pengajuan.pengajuanid %}"   enctype="multipart/form-data" autocomplete="off">
                             {% csrf_token %}
                             
                             <div class="row">
@@ -58,17 +64,20 @@
                                 data-bs-toggle="dropdown"
                                 aria-haspopup="true"
                                 aria-expanded="false"
+                                
                             >
-                                Pilih Nama Fasilitas
+                                {{ form.nama_fasilitas.value }}
+                            
                             </button>
                             <div
                                 class="dropdown-menu"
                                 aria-labelledby="namaFasilitasDropdown"
+                                value="{{ form.nama_fasilitas.value }}"
                             >
                                 
                             </div>
                         </div>
-                        <input type="hidden" id="hiddenNamaFasilitas" name="nama_fasilitas">
+                        <input type="hidden" id="hiddenNamaFasilitas" name="nama_fasilitas" value="{{ form.nama_fasilitas.value }}">
                         </div>
                         
                                 
@@ -82,21 +91,22 @@
                                 aria-haspopup="true"
                                 aria-expanded="false"
                             >
-                                Pilih Jenis Perlengkapan 
+                                {{ form.jenis_perlengkapan.value }} 
                             </button>
                             <div
                                 class="dropdown-menu"
+                                value="{{ form.jenis_perlengkapan.value }}"
                                 aria-labelledby="jenisPerlengkapanDropdown"
                             >
                                 
                             </div>
-                                <input type="hidden" id="hiddenJenisPerlengkapan" name="jenis_perlengkapan" required>
+                                <input type="hidden" id="hiddenJenisPerlengkapan" name="jenis_perlengkapan" value="{{ form.jenis_perlengkapan.value }}" required>
                         </div>
                     </div>
                         </div>
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Pilih Kondisi Fasilitas  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;</label>
+                                <label for="first-name-column">Pilih Kondisi Fasilitas :</label>
                                 
                                 <div class="btn-group mb-1 ml-3">
                         <div class="dropdown">
@@ -134,7 +144,7 @@
                             </div>
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Perkiraan Tanggal Bangun</label>
+                                <label for="first-name-column">Pilih Tanggal Bangun</label>
                                     <input
                                     type="date"
                                     class="form-control mb-3 flatpickr-no-config"
@@ -146,7 +156,7 @@
 
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Pilih Status Produk Fasilitas :</label>
+                                <label for="first-name-column">Pilih Status Fasilitas :</label>
                                 
                                 <div class="btn-group mb-1 ml-5">
                         <div class="dropdown">
@@ -183,7 +193,7 @@
                             
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Perkiraan Tanggal Konstruksi Selesai</label>
+                                <label for="first-name-column">Pilih Tanggal Konstruksi Selesai</label>
                                     <input
                                     type="date"
                                     class="form-control mb-3 flatpickr-no-config"
@@ -230,6 +240,7 @@
                                     class="form-control"
                                     name="latitude"
                                     placeholder="Latitude.."
+                                    value="{{ form.latitude.value }}"
                                     required
                                 />
                                 </div>
@@ -260,6 +271,7 @@
                                     class="form-control"
                                     name="longitude"
                                     placeholder="Longitude"
+                                    value="{{ form.longitude.value }}"
                                     required
                                 />
                                 </div>

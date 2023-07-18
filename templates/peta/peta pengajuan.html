@@ -53,7 +53,7 @@
                 <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
                 <script>
                     // Inisialisasi peta
-                    var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
+        var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
                     
             
         var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
@@ -111,46 +111,68 @@
             }
         });
         map.addLayer(googleStreets);
-        var markers = {{ markers|safe }};  // Gantikan dengan data marker yang diteruskan dari Django
+        function tampilkanMarker(markers) {
+            markers.forEach(function(marker) {
+                var latitude = marker.lat;
+                var longitude = marker.lng;
+                var nama = marker.nama;
+                var notelepon = marker.notelepon;
+                var alamat = marker.alamat;
+                var nama_fasilitas = marker.nama_fasilitas;
+                var gambar = marker.gambar;
 
-        // Tampilkan marker pada peta
-        markers.forEach(function(marker) {
-            var latitude = marker.lat;
-            var longitude = marker.lng;
-            var nama = marker.nama;
-            var notelepon = marker.notelepon;
-            var alamat = marker.alamat;
-            var gambar = marker.gambar;
+                if (!gambar) {
+                    // Gambar pengganti
+                    gambar = '/assets/image/samples/banana.jpg' ;
+                }
 
-
-            var popupContent = `
-            
-                <div class="custom-popup">
-                <div class="info">
-                    <b>Nama</b>
-                    <span>: ${nama}</span>
-                </div>
-                <div class="info">
-                    <b>No Telepon</b>
-                    <span>: ${notelepon}</span>
-                </div>
-                <div class="info">
-                    <b>Alamat</b>
-                    <span>: ${alamat}</span>
-                </div>
-                <div class="">                   
-                    
-                    <div class="image">
-                <img src=" ${gambar}" alt="Gambar Pengajuan" title="image pengajuan">
+                var popupContent = `
+                    <div class="custom-popup">
+                        <div class="info">
+                            <b>Nama</b>
+                            <span>: ${nama}</span>
+                        </div>
+                        <div class="info">
+                            <b>No Telepon</b>
+                            <span>: ${notelepon}</span>
+                        </div>
+                        <div class="info">
+                            <b>Alamat</b>
+                            <span>: ${alamat}</span>
+                        </div>
+                        <div class="info">
+                            <b>Nama Fasilitas</b>
+                            <span>: ${nama_fasilitas}</span>
+                        </div>
+                        <div class="image">
+                            <img src="${gambar}" alt="Pengguna tidak mengupload image" title="Gambar Pengajuan">
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
 
-            L.marker([latitude, longitude])
-                .bindPopup(popupContent)
-                .addTo(map);
-                });
+                L.marker([latitude, longitude])
+                    .bindPopup(popupContent)
+                    .addTo(map);
+            });
+        }
 
+        // Data markers yang diteruskan dari Django
+        var markers = [
+            {% for marker in markers %}
+                {
+                    lat: {{ marker.lat }},
+                    lng: {{ marker.lng }},
+                    nama: '{{ marker.nama }}',
+                    notelepon: '{{ marker.notelepon }}',
+                    alamat: '{{ marker.alamat }}',
+                    nama_fasilitas : '{{ marker.nama_fasilitas }}',
+                    gambar: '{{ marker.gambar }}'
+                },
+            {% endfor %}
+        ];
+
+        // Memanggil fungsi tampilkanMarker dengan data markers
+        tampilkanMarker(markers);
                 </script>
                 
                     </div>

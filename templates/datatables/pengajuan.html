@@ -56,7 +56,7 @@
                             <td>{{ pengajuan.masyarakatid.notelepon }}</td>
                             <td>{{ pengajuan.nama_fasilitas }}</td>
                             
-                                <td><span class="badges"><a href="#" class="badge bg-success">{{ pengajuan.statuspengajuan.tipestatus }}</a></span></td>
+                                <td><a   href="{% url 'tambahdataperencanaan' pengajuan.pengajuanid %}" class="badges badge bg-success">{{ pengajuan.statuspengajuan.tipestatus }}</a></td>
                                 <td><form action="{% url 'delete_pengajuan' pengajuan.pengajuanid %}" class="delete-form" data-confirm-text="Apakah Anda yakin ingin menghapus data ini?" method="POST" id="delete-form">
                                     {% csrf_token %}
                                     <button type="submit" class="badges"><p  class="badge bg-danger">DELETE</p></button>
@@ -109,7 +109,7 @@
                                             confirmButtonText: 'OK'
                                         });
                                         </script>
-{% endif %}
+                                    {% endif %}
                                 </form>
                             </td>
                             

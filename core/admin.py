@@ -2,8 +2,7 @@ from django.contrib import admin
 from core.models import *
 from django.contrib.auth.admin import UserAdmin
 # Register your models here.
-class Perencanaanadmin(admin.ModelAdmin):
-    pass
+
 class FasilitasAdmin(admin.ModelAdmin):
     pass
 class Statusadmin(admin.ModelAdmin):
@@ -20,7 +19,7 @@ class PembangunanAdmin(admin.ModelAdmin):
     pass
 class PenyeleksianAdmin(admin.ModelAdmin):
     pass
-class PerencanaanAdmin(admin.ModelAdmin):
+class KerusakanAdmin(admin.ModelAdmin):
     pass
 class Adminadmin(admin.ModelAdmin):
     pass
@@ -39,7 +38,7 @@ admin.site.register(Masyarakat,MasyarakatAdmin)
 admin.site.register(Pengajuan,PengajuanAdmin)
 admin.site.register(Pembangunan,PembangunanAdmin)
 admin.site.register(Penyeleksian,PenyeleksianAdmin)
-admin.site.register(Perencanaan,PerencanaanAdmin)
+admin.site.register(Kerusakan,KerusakanAdmin)
 # admin.site.register(Admin,Adminadmin)
 admin.site.register(Beranda,BerandaAdmin)
 

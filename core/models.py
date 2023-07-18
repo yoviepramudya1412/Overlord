@@ -16,7 +16,7 @@ class Admin(AbstractUser):
     divisi = models.CharField(max_length=200)
     kedinasan = models.CharField(max_length=200)
     email = models.EmailField(("Email Admin"), max_length=254)
-    gambar = models.ImageField(upload_to=common,blank=True,null=True)
+    gambar = models.ImageField(upload_to=common,null=True, blank=True)
     USERNAME_FIELD = "username"
     
         
@@ -28,7 +28,6 @@ class Admin(AbstractUser):
 class Status(models.Model):
     STATUS_CHOICES = (
         ('DIAJUKAN', 'Masih Diajukan'),
-        ('DIPROSES', 'Masih Diproses'),
         ('PERENCANAAN', 'Perencanaan'),
         ('PEMBANGUNAN', 'Pembangunan'),
     )
@@ -50,7 +49,7 @@ class Location(models.Model):
     longitude= models.FloatField()
     
     
-class Kerusakan(models.Model):
+class Rusak(models.Model):
     RUSAK_CHOICES = (
         ('RUSAK BERAT','Kerusakan Berat'),
         ('RUSAK SEDANG', 'Kerusakan Sedang'), 
@@ -58,13 +57,13 @@ class Kerusakan(models.Model):
     )    
     rusakid= models.BigAutoField(primary_key=True)
     tiperusak= models.CharField(max_length=50, choices=RUSAK_CHOICES,default='RUSAK RINGAN')
-    deskrpsi = models.TextField(blank=True,null=True)
+    deskrpsi = models.TextField(null=True, blank=True)
     
 # Bagan khusus.
 class Perlengkapan_jalan(models.Model):
     perlengkapanid = models.BigAutoField(primary_key= True)
     jenis_perlengkapan = models.CharField(max_length=200 , unique=True)
-    deskrpsi = models.TextField(blank=True,null=True)
+    deskrpsi = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return self.jenis_perlengkapan
@@ -74,7 +73,7 @@ def upload_to(instance, filename):
     _, file_extension = os.path.splitext(filename)
     unique_filename = f"{uuid.uuid4().hex}{file_extension}"
     return f"fasilitas/{unique_filename}"
-   
+
 class Fasilitas_perlengkapan(models.Model):
     fasilitasid = models.BigAutoField(primary_key=True)
     tipekhusus = models.CharField(max_length=200,blank=True,null=True)
@@ -83,7 +82,7 @@ class Fasilitas_perlengkapan(models.Model):
     tanggal_ditambahkan = models.CharField(max_length=200,blank=True,null=True)
     volume= models.IntegerField(blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
-    gambar = models.ImageField(upload_to=upload_to,blank=True,null=True)
+    gambar = models.ImageField(upload_to=upload_to,null=True, blank=True)
     deskrpsi = models.TextField(blank=True,null=True)
     
     def __str__(self):
@@ -110,7 +109,7 @@ class Pengajuan(models.Model):
     Fasilitas_khusus=models.CharField(max_length=200,blank=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
     statuspengajuan = models.OneToOneField(Status,on_delete=models.CASCADE,null=True,blank=True)
-    gambar = models.ImageField(upload_to=mirage,blank=True,null=True)
+    gambar = models.ImageField(upload_to=mirage,null=True, blank=True)
     
     # Menyimpan objek Pengajuan
     
@@ -139,7 +138,7 @@ class Penyeleksian(models.Model):
     adminid = models.CharField(max_length=200)
     pengajuanid = models.CharField(max_length=200)
     perencanaanid = models.CharField(max_length=200)
-    status = models.OneToOneField(Status, on_delete=models.CASCADE) 
+    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
     location = models.OneToOneField(Location, on_delete=models.CASCADE)   
     tggl_terima = models.DateTimeField()
     
@@ -149,18 +148,14 @@ def demonslayer(instance, filename):
     unique_filename = f"{uuid.uuid4().hex}{file_extension}"
     return f"perencanaan/{unique_filename}" 
 
-class Perencanaan(models.Model):
+class Kerusakan(models.Model):
     perencanaanid = models.BigAutoField(primary_key=True)
-    tanggal_bangun = models.CharField(max_length=200,null=True,blank=True)
-    konstruksi_selesai = models.CharField(max_length=200,null=True,blank=True)
-    nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
-    jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
-    kondisi= models.ForeignKey(Kondisi, on_delete=models.CASCADE,blank=True) 
-    volume= models.IntegerField(null=True,blank=True)
-    deskripsi = models.TextField(blank=True,null=True)
+    nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",null=True,blank=True)
+    jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",null=True,blank=True)    
+    deskripsi = models.TextField(null=True, blank=True)
     location = models.OneToOneField(Location, on_delete=models.CASCADE,null=True,blank=True)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
-    gambar = models.ImageField(upload_to=demonslayer,blank=True,null=True)
+    rusak = models.ForeignKey(Rusak, on_delete=models.CASCADE,null=True,blank=True) 
+    gambar = models.ImageField(upload_to=demonslayer,null=True, blank=True)
     
     
 # tabel skala/pendamping    
@@ -170,7 +165,7 @@ class Perencanaan(models.Model):
 class Beranda(models.Model):        
     folioid = models.BigAutoField(primary_key=True)
     konstruksi_selesai = models.ForeignKey(Pembangunan, on_delete=models.CASCADE)    
-    nama_perencanaan = models.ForeignKey(Perencanaan, on_delete=models.CASCADE)    
+    kerusakan= models.ForeignKey(Kerusakan, on_delete=models.CASCADE)    
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
     deskripsi = models.TextField(blank=True,null=True)
     

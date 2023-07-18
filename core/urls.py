@@ -36,11 +36,14 @@ urlpatterns = [
     path('datapembangunan/',views.datapembangunan, name='datapembangunan'),
     path('datapengajuan/',views.datapengajuan, name='datapengajuan'),
     path('delete_pengajuan/<int:pengajuan_id>/',views.delete_pengajuan, name='delete_pengajuan'),
+    path('delete_pembangunan/<int:pembangunan_id>/',views.delete_pembangunan, name='delete_pembangunan'),
+    path('delete_perencanaan/<int:pembangunan_id>/',views.delete_perencanaan, name='delete_perencanaan'),
     path('dataperencanaan/',views.dataperencanaan, name='dataperencanaan'),
     
     # masukkan data admin
     path('masukdatapembangunan/',views.masukdatapembangunan, name='masukdatapembangunan'),
     path('masukdataperencanaan/',views.masukdataperencanaan, name='masukdataperencanaan'),
+    path('tambahdataperencanaan/<int:pengajuan_id>/',views.tambahdataperencanaan, name='tambahdataperencanaan'),
     path('masukdataperlengkapan/',views.masukdataperlengkapan, name='masukdataperlengkapan'),
     
     

@@ -149,20 +149,24 @@ def petaadpengajuan(request):
     pengajuan_data = Pengajuan.objects.exclude(location=None)
     markers = []
     for pengajuan in pengajuan_data:
-        marker = {
-            'lat': pengajuan.location.latitude,
-            'lng': pengajuan.location.longitude,
-            'nama': pengajuan.masyarakatid.nama,
-            'notelepon': pengajuan.masyarakatid.notelepon,
-            'alamat': pengajuan.masyarakatid.alamat,
-            'gambar': pengajuan.gambar.url if pengajuan.gambar else None,
-        }
-        markers.append(marker)
-
+        if pengajuan.location is not None:
+            marker = {
+                'lat': pengajuan.location.latitude,
+                'lng': pengajuan.location.longitude,
+                'nama': pengajuan.masyarakatid.nama,
+                'notelepon': pengajuan.masyarakatid.notelepon,
+                'alamat': pengajuan.masyarakatid.alamat,
+                'nama_fasilitas': pengajuan.nama_fasilitas,
+            }
+            if pengajuan.gambar:
+                marker['gambar'] = pengajuan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
     context = {
         'markers': markers
     }
-    return render(request, 'peta/peta pengajuan.html',context)
+    return render(request, 'peta/peta pengajuan.html', context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadperencanaan(request):
@@ -192,11 +196,27 @@ def statistikperencanaan(request):
 # Data tables
 @login_required(login_url=settings.LOGIN_URL)
 def datafpj(request):
-    return render(request, 'datatables/data fpj.html')
+    fasilitas_data = Fasilitas_perlengkapan.objects.all()
+    
+    context = {
+        'fasilitas_data': fasilitas_data,
+    }
+    return render(request, 'datatables/data fpj.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def datapembangunan(request):
-    return render(request, 'datatables/pembangunan.html')
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN')
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'pembangunan_data': pembangunan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    
+    return render(request, 'datatables/pembangunan.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def datapengajuan(request):
@@ -212,6 +232,57 @@ def datapengajuan(request):
     }
     return render(request, 'datatables/pengajuan.html',context)
 
+@login_required(login_url=settings.LOGIN_URL)
+def delete_pembangunan(request, pembangunan_id):
+    pembangunan = Pembangunan.objects.get(pk=pembangunan_id)
+    
+    # Menampilkan SweetAlert konfirmasi penghapusan
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            pembangunan.location.delete()
+            pembangunan.status.delete()
+            pembangunan.kondisi.delete()
+            
+            # Hapus objek pembangunan
+            pembangunan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('datapembangunan')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+        context = {
+        'pembangunan': pembangunan
+    }
+    return render(request, 'datatables/pembangunan.html', context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_perencanaan(request, pembangunan_id):
+    pembangunan = Pembangunan.objects.get(pk=pembangunan_id)
+    
+    # Menampilkan SweetAlert konfirmasi penghapusan
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            pembangunan.location.delete()
+            pembangunan.status.delete()
+            pembangunan.kondisi.delete()
+            
+            # Hapus objek pembangunan
+            pembangunan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('dataperencanaan')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+        context = {
+        'pembangunan': pembangunan
+    }
+    return render(request, 'datatables/perencanaan.html', context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def delete_pengajuan(request, pengajuan_id):
@@ -244,7 +315,18 @@ def delete_pengajuan(request, pengajuan_id):
 
 @login_required(login_url=settings.LOGIN_URL)
 def dataperencanaan(request):
-    return render(request, 'datatables/perencanaan.html')
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN')
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'pembangunan_data': pembangunan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    
+    return render(request, 'datatables/perencanaan.html',context)
 
 # seleksi
 @login_required(login_url=settings.LOGIN_URL)
@@ -338,11 +420,117 @@ def masukdatapembangunan(request):
     return render(request, 'create/Pembangunan.html', context)
 
 
+@login_required(login_url=settings.LOGIN_URL)
+def masukdataperencanaan(request):
+    kondisi_choices = Kondisi.KONDISI_CHOICES
+    status_choices = Status.STATUS_CHOICES
+
+    if request.method == 'POST':
+        pembangunan_form = PembangunanForm(request.POST, request.FILES)
+        
+        if pembangunan_form.is_valid():
+            pembangunan = pembangunan_form.save(commit=False)
+            pembangunan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
+            pembangunan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
+            pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
+            pembangunan.volume = request.POST['volume']
+            pembangunan.deskripsi = request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                pembangunan.gambar = request.FILES['gambar']
+            
+            tipe_kondisi = request.POST['kondisi_id']
+            tipe_status = request.POST['status_id']
+            
+            kondisi = Kondisi.objects.create(tipekondisi=tipe_kondisi)
+            status = Status.objects.create(tipestatus=tipe_status)
+            
+            pembangunan.kondisi = kondisi
+            pembangunan.status = status
+            
+            location = Location.objects.create(
+                latitude=request.POST['latitude'],
+                longitude=request.POST['longitude'],
+            )
+            pembangunan.location = location
+
+            pembangunan.save()
+            
+            messages.success(request, 'Data berhasil ditambahkan')
+            return redirect('masukdataperencanaan')  # Ganti 'masukdatapembangunan' dengan URL yang sesuai
+            
+        else:
+            errors = pembangunan_form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan dalam menambahkan data.')
+    else:
+        pembangunan_form = PembangunanForm()
+    
+    context = {
+        'pembangunan_form': pembangunan_form,
+        'kondisi_choices': kondisi_choices,
+        'status_choices': status_choices,
+    }
+    return render(request, 'create/Perencanaan.html',context)
 
 
 @login_required(login_url=settings.LOGIN_URL)
-def masukdataperencanaan(request):
-    return render(request, 'create/Perencanaan.html')
+def tambahdataperencanaan(request,pengajuan_id):
+    kondisi_choices = Kondisi.KONDISI_CHOICES
+    status_choices = Status.STATUS_CHOICES
+    pengajuan = Pengajuan.objects.get(pk=pengajuan_id)
+
+    if request.method == 'POST':
+        form = PembangunanForm(request.POST, request.FILES)
+        if form.is_valid():
+            pembangunan = form.save(commit=False)
+            pembangunan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
+            pembangunan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
+            pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
+            pembangunan.volume = request.POST['volume']
+            pembangunan.deskripsi = request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                pembangunan.gambar = request.FILES['gambar']
+            
+            tipe_kondisi = request.POST['kondisi_id']
+            tipe_status = request.POST['status_id']
+            
+            kondisi = Kondisi.objects.create(tipekondisi=tipe_kondisi)
+            status = Status.objects.create(tipestatus=tipe_status)
+            
+            pembangunan.kondisi = kondisi
+            pembangunan.status = status
+            
+            location = Location.objects.create(
+                latitude=request.POST['latitude'],
+                longitude=request.POST['longitude'],
+            )
+            pembangunan.location = location
+
+            pembangunan.save()
+
+            messages.success(request, 'Data berhasil disimpan.')
+            return redirect('tambahdataperencanaan')  # Ganti 'nama_halaman' dengan URL halaman yang sesuai
+        else:
+            messages.error(request, 'Terjadi kesalahan dalam menyimpan data.')
+    else:
+        form = PembangunanForm(initial={
+            'nama': pengajuan.masyarakatid.nama,
+            'notelepon':pengajuan.masyarakatid.notelepon,
+            'nama_fasilitas': pengajuan.nama_fasilitas.nama_fasilitas,
+            'jenis_perlengkapan': pengajuan.jenis_perlengkapan.jenis_perlengkapan,
+            'latitude': pengajuan.location.latitude,
+            'longitude': pengajuan.location.longitude,
+        })
+
+    context = {
+        'pengajuan': pengajuan,
+        'form': form,
+        'kondisi_choices': kondisi_choices,
+        'status_choices': status_choices,
+    }
+    return render(request, 'create/Edit Perencanaan.html', context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def masukdataperlengkapan(request):
@@ -400,8 +588,12 @@ def penggunaan(request):
 @login_required(login_url=settings.LOGIN_URL)
 def dashboardadmin(request):
     jumlah_data = Pengajuan.objects.count()
+    data_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').count()
+    data_pembangunan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').count()
     admin = request.user
     context = {
+        'data_perencanaan' : data_perencanaan,
+        'data_pembangunan' : data_pembangunan,
         'jumlah_data': jumlah_data,
         'admin': admin,
         }
