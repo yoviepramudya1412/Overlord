@@ -58,7 +58,7 @@
                             <td>{{ pembangunan.volume}}</td>
                             <td>{{ pembangunan.kondisi.tipekondisi}}</td>
                             
-                                <td><a   href="#" class="badges badge bg-art">{{ pembangunan.status.tipestatus }}</a></td>
+                                <td><a   href="{% url 'editdatapembangunan' pembangunan.pembangunanid %}" class="badges badge bg-pink-400">{{ pembangunan.status.tipestatus }}</a></td>
                                 <td><form action="{% url 'delete_pembangunan' pembangunan.pembangunanid %}" class="delete-form" data-confirm-text="Apakah Anda yakin ingin menghapus data ini?" method="POST" id="delete-form">
                                     {% csrf_token %}
                                     <button type="submit" class="badges"><p  class="badge bg-danger">DELETE</p></button>

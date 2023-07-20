@@ -419,7 +419,68 @@ def masukdatapembangunan(request):
     
     return render(request, 'create/Pembangunan.html', context)
 
+@login_required(login_url=settings.LOGIN_URL)
+def editdatapembangunan(request,pembangunan_id):
+    kondisi_choices = Kondisi.KONDISI_CHOICES
+    status_choices = Status.STATUS_CHOICES
+    pembangunan = Pembangunan.objects.get(pk=pembangunan_id)
 
+    if request.method == 'POST':
+        form = PembangunanForm(request.POST, request.FILES,instance=pembangunan)
+        if form.is_valid():
+            pembangunan = form.save(commit=False)
+            pembangunan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
+            pembangunan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
+            pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
+            pembangunan.volume = request.POST['volume']
+            pembangunan.deskripsi = request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                pembangunan.gambar = request.FILES['gambar']
+            
+            tipe_kondisi = request.POST['kondisi_id']
+            tipe_status = request.POST['status_id']
+            
+            kondisi = Kondisi.objects.create(tipekondisi=tipe_kondisi)
+            status = Status.objects.create(tipestatus=tipe_status)
+            
+            pembangunan.kondisi = kondisi
+            pembangunan.status = status
+            
+            location = Location.objects.create(
+                latitude=request.POST['latitude'],
+                longitude=request.POST['longitude'],
+            )
+            pembangunan.location = location
+
+            pembangunan.save()
+
+            messages.success(request, 'Data berhasil diubah dari data sebelumnya')
+            return redirect('datapembangunan')  # Ganti 'nama_halaman' dengan URL halaman yang sesuai
+        else:
+            messages.error(request, 'Terjadi kesalahan dalam menyimpan data.')
+    else:
+        form = PembangunanForm(initial={
+            'latitude': pembangunan.location.latitude,
+            'longitude': pembangunan.location.longitude,
+            'kondisi': pembangunan.kondisi.tipekondisi,
+            'status': pembangunan.status.tipestatus,
+            'deskripsi': pembangunan.deskripsi,
+            'volume': pembangunan.volume,
+            'tanggal_bangun':pembangunan.tanggal_bangun,
+            'konstruksi_selesai': pembangunan.konstruksi_selesai,
+            'nama_fasilitas': pembangunan.nama_fasilitas,
+            'jenis_perlengkapan': pembangunan.jenis_perlengkapan,
+        })
+        context = {
+        'pembangunan': pembangunan,
+        'form': form,
+        'kondisi_choices': kondisi_choices,
+        'status_choices': status_choices,
+    }
+    return render(request, 'create/Edit data.html', context)
+
+    
 @login_required(login_url=settings.LOGIN_URL)
 def masukdataperencanaan(request):
     kondisi_choices = Kondisi.KONDISI_CHOICES

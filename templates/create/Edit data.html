@@ -1,0 +1,433 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %} 
+{% include 'layout/sidebaradmin.html' %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="page-heading">
+        <div class="page-title">
+        <div class="row">
+            <div class="col-12 col-md-6 order-md-1 order-last">
+            <h3>Edit Data Fasilitas Perlengkapan</h3>
+            <p class="text-subtitle text-muted">
+                Pastikan anda merubah data yang tervalidasi
+            </p>
+            </div>
+            <div class="col-12 col-md-6 order-md-2 order-first">
+            <nav
+                aria-label="breadcrumb"
+                class="breadcrumb-header float-start float-lg-end"
+            >
+                <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="index.html">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">
+                    Edit Data 
+                </li>
+                </ol>
+            </nav>
+            </div>
+        </div>
+        </div>
+
+
+
+                    <!-- // Basic multiple Column Form section start -->
+            <section id="multiple-column-form">
+                <div class="row match-height">
+                <div class="col-12">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Pembangunan Form</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-body">
+
+
+                        <form method="POST" class="form" action="{% url 'editdatapembangunan' pembangunan.pembangunanid %}"   enctype="multipart/form-data" autocomplete="off">
+                            {% csrf_token %}
+                            
+                            <div class="row">
+                            <div class="col-md-6 col-12">
+                            <div class="btn-group mb-1">
+                        <div class="dropdown">
+                            <button
+                                class="btn btn-dark dropdown-toggle"
+                                type="button"
+                                id="namaFasilitasDropdown"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                {{ form.nama_fasilitas.value }}
+                            </button>
+                            <div
+                                class="dropdown-menu"
+                                aria-labelledby="namaFasilitasDropdown"
+                                value="{{ form.nama_fasilitas.value }}"
+                            >
+                                
+                            </div>
+                        </div>
+                        <input type="hidden" id="hiddenNamaFasilitas" name="nama_fasilitas" value="{{ form.nama_fasilitas.value }}">
+                        </div>
+                        
+                                
+                                <div class="btn-group mb-1 ml-7">
+                            <div class="dropdown">
+                            <button
+                                class="btn btn-dark dropdown-toggle"
+                                type="button"
+                                id="jenisPerlengkapanDropdown"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                {{ form.jenis_perlengkapan.value }}
+                            </button>
+                            <div
+                                class="dropdown-menu"
+                                value="{{ form.jenis_perlengkapan.value }}"
+                                aria-labelledby="jenisPerlengkapanDropdown"
+                            >
+                                
+                            </div>
+                                <input type="hidden" id="hiddenJenisPerlengkapan" name="jenis_perlengkapan" value="{{ form.jenis_perlengkapan.value }}" required>
+                        </div>
+                    </div>
+                        </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="first-name-column">Pilih Kondisi Fasilitas :</label>
+                                
+                                <div class="btn-group mb-1 ml-3">
+                        <div class="dropdown">
+                            <button
+                                class="btn btn-dark dropdown-toggle"
+                                type="button"
+                                id="dropdownMenukondisi"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                {{ form.kondisi.value }}
+                            </button>
+                            <div
+                                class="dropdown-menu"
+                                value="{{ form.kondisi.value }}"
+                                aria-labelledby="dropdownMenukondisi"
+                            >
+                            {% for kondisi in kondisi_choices %}
+                                <a class="dropdown-item kondisi" data-value="{{ kondisi.0 }}">{{ kondisi.1 }}</a>
+                                
+                                {% endfor %}
+                            </div>
+                                <input
+                                    type="hidden"
+                                    id="hiddenInputkondisi"
+                                    class="form-control"
+                                    
+                                    name="kondisi_id"
+                                    value="{{ form.kondisi.value }}"
+                                    required
+                                />
+                            </div>
+                        </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="first-name-column">Pilih Tanggal Bangun</label>
+                                    <input
+                                    type="date"
+                                    class="form-control mb-3 flatpickr-no-config"
+                                    placeholder="{{ form.initial.tanggal_bangun }}"
+                                    name="tanggal_bangun"
+                                    value="{{ form.initial.tanggal_bangun.value }}"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="first-name-column">Pilih Status Fasilitas :</label>
+                                
+                                <div class="btn-group mb-1 ml-5">
+                        <div class="dropdown">
+                            <button
+                                class="btn btn-dark dropdown-toggle"
+                                type="button"
+                                id="dropdownMenustatus"
+                                data-bs-toggle="dropdown"
+                                aria-haspopup="true"
+                                aria-expanded="false"
+                            >
+                                {{ form.status.value }}
+                            </button>
+                            <div
+                                class="dropdown-menu"
+                                value="{{ form.status.value }}"
+                                aria-labelledby="dropdownMenustatus"
+                            >
+                            {% for status in status_choices %}
+                                <a  class="dropdown-item status" data-value="{{ status.0 }}">{{ status.1 }}</a>
+                                {% endfor %}
+                            </div>
+                                <input
+                                    type="hidden"
+                                    id="hiddenInputstatus"
+                                    class="form-control"
+                                    value="{{ form.status.value }}"
+                                    name="status_id"
+                                    required
+                                />
+                            </div>
+                        </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="first-name-column">Pilih Tanggal Konstruksi Selesai</label>
+                                    <input
+                                    type="date"
+                                    class="form-control mb-3 flatpickr-no-config"
+                                    name="konstruksi_selesai"
+                                    placeholder="{{ form.konstruksi_selesai.value }}"
+                                    value="{{ form.konstruksi_selesai.value }}"
+                                    />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-12 ">
+                                <div class="form-group">
+                                <label for="Deskripsi">Deskripsi</label>
+                                <textarea
+                                    
+                                    id="Deskripsi"
+                                    class="form-control"
+                                    name="deskripsi"
+                                    placeholder="Masukkan Deskripsi.."
+                                    {{ form.deskripsi.value }}
+                                ></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="volume">Volume</label>
+                                <input
+                                    type="number"
+                                    id="Volume"
+                                    class="form-control"
+                                    name="volume"
+                                    placeholder="Volume"
+                                    value="{{ form.volume.value }}"
+                                    required
+                                />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="latitude">Latitude</label>
+                                <input
+                                    type="text"
+                                    id="latitude"
+                                    class="form-control"
+                                    name="latitude"
+                                    placeholder="Latitude.."
+                                    value="{{ form.latitude.value }}"
+                                    required
+                                />
+                                </div>
+                            </div>
+
+                            
+                            
+                        <div class="col-md-6 col-12">
+                            <label for="file_input" class="form-label"
+                                >Masukkan Gambar Dari GPS Camera</label
+                            >
+                            <input
+                                class="form-control form-control-sm"
+                                id="file_input"
+                                type="file"
+                                name="gambar"
+                            />
+                        </div>
+                        
+                        
+                            
+                            <div class="col-md-6 col-12 ">
+                                <div class="form-group">
+                                <label for="longitude">Longitude</label>
+                                <input
+                                    type="text"
+                                    id="longitude"
+                                    class="form-control"
+                                    name="longitude"
+                                    placeholder="Longitude"
+                                    value="{{ form.longitude.value }}"
+                                    required
+                                />
+                                </div>
+                            </div>
+
+                            
+                            
+
+                            <div class="col-md-6 col-12 mt-3 mb-32">
+                                <div id="mappengajuan" class="h-[300px]  border-art border-4 rounded-xl">
+                                    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+                                    <script>
+                                        var myMap = L.map('mappengajuan').setView([5.549037601496668, 95.31928497494027], 11);
+                                        var marker;
+
+                                        // Tambahkan layer peta
+                                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                                        }).addTo(myMap);
+
+                                        // Fungsi untuk memperbarui marker pada peta
+                                        function updateMarker(lat, lng) {
+                                        if (marker) {
+                                            myMap.removeLayer(marker);
+                                        }
+                                        marker = L.marker([lat, lng]).addTo(myMap);
+                                        }
+
+                                        // Event listener saat mengklik pada peta
+                                        myMap.on('click', function (e) {
+                                        var latitude = e.latlng.lat.toFixed(6);
+                                        var longitude = e.latlng.lng.toFixed(6);
+                                        document.getElementById('latitude').value = latitude;
+                                        document.getElementById('longitude').value = longitude;
+                                        updateMarker(latitude, longitude);
+                                        });
+
+                                        // Event listener saat nilai latitude dan longitude berubah
+                                        document.getElementById('latitude').addEventListener('input', function () {
+                                        var latitude = parseFloat(document.getElementById('latitude').value);
+                                        var longitude = parseFloat(document.getElementById('longitude').value);
+                                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                                            updateMarker(latitude, longitude);
+                                            myMap.setView([latitude, longitude], 13);
+                                        }
+                                        });
+
+                                        document.getElementById('longitude').addEventListener('input', function () {
+                                        var latitude = parseFloat(document.getElementById('latitude').value);
+                                        var longitude = parseFloat(document.getElementById('longitude').value);
+                                        if (!isNaN(latitude) && !isNaN(longitude)) {
+                                            updateMarker(latitude, longitude);
+                                            myMap.setView([latitude, longitude], 13);
+                                        }
+                                        });
+
+                                        const photoUpload = document.getElementById('file_input');
+                                        const latitudeInput = document.getElementById('latitude');
+                                        const longitudeInput = document.getElementById('longitude');
+
+                                        photoUpload.addEventListener('change', function (event) {
+                                        const file = event.target.files[0];
+                                        const reader = new FileReader();
+
+                                        reader.onload = function (event) {
+                                            const image = new Image();
+                                            image.src = event.target.result;
+
+                                            image.onload = function () {
+                                            EXIF.getData(image, function () {
+                                                const latitude = EXIF.getTag(this, 'GPSLatitude');
+                                                const longitude = EXIF.getTag(this, 'GPSLongitude');
+
+                                                if (latitude && longitude) {
+                                                const latitudeDecimal = convertDMSToDecimal(latitude);
+                                                const longitudeDecimal = convertDMSToDecimal(longitude);
+
+                                                latitudeInput.value = latitudeDecimal;
+                                                longitudeInput.value = longitudeDecimal;
+                                                updateMarker(latitudeDecimal, longitudeDecimal);
+                                                myMap.setView([latitudeDecimal, longitudeDecimal], 13);
+                                                } else {
+                                                console.log('Metadata koordinat tidak ditemukan.');
+                                                }
+                                            });
+                                            };
+                                        };
+
+                                        reader.readAsDataURL(file);
+                                        });
+
+                                        function convertDMSToDecimal(coordinate) {
+                                        const degrees = coordinate[0].numerator;
+                                        const minutes = coordinate[1].numerator;
+                                        const seconds = coordinate[2].numerator / coordinate[2].denominator;
+
+                                        var decimal = degrees + minutes / 60 + seconds / 3600;
+                                        return decimal.toFixed(6);
+                                        }
+                                        {% if messages %}
+                                        {% for message in messages %}
+                                        {% if message.tags == 'success' %}
+                                            Swal.fire({
+                                            icon: 'success',
+                                            title: '{{ message }}',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                            });
+                                        {% elif message.tags == 'error' %}
+                                            Swal.fire({
+                                            icon: 'error',
+                                            title: '{{ message }}',
+                                            showConfirmButton: false,
+                                            timer: 2000
+                                            });
+                                        {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+
+                                    </script>
+                                </div>
+                            </div>
+
+                            
+                            
+
+                            <div class="col-12 d-flex justify-content-end mt-70">
+                                <button
+                                type="submit"
+                                class="btn btn-primary me-1 mb-1"
+                                >
+                                Submit
+                                </button>
+                                <button
+                                type="reset"
+                                class="btn btn-light-secondary me-1 mb-1"
+                                >
+                                Reset
+                                </button>
+                            </div>
+                            </div>
+                        </form>
+
+
+                        
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                
+                
+            </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="{% static 'assets/js/pembangunan.js' %}"></script>
+    
+
+</div>
+
+{% include 'layout/footeradmin.html' %}
+{% endblock content %}
