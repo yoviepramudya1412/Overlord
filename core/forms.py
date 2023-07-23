@@ -13,7 +13,7 @@ class FasilitasForm(forms.ModelForm):
     gambar = forms.ImageField(required=False)
     class Meta:
         model = Fasilitas_perlengkapan
-        fields = ['tipekhusus', 'namakhusus', 'nama_fasilitas', 'tanggal_ditambahkan', 'volume', 'jenis_perlengkapan', 'gambar', 'deskrpsi']
+        fields = ['tipekhusus', 'namakhusus', 'nama_fasilitas', 'tanggal_ditambahkan', 'volume', 'jenis_perlengkapan', 'gambar', 'deskrpsi','color']
 
 class PengajuanForm(forms.ModelForm):
     gambar = forms.ImageField(required=False)
@@ -37,11 +37,12 @@ class PembangunanForm(forms.ModelForm):
     latitude = forms.CharField(required=False)
     longitude = forms.CharField(required=False)
     nama = forms.CharField(required=False)
+    ruasjalan = forms.CharField(required=False)
     notelepon = forms.CharField(required=False)
     
     class Meta:
         model = Pembangunan
-        fields = ['notelepon','nama','latitude','longitude','nama_fasilitas', 'jenis_perlengkapan', 'tanggal_bangun', 'konstruksi_selesai', 'kondisi', 'volume', 'deskripsi', 'location', 'status', 'gambar']
+        fields = ['notelepon','ruasjalan','nama','latitude','longitude','nama_fasilitas', 'jenis_perlengkapan', 'tanggal_bangun', 'konstruksi_selesai', 'kondisi', 'volume', 'deskripsi', 'location', 'status', 'gambar']
     
     
 

@@ -1,0 +1,371 @@
+    {% extends 'base.html' %}
+    {% load static %}
+    {% load static tailwind_tags %}
+    {% block content %}
+
+    {% tailwind_css %}
+    {% include 'layout/navbar.html' %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+
+    <section class=" ml-1 mb-80 pt-32">
+        <script src="{% static 'assets/js/drop.js' %}"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+        <form action="{% url 'create_pengajuan' %}" method="POST"  enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+            
+            <div class="container">
+                <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
+                    <div class="flex flex-wrap">
+                        <div class="w-full self-center px-4 pt-5 lg:w-1/2">
+                            <label for="nama" class="block mb-3">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 after:content-['*']
+                            after:text-pink-500 after:ml-0.5
+                            ">Nama</span>
+                                <input id="nama"  type="text" name="nama" placeholder="Masukkan nama.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            invalid:text-pink-700 invalid:focus:ring-pink-700
+                            " required >
+                            </label>
+                            <label for="nohp" class="block mb-3">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 after:content-['*']
+                            after:text-pink-500 after:ml-0.5
+                            ">Nomor telepon</span>
+                                <input id="nohp" type="text" name="notelepon" placeholder="Masukkan no telepon.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            invalid:text-pink-700 invalid:focus:ring-pink-700
+                            " pattern="[0-9]{10,13}" maxlength="13" required >
+                            </label>
+                            <label for="alamat" class="block mb-3">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 after:content-['*']
+                            after:text-pink-500 after:ml-0.5
+                            ">Alamat</span>
+                                <input id="alamat" type="text" name="alamat" placeholder="Masukkan alamat.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            " required>
+                            </label>
+                            <label for="latitude" class="block mb-3">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 after:content-['*']
+                            after:text-pink-500 after:ml-0.5
+                            ">Latitude</span>
+                                <input id="latitudeA" type="text"  placeholder="Masukkan latitude.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            invalid:text-pink-700 invalid:focus:ring-pink-700
+                            " name="latitudeA" value="">
+                            </label>
+                            <label for="longitude" class="block mb-3">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 after:content-['*']
+                            after:text-pink-500 after:ml-0.5
+                            ">Longitude</span>
+                                <input id="longitudeB" type="text" placeholder="Masukkan longitude.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            invalid:text-pink-700 invalid:focus:ring-pink-700
+                            " name="longitudeB" value="">
+                            </label>
+                            <label for="fasilitaskhusus" class="block mb-6">
+                                <span class="block font-semibold
+                            mb-1 text-slate-700 
+                            ">Fasilitas Khusus</span>
+                                <input id="fasilitaskhusus" type="text" name="Fasilitas_khusus" placeholder="Masukkan permintaan fasilitas khusus.."  class="
+                            px-3 py-2 border shadow rounded w-full block 
+                            text-sm placeholder:text-slate-400 
+                            focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                            ">
+                            </label>
+                            
+                            
+                            <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
+                            <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="gambar" type="file">
+                            </label>
+                            <script>
+                                
+                            </script>
+                            
+                        </div>
+
+
+                        <div class="w-full self-center px-4 mt-10   lg:w-1/2  lg:pt-24 relative z-[8]">
+
+                            <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
+
+                                <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+
+                                <script>
+                                    var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
+                                    var marker;
+
+                                    // Tambahkan layer peta
+                                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+                                    }).addTo(myMap);
+
+                                    // Fungsi untuk memperbarui marker pada peta
+                                    function updateMarker(lat, lng) {
+                                    if (marker) {
+                                        myMap.removeLayer(marker);
+                                    }
+                                    marker = L.marker([lat, lng]).addTo(myMap);
+                                    }
+
+                                    // Event listener saat mengklik pada peta
+                                    myMap.on('click', function (e) {
+                                    var latitude = e.latlng.lat.toFixed(6);
+                                    var longitude = e.latlng.lng.toFixed(6);
+                                    document.getElementById('latitudeA').value = latitude;
+                                    document.getElementById('longitudeB').value = longitude;
+                                    updateMarker(latitude, longitude);
+                                    });
+
+                                    // Event listener saat nilai latitude dan longitude berubah
+                                    document.getElementById('latitudeA').addEventListener('input', function () {
+                                    var latitude = parseFloat(document.getElementById('latitudeA').value);
+                                    var longitude = parseFloat(document.getElementById('longitudeB').value);
+                                    if (!isNaN(latitude) && !isNaN(longitude)) {
+                                        updateMarker(latitude, longitude);
+                                        myMap.setView([latitude, longitude], 13);
+                                    }
+                                    });
+
+                                    document.getElementById('longitudeB').addEventListener('input', function () {
+                                    var latitude = parseFloat(document.getElementById('latitudeA').value);
+                                    var longitude = parseFloat(document.getElementById('longitudeB').value);
+                                    if (!isNaN(latitude) && !isNaN(longitude)) {
+                                        updateMarker(latitude, longitude);
+                                        myMap.setView([latitude, longitude], 13);
+                                    }
+                                    });
+
+                                    const photoUpload = document.getElementById('file_input');
+                                    const latitudeInput = document.getElementById('latitudeA');
+                                    const longitudeInput = document.getElementById('longitudeB');
+
+                                    photoUpload.addEventListener('change', function (event) {
+                                    const file = event.target.files[0];
+                                    const reader = new FileReader();
+
+                                    reader.onload = function (event) {
+                                        const image = new Image();
+                                        image.src = event.target.result;
+
+                                        image.onload = function () {
+                                        EXIF.getData(image, function () {
+                                            const latitude = EXIF.getTag(this, 'GPSLatitude');
+                                            const longitude = EXIF.getTag(this, 'GPSLongitude');
+
+                                            if (latitude && longitude) {
+                                            const latitudeDecimal = convertDMSToDecimal(latitude);
+                                            const longitudeDecimal = convertDMSToDecimal(longitude);
+
+                                            latitudeInput.value = latitudeDecimal;
+                                            longitudeInput.value = longitudeDecimal;
+                                            updateMarker(latitudeDecimal, longitudeDecimal);
+                                            myMap.setView([latitudeDecimal, longitudeDecimal], 13);
+                                            } else {
+                                            console.log('Metadata koordinat tidak ditemukan.');
+                                            }
+                                        });
+                                        };
+                                    };
+
+                                    reader.readAsDataURL(file);
+                                    });
+
+                                    function convertDMSToDecimal(coordinate) {
+                                    const degrees = coordinate[0].numerator;
+                                    const minutes = coordinate[1].numerator;
+                                    const seconds = coordinate[2].numerator / coordinate[2].denominator;
+
+                                    var decimal = degrees + minutes / 60 + seconds / 3600;
+                                    return decimal.toFixed(6);
+                                    }
+
+
+
+                                    function cariDaerah() {
+                                        var inputDaerah = document.getElementById('daerah').value;
+
+                                        // Hapus marker sebelumnya
+                                        if (marker) {
+                                            myMap.removeLayer(marker);
+                                        }
+
+                                        // Gunakan API Nominatim untuk mencari koordinat daerah
+                                        var url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + inputDaerah;
+
+                                        fetch(url)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                if (data.length > 0) {
+                                                    var lat = data[0].lat;
+                                                    var lon = data[0].lon;
+
+                                                    // Tampilkan marker di koordinat hasil pencarian
+                                                    marker = L.marker([lat, lon]).addTo(myMap);
+                                                    myMap.setView([lat, lon], 13);
+
+                                                    document.getElementById('latitudeA').value;
+                                                    document.getElementById('longitudeB').value;
+                                                } else {
+                                                    alert('Daerah tidak ditemukan.');
+                                                }
+                                            });
+
+                                    }
+                                    
+                                    {% if messages %}
+                                    {% for message in messages %}
+                                    {% if message.tags == 'success' %}
+                                        Swal.fire({
+                                        icon: 'success',
+                                        title: '{{ message }}',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                        });
+                                    {% elif message.tags == 'error' %}
+                                        Swal.fire({
+                                        icon: 'error',
+                                        title: '{{ message }}',
+                                        showConfirmButton: false,
+                                        timer: 2000
+                                        });
+                                    {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                </script>
+                                <script src="{% static 'assets/js/cuai.js' %}"></script>
+                                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
+                                <script>
+                                
+                                </script>
+                            </div>
+                            <div class="pencarian flex flex-wrap">
+                                <label for="daerah" class="block mb-3">
+                                            <span class="block font-semibold
+                                    mb-1 text-slate-700 
+                                    ">Pencarian Daerah</span>
+                                            <input id="daerah" type="text" placeholder="Masukkan nama daerah.." class=" 
+                                    px-3 py-2 border shadow rounded w-full block 
+                                    text-sm placeholder:text-slate-400 
+                                    focus:outline-none focus:ring-1 focus:ring-art focus:border-art
+                                    invalid:text-pink-700 invalid:focus:ring-pink-700
+                                    " name="daerah">
+
+                                </label>
+                                <button type="button" onclick="cariDaerah()"
+                                    class="ml-5 mt-[26px] px-3 h-9 rounded-lg bg-white hover:shadow-lg hover:opacity-60 transition duration-400 ease-in-out ">Cari</button>
+                            </div>
+                        </div>
+                        
+                
+                    <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                    <div class="dropdown">
+                    <button id="dropdownButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                        Pilih Nama Fasilitas
+                    </button>
+                    <ul id="dropdownMenu" class="dropdown-menu">
+                        
+                    </ul>
+                    <input id="hiddenInput" name="nama_fasilitas" type="hidden">
+                    </div>
+
+
+                    </div>
+                    <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                        <div class="dropdown">
+                    <button id="dropdownButton1" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
+                        Pilih Jenis Perlengkapan
+                    </button>
+                    <ul id="dropdownMenu1" class="dropdown-menu">
+                    
+                    </ul>
+                    <input id="hiddenInput0" name="jenis_perlengkapan" type="hidden">
+                    </div>
+                    </div>
+                </div>
+
+            
+                    
+                    </div>
+                    
+
+
+
+
+
+
+                        <div class="self-end px-4 lg:w-1/2  lg:mt-24">
+                            <button type="submit" name="submit" value="Submit"
+                                class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Kirim</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        </form>
+        
+        <!-- Modal Sukses -->
+    <div class="modal" id="successModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Sukses</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Pengajuan berhasil disimpan.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal Gagal -->
+    <div class="modal" id="errorModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Gagal</h5>
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Pengajuan gagal disimpan.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+        </div>
+        </div>
+    </div>
+    </div>
+
+
+
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+
+
+    {% include 'layout/footer.html' %}
+    {% endblock content %}

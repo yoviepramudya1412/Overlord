@@ -83,6 +83,7 @@ class Fasilitas_perlengkapan(models.Model):
     volume= models.IntegerField(blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
     gambar = models.ImageField(upload_to=upload_to,null=True, blank=True)
+    color = models.CharField(max_length=30,null=True, blank=True)
     deskrpsi = models.TextField(blank=True,null=True)
     
     def __str__(self):
@@ -123,6 +124,7 @@ class Pembangunan(models.Model):
     pembangunanid = models.BigAutoField(primary_key=True)
     tanggal_bangun = models.CharField(max_length=200,null=True,blank=True)
     konstruksi_selesai = models.CharField(max_length=200,null=True,blank=True)
+    ruasjalan = models.CharField(max_length=400,null=True,blank=True)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
     kondisi= models.ForeignKey(Kondisi, on_delete=models.CASCADE,blank=True) 

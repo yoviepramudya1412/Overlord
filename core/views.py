@@ -142,7 +142,26 @@ def petaadkerusakan(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadpembangunan(request):
-    return render(request, 'peta/peta pembangunan.html')
+    pembangunan_perencanaan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': pembangunan.konstruksi_selesai,
+                
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta pembangunan.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadpengajuan(request):
@@ -170,7 +189,26 @@ def petaadpengajuan(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadperencanaan(request):
-    return render(request, 'peta/peta perencanaan.html')
+    pembangunan_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': pembangunan.konstruksi_selesai,
+                
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta perencanaan.html',context)
 
 # Peta statistik
 @login_required(login_url=settings.LOGIN_URL)
@@ -197,8 +235,13 @@ def statistikperencanaan(request):
 @login_required(login_url=settings.LOGIN_URL)
 def datafpj(request):
     fasilitas_data = Fasilitas_perlengkapan.objects.all()
-    
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
     context = {
+        'success_message': success_message,
+        'error_message': error_message,
         'fasilitas_data': fasilitas_data,
     }
     return render(request, 'datatables/data fpj.html',context)
@@ -231,6 +274,27 @@ def datapengajuan(request):
         'error_message': error_message,
     }
     return render(request, 'datatables/pengajuan.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_fasilitas(request,fasilitas_id):
+    fasilitas = Fasilitas_perlengkapan.objects.get(pk=fasilitas_id)
+
+    if request.method == 'POST':
+        try:
+            
+            # Hapus objek fasilitas
+            fasilitas.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('datafpj')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+        context = {
+        'fasilitas': fasilitas
+    }
+    return render(request, 'datatables/data fpj.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def delete_pembangunan(request, pembangunan_id):
@@ -380,6 +444,7 @@ def masukdatapembangunan(request):
             pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
             pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
             pembangunan.volume = request.POST['volume']
+            pembangunan.ruasjalan = request.POST['RuasJalan']
             pembangunan.deskripsi = request.POST['deskripsi']
             if 'gambar' in request.FILES:
                 pembangunan.gambar = request.FILES['gambar']
@@ -433,6 +498,7 @@ def editdatapembangunan(request,pembangunan_id):
             pembangunan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
             pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
             pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
+            pembangunan.ruasjalan = request.POST['RuasJalan']
             pembangunan.volume = request.POST['volume']
             pembangunan.deskripsi = request.POST['deskripsi']
             if 'gambar' in request.FILES:
@@ -471,6 +537,7 @@ def editdatapembangunan(request,pembangunan_id):
             'konstruksi_selesai': pembangunan.konstruksi_selesai,
             'nama_fasilitas': pembangunan.nama_fasilitas,
             'jenis_perlengkapan': pembangunan.jenis_perlengkapan,
+            'ruasjalan':pembangunan.ruasjalan,
         })
         context = {
         'pembangunan': pembangunan,
@@ -496,6 +563,7 @@ def masukdataperencanaan(request):
             pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
             pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
             pembangunan.volume = request.POST['volume']
+            pembangunan.ruasjalan = request.POST['RuasJalan']
             pembangunan.deskripsi = request.POST['deskripsi']
             if 'gambar' in request.FILES:
                 pembangunan.gambar = request.FILES['gambar']
@@ -550,6 +618,7 @@ def tambahdataperencanaan(request,pengajuan_id):
             pembangunan.tanggal_bangun = request.POST['tanggal_bangun']
             pembangunan.konstruksi_selesai = request.POST['konstruksi_selesai']
             pembangunan.volume = request.POST['volume']
+            pembangunan.ruasjalan = request.POST['RuasJalan']
             pembangunan.deskripsi = request.POST['deskripsi']
             if 'gambar' in request.FILES:
                 pembangunan.gambar = request.FILES['gambar']
@@ -593,6 +662,41 @@ def tambahdataperencanaan(request,pengajuan_id):
     }
     return render(request, 'create/Edit Perencanaan.html', context)
 
+
+
+def editdataperlengkapan(request, fasilitas_id):
+    fasilitas = get_object_or_404(Fasilitas_perlengkapan, pk=fasilitas_id)
+    perlengkapan_list = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
+
+    if request.method == 'POST':
+        fasilitas_form = FasilitasForm(request.POST, request.FILES, instance=fasilitas)
+        if fasilitas_form.is_valid():
+            nama_fasilitas = fasilitas_form.cleaned_data['nama_fasilitas']
+            if Fasilitas_perlengkapan.objects.exclude(pk=fasilitas_id).filter(nama_fasilitas=nama_fasilitas).exists():
+                if fasilitas.nama_fasilitas != nama_fasilitas:
+                    messages.error(request, 'Nama fasilitas sudah ada di database.')
+                else:
+                    fasilitas_form.save()
+                    messages.success(request, 'Data berhasil diubah')
+            else:
+                fasilitas_form.save()
+                messages.success(request, 'Data berhasil diubah')
+        else:
+            errors = fasilitas_form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan dalam menyimpan data.')
+    else:
+        # Isi form dengan data yang ada untuk diedit
+        fasilitas_form = FasilitasForm(instance=fasilitas)
+
+    context = {
+        'fasilitas': fasilitas,
+        'fasilitas_form': fasilitas_form,
+        'perlengkapan_list': perlengkapan_list,
+    }
+    return render(request, 'create/Edit data Perlengkapan.html', context)
+
+        
 @login_required(login_url=settings.LOGIN_URL)
 def masukdataperlengkapan(request):
     perlengkapan_list = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
@@ -605,6 +709,7 @@ def masukdataperlengkapan(request):
             fasilitas.namakhusus =request.POST['namakhusus']
             fasilitas.tanggal_ditambahkan =request.POST['tanggal_bangun']
             fasilitas.volume =request.POST['volume']
+            fasilitas.color =request.POST['color']
             fasilitas.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
             fasilitas.deskripsi =request.POST['deskripsi']
             if 'gambar' in request.FILES:

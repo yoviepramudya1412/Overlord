@@ -111,7 +111,59 @@
             }
         });
         map.addLayer(googleStreets);
+        function tampilkanMarker(markers) {
+            markers.forEach(function(marker) {
+                var latitude = marker.lat;
+                var longitude = marker.lng;
+                var konstruksi_selesai = marker.konstruksi_selesai;
+                var nama_fasilitas = marker.nama_fasilitas;
+                var gambar = marker.gambar;
 
+                if (!gambar) {
+                    // Gambar pengganti
+                    gambar = '/assets/image/samples/banana.jpg' ;
+                }
+
+                var popupContent = `
+                    <div class="custom-popup">
+                        <div class="info">
+                            <b>Nama Fasilitas</b>
+                            <span>: ${nama_fasilitas}</span>
+                        </div>
+                        <div class="info">
+                            <b>Tanggal Selesai</b>
+                            <span>: ${konstruksi_selesai}</span>
+                        </div>
+                        
+                        
+                        <div class="image">
+                            <img src="${gambar}" alt="Pengguna tidak mengupload image" title="Gambar Pengajuan">
+                        </div>
+                    </div>
+                `;
+
+                L.marker([latitude, longitude])
+                    .bindPopup(popupContent)
+                    .addTo(map);
+            });
+        }
+
+        // Data markers yang diteruskan dari Django
+        var markers = [
+            {% for marker in markers %}
+                {
+                    lat: {{ marker.lat }},
+                    lng: {{ marker.lng }},
+                    
+                    nama_fasilitas : '{{ marker.nama_fasilitas }}',
+                    konstruksi_selesai: '{{ marker.konstruksi_selesai }}',
+                    gambar: '{{ marker.gambar }}'
+                },
+            {% endfor %}
+        ];
+
+        // Memanggil fungsi tampilkanMarker dengan data markers
+        tampilkanMarker(markers);
 
                 </script>
                 

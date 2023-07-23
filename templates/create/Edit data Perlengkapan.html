@@ -47,7 +47,7 @@
                         <div class="card-body">
 
 
-                        <form method="POST" class="form" action="{% url 'masukdataperlengkapan' %}"   enctype="multipart/form-data" autocomplete="off">
+                        <form method="POST" class="form" action="{% url 'editdataperlengkapan' fasilitas.fasilitasid %}"   enctype="multipart/form-data" autocomplete="off">
                             {% csrf_token %}
                             
                             <div class="row">
@@ -62,6 +62,7 @@
                                     class="form-control"
                                     name="nama_fasilitas"
                                     placeholder="Nama Fasilitas.."
+                                    value="{{ fasilitas_form.instance.nama_fasilitas }}"
                                     required
                                 />
                                 </div>
@@ -70,12 +71,13 @@
 
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Pilih Tanggal Ditambahkan</label>
+                                <label for="tanggal_ditambahkan">Pilih Tanggal Ditambahkan</label>
                                     <input
-                                    type="date"
-                                    class="form-control mb-3 flatpickr-no-config"
-                                    placeholder="Masukkan Tanggal.."
-                                    name="tanggal_bangun"
+                                    type="text"
+                                    class="form-control "
+                                    placeholder=""
+                                    name="tanggal_ditambahkan"
+                                    value="{{ fasilitas_form.tanggal_ditambahkan.value }}"
                                     />
                                 </div>
                             </div>
@@ -94,10 +96,11 @@
                                 aria-haspopup="true"
                                 aria-expanded="false"
                             >
-                                Jenis Perlengkapan
+                                {{ fasilitas_form.jenis_perlengkapan.value }}
                             </button>
                             <div
                                 class="dropdown-menu"
+                                value="{{ fasilitas_form.jenis_perlengkapan.value }}"
                                 aria-labelledby="dropdownMenufasilitas"
                             >
                             {% for item in perlengkapan_list %}
@@ -111,7 +114,7 @@
                                     class="form-control"
                                     
                                     name="jenis_perlengkapan"
-                                    value=""
+                                    value="{{ fasilitas_form.jenis_perlengkapan.value }}"
                                 />
                             </div>
                         </div>
@@ -127,6 +130,7 @@
                                     class="form-control"
                                     name="tipekhusus"
                                     placeholder="Tipe Khusus.."
+                                    value="{{ fasilitas_form.tipekhusus.value }}"
                                 />
                                 </div>
                             </div>
@@ -142,6 +146,7 @@
                                     class="form-control"
                                     name="namakhusus"
                                     placeholder="Nama Fasilitas Khusus.."
+                                    value="{{ fasilitas_form.namakhusus.value }}"
                                 />
                                 </div>
                             </div>
@@ -155,6 +160,7 @@
                                     class="form-control"
                                     name="volume"
                                     placeholder="Volume.."
+                                    value="{{ fasilitas_form.volume.value }}"
                                 />
                                 </div>
                             </div>
@@ -170,13 +176,14 @@
                                     class="form-control"
                                     name="deskripsi"
                                     placeholder="Masukkan Deskripsi.."
+                                    value="{{ fasilitas_form.deskrpsi.value }}"
                                 ></textarea>
                                 </div>
                             </div>
                             <div class="col-md-6 col-12 ">
                                 <div class="form-group">
                                 <label for="Deskripsi">Color :</label>
-                                <input type="text" data-coloris name="color">
+                                <input type="text" data-coloris name="color" value="{{ fasilitas_form.color.value }}">
                                 </div>
                             </div>
 

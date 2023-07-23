@@ -38,12 +38,14 @@ urlpatterns = [
     path('delete_pengajuan/<int:pengajuan_id>/',views.delete_pengajuan, name='delete_pengajuan'),
     path('delete_pembangunan/<int:pembangunan_id>/',views.delete_pembangunan, name='delete_pembangunan'),
     path('delete_perencanaan/<int:pembangunan_id>/',views.delete_perencanaan, name='delete_perencanaan'),
+    path('delete_fasilitas/<int:fasilitas_id>/',views.delete_fasilitas, name='delete_fasilitas'),
     path('dataperencanaan/',views.dataperencanaan, name='dataperencanaan'),
     
     # masukkan data admin
     path('masukdatapembangunan/',views.masukdatapembangunan, name='masukdatapembangunan'),
     path('masukdataperencanaan/',views.masukdataperencanaan, name='masukdataperencanaan'),
     path('editdatapembangunan/<int:pembangunan_id>/',views.editdatapembangunan, name='editdatapembangunan'),
+    path('editdataperlengkapan/<int:fasilitas_id>/', views.editdataperlengkapan, name='editdataperlengkapan'),
     path('tambahdataperencanaan/<int:pengajuan_id>/',views.tambahdataperencanaan, name='tambahdataperencanaan'),
     path('masukdataperlengkapan/',views.masukdataperlengkapan, name='masukdataperlengkapan'),
     

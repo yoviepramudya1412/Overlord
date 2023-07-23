@@ -137,13 +137,13 @@
                             </div>
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Pilih Tanggal Bangun</label>
+                                <label for="first-name-column">Edit Tanggal Bangun</label>
                                     <input
-                                    type="date"
-                                    class="form-control mb-3 flatpickr-no-config"
+                                    type="text"
+                                    class="form-control mb-3 "
                                     placeholder="{{ form.initial.tanggal_bangun }}"
                                     name="tanggal_bangun"
-                                    value="{{ form.initial.tanggal_bangun.value }}"
+                                    value="{{ form.initial.tanggal_bangun}}"
                                     />
                                 </div>
                             </div>
@@ -188,10 +188,10 @@
                             
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
-                                <label for="first-name-column">Pilih Tanggal Konstruksi Selesai</label>
+                                <label for="first-name-column">Edit Tanggal Konstruksi Selesai</label>
                                     <input
-                                    type="date"
-                                    class="form-control mb-3 flatpickr-no-config"
+                                    type="text"
+                                    class="form-control mb-3 "
                                     name="konstruksi_selesai"
                                     placeholder="{{ form.konstruksi_selesai.value }}"
                                     value="{{ form.konstruksi_selesai.value }}"
@@ -199,19 +199,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-6 col-12 ">
-                                <div class="form-group">
-                                <label for="Deskripsi">Deskripsi</label>
-                                <textarea
-                                    
-                                    id="Deskripsi"
-                                    class="form-control"
-                                    name="deskripsi"
-                                    placeholder="Masukkan Deskripsi.."
-                                    {{ form.deskripsi.value }}
-                                ></textarea>
-                                </div>
-                            </div>
+                            
 
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
@@ -227,6 +215,22 @@
                                 />
                                 </div>
                             </div>
+                            <div class="col-md-6 col-12">
+                                <div class="form-group">
+                                <label for="RuasJalan">Ruas Jalan</label>
+                                <input
+                                    type="text"
+                                    id="RuasJalan"
+                                    class="form-control"
+                                    placeholder="RuasJalan"
+                                    name="RuasJalan"
+                                    value="{{ form.ruasjalan.value }}"
+                                    required
+                                />
+                                </div>
+                            </div>
+
+                            
 
                             <div class="col-md-6 col-12">
                                 <div class="form-group">
@@ -242,10 +246,9 @@
                                 />
                                 </div>
                             </div>
+                            
 
-                            
-                            
-                        <div class="col-md-6 col-12">
+                            <div class="col-md-6 col-12">
                             <label for="file_input" class="form-label"
                                 >Masukkan Gambar Dari GPS Camera</label
                             >
@@ -256,6 +259,8 @@
                                 name="gambar"
                             />
                         </div>
+                            
+                        
                         
                         
                             
@@ -274,7 +279,19 @@
                                 </div>
                             </div>
 
-                            
+                            <div class="col-md-6 col-12 ">
+                                <div class="form-group">
+                                <label for="Deskripsi">Deskripsi</label>
+                                <textarea
+                                    
+                                    id="Deskripsi"
+                                    class="form-control"
+                                    name="deskripsi"
+                                    placeholder="Masukkan Deskripsi.."
+                                    {{ form.deskripsi.value }}
+                                ></textarea>
+                                </div>
+                            </div>
                             
 
                             <div class="col-md-6 col-12 mt-3 mb-32">
