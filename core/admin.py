@@ -17,8 +17,7 @@ class PengajuanAdmin(admin.ModelAdmin):
     pass
 class PembangunanAdmin(admin.ModelAdmin):
     pass
-class PenyeleksianAdmin(admin.ModelAdmin):
-    pass
+
 class KerusakanAdmin(admin.ModelAdmin):
     pass
 class Adminadmin(admin.ModelAdmin):
@@ -37,7 +36,7 @@ admin.site.register(Perlengkapan_jalan,PerlengkapanJalanAdmin)
 admin.site.register(Masyarakat,MasyarakatAdmin)
 admin.site.register(Pengajuan,PengajuanAdmin)
 admin.site.register(Pembangunan,PembangunanAdmin)
-admin.site.register(Penyeleksian,PenyeleksianAdmin)
+
 admin.site.register(Kerusakan,KerusakanAdmin)
 # admin.site.register(Admin,Adminadmin)
 admin.site.register(Beranda,BerandaAdmin)

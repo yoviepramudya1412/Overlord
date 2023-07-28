@@ -4,9 +4,15 @@
 {% block content %}
 
 {% tailwind_css %}
-{% include 'layout/navbar.html' %}
+{% include 'layout/navbar.html'  %}
 
-<section class=" ml-1 mb-80 pt-32">
+    <div class="text-right mr-5 pt-32 md:mr-20">
+    <button id="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 float-right" type="button">
+        <a href="{% url 'laporkerusakan' %}" class="block">Lapor Kerusakan</a>
+    </button>
+    </div>
+<section class=" ml-1 mb-80 pt-10">
+    
     <script src="{% static 'assets/js/drop.js' %}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
@@ -18,7 +24,9 @@
         <div class="container">
             <div class="w-full max-h-fit bg-sky-400/20 rounded shadow-md">
                 <div class="flex flex-wrap">
+                    
                     <div class="w-full self-center px-4 pt-5 lg:w-1/2">
+                        
                         <label for="nama" class="block mb-3">
                             <span class="block font-semibold
                         mb-1 text-slate-700 after:content-['*']
@@ -101,6 +109,7 @@
 
 
                     <div class="w-full self-center px-4 mt-10   lg:w-1/2  lg:pt-24 relative z-[8]">
+                        
 
                         <div id="map" class="h-[400px]  border-art border-4 rounded-xl mb-6 lg:mb-9">
 
@@ -288,6 +297,7 @@
 
                 </div>
                 <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                    
                     <div class="dropdown">
                 <button id="dropdownButton1" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                     Pilih Jenis Perlengkapan
@@ -297,12 +307,13 @@
                 </ul>
                 <input id="hiddenInput0" name="jenis_perlengkapan" type="hidden">
                 </div>
-                </div>
+            </div>
+            
             </div>
 
         
                 
-                </div>
+                
                 
 
 
@@ -317,7 +328,7 @@
 
                 </div>
             </div>
-        </div>
+        
     
 
     </form>

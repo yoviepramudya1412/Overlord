@@ -277,6 +277,7 @@
             <li class="sidebar-item has-sub
             {% if request.resolver_match.url_name == 'kerusakanringan' %}active{% endif %}
             {% if request.resolver_match.url_name == 'kerusakanberat' %}active{% endif %}
+            {% if request.resolver_match.url_name == 'kerusakansedang' %}active{% endif %}
             ">
             <a href="#" class="sidebar-link">
                 <i class="bi bi-journal-check"></i>
@@ -287,6 +288,11 @@
                 <li class="submenu-item {% if request.resolver_match.url_name == 'kerusakanringan' %}active{% endif %}">
                 <a href="{% url 'kerusakanringan' %}" class="submenu-link"
                     >Ringan</a
+                >
+                </li>
+                <li class="submenu-item {% if request.resolver_match.url_name == 'kerusakansedang' %}active{% endif %}">
+                <a href="{% url 'kerusakansedang' %}" class="submenu-link"
+                    >Sedang</a
                 >
                 </li>
                 <li class="submenu-item {% if request.resolver_match.url_name == 'kerusakanberat' %}active{% endif %}">

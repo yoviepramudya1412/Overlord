@@ -11,13 +11,14 @@ class EditProfileForm(forms.ModelForm):
 
 class FasilitasForm(forms.ModelForm):
     gambar = forms.ImageField(required=False)
+    color = forms.CharField(required=False)
+    
     class Meta:
         model = Fasilitas_perlengkapan
         fields = ['tipekhusus', 'namakhusus', 'nama_fasilitas', 'tanggal_ditambahkan', 'volume', 'jenis_perlengkapan', 'gambar', 'deskrpsi','color']
 
 class PengajuanForm(forms.ModelForm):
     gambar = forms.ImageField(required=False)
-    
     masyarakatid = forms.ModelChoiceField(queryset=Masyarakat.objects.all(), required=False)
     location = forms.ModelChoiceField(queryset=Location.objects.all(), required=False)
     statuspengajuan = forms.ModelChoiceField(queryset=Status.objects.all(), required=False)
@@ -26,7 +27,18 @@ class PengajuanForm(forms.ModelForm):
         model = Pengajuan
         fields = [ 'nama_fasilitas', 'jenis_perlengkapan', 'Fasilitas_khusus', 'gambar', 'masyarakatid', 'location', 'statuspengajuan']
 
+class KerusakanForm(forms.ModelForm):
+    gambar = forms.ImageField(required=False)
+    deskripsi = forms.CharField(required=False, widget=forms.Textarea)
+    masyarakatid = forms.ModelChoiceField(queryset=Masyarakat.objects.all(), required=False)
+    location = forms.ModelChoiceField(queryset=Location.objects.all(), required=False)
     
+    
+    
+    
+    class Meta:
+        model = Kerusakan
+        fields = ['masyarakatid','nama_fasilitas','jenis_perlengkapan','deskripsi','location','rusak','gambar']
 
 
 class PembangunanForm(forms.ModelForm):

@@ -42,8 +42,64 @@ def get_nama_fasilitas(request):
     nama_fasilitas_list = Fasilitas_perlengkapan.objects.filter(jenis_perlengkapan__jenis_perlengkapan=jenis_perlengkapan).values_list('nama_fasilitas', flat=True)
     return JsonResponse(list(nama_fasilitas_list), safe=False)
 
+def laporkerusakan(request):
+    rusak_choices = Rusak.RUSAK_CHOICES
+    if request.method == 'POST':
+        kerusakan_form = KerusakanForm(request.POST, request.FILES)
 
+        if kerusakan_form.is_valid():
+            # Membuat objek Masyarakat dan mengisi kolom-kolomnya
+            masyarakat = Masyarakat.objects.create(
+                nama=request.POST['nama'],
+                notelepon=request.POST['notelepon'],
+                alamat=request.POST['alamat']
+            )
 
+            # Mengisi kolom-kolom pada objek Pengajuan
+            kerusakan = kerusakan_form.save(commit=False)
+            kerusakan.masyarakatid = masyarakat
+            kerusakan.nama_fasilitas = Fasilitas_perlengkapan.objects.get(nama_fasilitas=request.POST['nama_fasilitas'])
+            kerusakan.jenis_perlengkapan = Perlengkapan_jalan.objects.get(jenis_perlengkapan=request.POST['jenis_perlengkapan'])
+            kerusakan.deskripsi = request.POST['deskripsi']
+            if 'gambar' in request.FILES:
+                kerusakan.gambar = request.FILES['gambar']
+
+            # Simpan objek kerusakan
+            kerusakan.save()
+
+            # Dapatkan objek Status dengan nilai 'DIAJUKAN'
+            tipe_rusak = request.POST.get('tipe_rusak')
+            rusak = Rusak.objects.create(tiperusak=tipe_rusak)
+            kerusakan.rusak = rusak
+            # Menghubungkan objek kerusakan dengan objek status
+            
+
+            # Buat objek Location dan hubungkan dengan objek kerusakan
+            location = Location.objects.create(
+                latitude=request.POST['latitudeA'],
+                longitude=request.POST['longitudeB'],
+            )
+            kerusakan.location = location
+            kerusakan.save()
+
+            messages.success(request, 'Data berhasil dilaporkan')
+            return redirect('laporkerusakan')  # Ganti 'peta' dengan URL halaman peta
+
+        else:
+            errors = kerusakan_form.errors
+            print(errors)
+            messages.error(request, 'Terjadi kesalahan dalam menambahkan data.')
+
+    else:
+        kerusakan_form = KerusakanForm()
+
+    
+    
+    context={
+        'rusak_choices':rusak_choices,
+        'kerusakan_form':kerusakan_form,
+    }
+    return render(request, 'masyarakat/lapor kerusakan.html',context)
 
 
 def create_pengajuan(request):
@@ -85,7 +141,7 @@ def create_pengajuan(request):
             pengajuan.location = location
             pengajuan.save()
 
-            messages.success(request, 'Data berhasil ditambahkan')
+            messages.success(request, 'Berhasil diajukan')
             return redirect('create_pengajuan')  # Ganti 'peta' dengan URL halaman peta
 
         else:
@@ -138,7 +194,28 @@ def Account(request):
 # Peta admin
 @login_required(login_url=settings.LOGIN_URL)
 def petaadkerusakan(request):
-    return render(request, 'peta/peta kerusakan.html')
+    kerusakan_data = Kerusakan.objects.all().exclude(location=None)
+    markers = []
+    for kerusakan in kerusakan_data:
+        if kerusakan.location is not None:
+            marker = {
+                'lat': kerusakan.location.latitude,
+                'lng': kerusakan.location.longitude,
+                'nama': kerusakan.masyarakatid.nama,
+                'notelepon': kerusakan.masyarakatid.notelepon,
+                'alamat': kerusakan.masyarakatid.alamat,
+                'nama_fasilitas': kerusakan.nama_fasilitas,
+                'tiperusak':kerusakan.rusak.tiperusak,
+            }
+            if kerusakan.gambar:
+                marker['gambar'] = kerusakan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta kerusakan.html', context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadpembangunan(request):
@@ -167,8 +244,13 @@ def petaadpembangunan(request):
 def petaadpengajuan(request):
     pengajuan_data = Pengajuan.objects.exclude(location=None)
     markers = []
+
     for pengajuan in pengajuan_data:
         if pengajuan.location is not None:
+            fasilitas = pengajuan.nama_fasilitas
+            color = fasilitas.color  # Mengambil warna dari fasilitas perlengkapan
+            
+
             marker = {
                 'lat': pengajuan.location.latitude,
                 'lng': pengajuan.location.longitude,
@@ -176,16 +258,22 @@ def petaadpengajuan(request):
                 'notelepon': pengajuan.masyarakatid.notelepon,
                 'alamat': pengajuan.masyarakatid.alamat,
                 'nama_fasilitas': pengajuan.nama_fasilitas,
+                'color': color,  # Menambahkan warna ke data marker
             }
+
             if pengajuan.gambar:
                 marker['gambar'] = pengajuan.gambar.url
             else:
                 marker['gambar'] = None
+
             markers.append(marker)
+
     context = {
         'markers': markers
     }
+
     return render(request, 'peta/peta pengajuan.html', context)
+
 
 @login_required(login_url=settings.LOGIN_URL)
 def petaadperencanaan(request):
@@ -209,6 +297,8 @@ def petaadperencanaan(request):
         'markers': markers
     }
     return render(request, 'peta/peta perencanaan.html',context)
+
+
 
 # Peta statistik
 @login_required(login_url=settings.LOGIN_URL)
@@ -348,6 +438,86 @@ def delete_perencanaan(request, pembangunan_id):
     }
     return render(request, 'datatables/perencanaan.html', context)
 
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_kerusakanringan(request, kerusakanid):
+    kerusakan = Kerusakan.objects.get(pk=kerusakanid)
+    
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            kerusakan.location.delete()
+            kerusakan.rusak.delete()
+            kerusakan.masyarakatid.delete()
+            
+            # Hapus objek kerusakan
+            kerusakan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('kerusakanringan')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+    
+    context = {
+        'kerusakan': kerusakan
+    }
+    return render(request, 'kerusakan/ringan.html', context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_kerusakansedang(request, kerusakanid):
+    kerusakan = Kerusakan.objects.get(pk=kerusakanid)
+    
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            kerusakan.location.delete()
+            kerusakan.rusak.delete()
+            kerusakan.masyarakatid.delete()
+            
+            # Hapus objek kerusakan
+            kerusakan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('kerusakansedang')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+    
+    context = {
+        'kerusakan': kerusakan
+    }
+    return render(request, 'kerusakan/sedang.html', context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def delete_kerusakanberat(request, kerusakanid):
+    kerusakan = Kerusakan.objects.get(pk=kerusakanid)
+    
+    if request.method == 'POST':
+        try:
+            # Hapus data yang berelasi
+            kerusakan.location.delete()
+            kerusakan.rusak.delete()
+            kerusakan.masyarakatid.delete()
+            
+            # Hapus objek kerusakan
+            kerusakan.delete()
+            
+            messages.success(request, 'Data berhasil dihapus.')
+            return redirect('kerusakanberat')
+        
+        except Exception as e:
+            messages.error(request, 'Terjadi kesalahan saat menghapus data.')
+            print(str(e))
+    
+    context = {
+        'kerusakan': kerusakan
+    }
+    return render(request, 'kerusakan/berat.html', context)
+
+
 @login_required(login_url=settings.LOGIN_URL)
 def delete_pengajuan(request, pengajuan_id):
     pengajuan = Pengajuan.objects.get(pk=pengajuan_id)
@@ -409,11 +579,45 @@ def pelaporan(request):
 # kerusakan
 @login_required(login_url=settings.LOGIN_URL)
 def kerusakanberat(request):
-    return render(request, 'kerusakan/berat.html')
+    kerusakan_data = Kerusakan.objects.filter(rusak__tiperusak="RUSAK BERAT")
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'kerusakan_data':kerusakan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    return render(request, 'kerusakan/berat.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def kerusakansedang(request):
+    kerusakan_data = Kerusakan.objects.filter(rusak__tiperusak="RUSAK SEDANG")
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'kerusakan_data':kerusakan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    return render(request, 'kerusakan/sedang.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def kerusakanringan(request):
-    return render(request, 'kerusakan/ringan.html')
+    kerusakan_data = Kerusakan.objects.filter(rusak__tiperusak="RUSAK RINGAN")
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'kerusakan_data':kerusakan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    return render(request, 'kerusakan/ringan.html',context)
 
 # bantuan
 @login_required(login_url=settings.LOGIN_URL)
@@ -681,6 +885,7 @@ def editdataperlengkapan(request, fasilitas_id):
             else:
                 fasilitas_form.save()
                 messages.success(request, 'Data berhasil diubah')
+                return redirect('datafpj')
         else:
             errors = fasilitas_form.errors
             print(errors)
@@ -754,6 +959,7 @@ def penggunaan(request):
 @login_required(login_url=settings.LOGIN_URL)
 def dashboardadmin(request):
     jumlah_data = Pengajuan.objects.count()
+    kerusakan = Kerusakan.objects.count()
     data_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').count()
     data_pembangunan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').count()
     admin = request.user
@@ -761,6 +967,7 @@ def dashboardadmin(request):
         'data_perencanaan' : data_perencanaan,
         'data_pembangunan' : data_pembangunan,
         'jumlah_data': jumlah_data,
+        'kerusakan': kerusakan,
         'admin': admin,
         }
     return render(request, 'core/dashboard.html',context)

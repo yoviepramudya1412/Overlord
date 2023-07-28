@@ -3,6 +3,8 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 <link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
+
 
 {% if user.is_authenticated %}
 
@@ -28,7 +30,7 @@
                     <h6 class="text-muted font-semibold">
                     Kerusakan
                     </h6>
-                    <h6 class="font-extrabold mb-0">112.000</h6>
+                    <h6 class="font-extrabold mb-0">{{kerusakan}}</h6>
                 </div>
                 </div>
             </div>

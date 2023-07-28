@@ -134,24 +134,17 @@ class Pembangunan(models.Model):
     status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
     gambar = models.ImageField(upload_to=cringe,blank=True,null=True)
     
-class Penyeleksian(models.Model):
-    penyeleksianid = models.BigAutoField(primary_key=True)
-    pembangunanid = models.ManyToManyField(Pembangunan)
-    adminid = models.CharField(max_length=200)
-    pengajuanid = models.CharField(max_length=200)
-    perencanaanid = models.CharField(max_length=200)
-    status = models.ForeignKey(Status, on_delete=models.CASCADE,null=True,blank=True) 
-    location = models.OneToOneField(Location, on_delete=models.CASCADE)   
-    tggl_terima = models.DateTimeField()
+
     
 
 def demonslayer(instance, filename):
     _, file_extension = os.path.splitext(filename)
     unique_filename = f"{uuid.uuid4().hex}{file_extension}"
-    return f"perencanaan/{unique_filename}" 
+    return f"kerusakan/{unique_filename}" 
 
 class Kerusakan(models.Model):
-    perencanaanid = models.BigAutoField(primary_key=True)
+    kerusakanid = models.BigAutoField(primary_key=True)
+    masyarakatid = models.ForeignKey(Masyarakat,on_delete=models.CASCADE)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",null=True,blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",null=True,blank=True)    
     deskripsi = models.TextField(null=True, blank=True)

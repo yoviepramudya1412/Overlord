@@ -3,4 +3,127 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
+<link rel="stylesheet" href="{% static 'assets/compiled/css/table-datatable.css' %}" />
+
+<div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Data Kerusakan Berat</h3>
+                    <p class="text-subtitle text-muted">
+                    Diharapkan untuk mensurvei kerusakan fasilitas 
+                    yang dialami sebelum menghapus pelaporan
+                    </p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav
+                    aria-label="breadcrumb"
+                    class="breadcrumb-header float-start float-lg-end"
+                    >
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                        <a href="index.html">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                        Data Kerusakan Berat
+                        </li>
+                    </ol>
+                    </nav>
+                </div>
+                </div>
+            </div>
+            <section class="section">
+                <div class="card">
+                <div class="card-header">Masyarakat yang mengajukan titik fasilitas</div>
+                <div class="card-body">
+                    <table class="table table-striped" id="table1">
+                    <thead>
+                        <tr>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>No Telepon</th>
+                        <th>Nama Fasilitas</th>
+                        <th>Kerusakan</th>
+                        <th>Delete</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for kerusakan in kerusakan_data %}
+                        <tr>
+                            <td>{{ kerusakan.masyarakatid.nama }}</td>
+                            <td>{{ kerusakan.masyarakatid.alamat }}</td>
+                            <td>{{ kerusakan.masyarakatid.notelepon }}</td>
+                            <td>{{ kerusakan.nama_fasilitas }}</td>
+                            
+                                <td><a   href="#" class="badges badge bg-success">{{ kerusakan.rusak.tiperusak }}</a></td>
+                                <td><form action="{% url 'delete_kerusakanberat' kerusakan.kerusakanid %}" class="delete-form" data-confirm-text="Apakah Anda yakin ingin menghapus data ini?" method="POST" id="delete-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="badges"><p  class="badge bg-danger">DELETE</p></button>
+                                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                                    <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const deleteForms = document.querySelectorAll('.delete-form');
+                                        deleteForms.forEach(function(form) {
+                                            form.addEventListener('submit', function(e) {
+                                                e.preventDefault();
+                                                const confirmText = form.getAttribute('data-confirm-text');
+                                                Swal.fire({
+                                                    title: 'Konfirmasi',
+                                                    text: confirmText,
+                                                    icon: 'warning',
+                                                    showCancelButton: true,
+                                                    confirmButtonText: 'Hapus',
+                                                    cancelButtonText: 'Batal'
+                                                }).then((result) => {
+                                                    if (result.isConfirmed) {
+                                                        // Submit form jika tombol Hapus diklik
+                                                        form.submit();
+                                                    }
+                                                });
+                                            });
+                                        });
+
+                                        // Tangkap pesan dari session dan tampilkan dalam SweetAlert
+                                        
+                                    });
+                                    </script>
+                                    {% if success_message %}
+                                        <script>
+                                        Swal.fire({
+                                            title: 'Berhasil',
+                                            text: "{{ success_message }}",
+                                            icon: 'success',
+                                            confirmButtonText: 'OK'
+                                        });
+                                        </script>
+                                    {% endif %}
+
+                                    {% if error_message %}
+                                        <script>
+                                        Swal.fire({
+                                            title: 'Error',
+                                            text: "{{ error_message }}",
+                                            icon: 'error',
+                                            confirmButtonText: 'OK'
+                                        });
+                                        </script>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </section>
+        </div>
+
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %} "></script>
+<script src="{% static 'assets/js/pages/simple-datatables.js' %} "></script>
+{% include 'layout/footeradmin.html' %}
 {% endblock content %}

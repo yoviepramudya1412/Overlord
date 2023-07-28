@@ -4,6 +4,13 @@
 {% include 'layout/sidebaradmin.html' %}
 
 <link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/leaflet.fullscreen.css"
+/>
 
 
 <div class="page-heading">
@@ -41,6 +48,8 @@
                 </div>
                 <div class="card-body">
                 <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
+
+                
                 <div class="layer-selector">
         <label for="layer-select">Select Layer:</label>
         <select id="layer-select">
@@ -49,12 +58,57 @@
             <option value="satellite">Google Satellite</option>
             <option value="terrain">Google Terrain</option>
         </select>                    
+    </div>
+    <div id="search-container" class="leaflet-control-search leaflet-bar leaflet-control">
+                <link rel="stylesheet" href="https://unpkg.com/leaflet-control-search/dist/search.min.css" />   
+                <script src="https://unpkg.com/leaflet-control-search/dist/search.min.js"></script>
+    </div>
+    <div class="legend ">
+                    <h6>Legend</h6>
+                    <div class="legend-content">
+                        <!-- Data legenda akan di-generate oleh JavaScript -->
+                    </div>
+                </div>
+    </div>
+                
+
+                
                 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
                 <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
-                <script>
+                <script src="https://unpkg.com/leaflet-draw"></script>
+                <script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
+                <script src="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/Leaflet.fullscreen.js"></script>
+
+
+<script>
                     // Inisialisasi peta
         var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
-                    
+        map.addControl(new L.Control.Fullscreen());
+        var drawnItems = new L.FeatureGroup();
+map.addLayer(drawnItems);
+
+var drawControl = new L.Control.Draw({
+    draw: {
+        polyline: true,
+        polygon: true,
+        circle: true,
+        marker: false,
+        circlemarker: false,
+    },
+    edit: {
+        featureGroup: drawnItems,
+        edit: true,
+        remove: true,
+    },
+});
+
+map.addControl(drawControl);
+
+// Event listener untuk menangani ketika pengukuran selesai
+map.on('draw:created', function (e) {
+    var layer = e.layer;
+    drawnItems.addLayer(layer);
+});
             
         var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
@@ -111,6 +165,7 @@
             }
         });
         map.addLayer(googleStreets);
+        
         function tampilkanMarker(markers) {
             markers.forEach(function(marker) {
                 var latitude = marker.lat;
@@ -120,11 +175,16 @@
                 var alamat = marker.alamat;
                 var nama_fasilitas = marker.nama_fasilitas;
                 var gambar = marker.gambar;
+                var color = marker.color;
 
                 if (!gambar) {
                     // Gambar pengganti
                     gambar = '/assets/image/samples/banana.jpg' ;
                 }
+                var customIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: `<i class="fa-solid fa-location-dot fa-2xl" style="color: ${color}; "></i>`
+                });
 
                 var popupContent = `
                     <div class="custom-popup">
@@ -150,11 +210,12 @@
                     </div>
                 `;
 
-                L.marker([latitude, longitude])
+                L.marker([latitude, longitude], { icon: customIcon })
                     .bindPopup(popupContent)
                     .addTo(map);
             });
         }
+        
 
         // Data markers yang diteruskan dari Django
         var markers = [
@@ -166,16 +227,95 @@
                     notelepon: '{{ marker.notelepon }}',
                     alamat: '{{ marker.alamat }}',
                     nama_fasilitas : '{{ marker.nama_fasilitas }}',
-                    gambar: '{{ marker.gambar }}'
+                    gambar: '{{ marker.gambar }}',
+                    color: '{{ marker.color }}',
                 },
             {% endfor %}
         ];
 
         // Memanggil fungsi tampilkanMarker dengan data markers
         tampilkanMarker(markers);
-                </script>
+
                 
-                    </div>
+        function createLegend(markers) {
+        var legendContent = document.querySelector('.legend-content');
+        var addedFasilitas = {}; // Objek untuk melacak nama fasilitas yang sudah ditambahkan ke legend
+
+        markers.forEach(function (marker) {
+            var nama_fasilitas = marker.nama_fasilitas;
+            var color = marker.color;
+
+            // Cek apakah nama fasilitas sudah ada dalam objek addedFasilitas
+            if (!addedFasilitas[nama_fasilitas]) {
+            var legendItem = document.createElement('div');
+            legendItem.classList.add('legend-item');
+
+            var legendMarker = document.createElement('span');
+            legendMarker.classList.add('legend-marker');
+            legendMarker.style.backgroundColor = color;
+
+            var legendText = document.createElement('span');
+            legendText.innerText = nama_fasilitas;
+
+            legendItem.appendChild(legendMarker);
+            legendItem.appendChild(legendText);
+            legendContent.appendChild(legendItem);
+
+            addedFasilitas[nama_fasilitas] = true; // Tandai bahwa nama fasilitas sudah ditambahkan ke legend
+            }
+        });
+        }
+// Memanggil fungsi createLegend dengan data markers
+createLegend(markers);
+
+var searchContainer = document.getElementById('search-container');
+
+// Tambahkan kontrol pencarian ke kontainer pencarian
+var searchControl = new L.Control.Search({
+    position: 'topleft', // Letakkan di pojok kiri atas peta
+    layer: drawnItems, // Gunakan drawnItems sebagai layer untuk pencarian
+    initial: false, // Tidak otomatis mencari pada saat peta dimuat
+    zoom: 16, // Level zoom saat hasil pencarian ditemukan
+});
+
+searchControl.setLayer(drawnItems); // Tetapkan layer yang ingin dicari
+
+// Tambahkan kontrol pencarian ke dalam peta
+searchContainer.appendChild(searchControl.onAdd(map));
+
+// Event listener untuk menangani hasil pencarian
+map.on('search:locationfound', function (e) {
+    // Mencari marker berdasarkan hasil pencarian
+    var foundMarker = markers.find(function (marker) {
+        return (
+            marker.lat == e.latlng.lat &&
+            marker.lng == e.latlng.lng &&
+            marker.nama.includes(e.text)
+        );
+    });
+
+    // Jika marker ditemukan, lakukan zoom ke arah marker
+    if (foundMarker) {
+        map.setView([foundMarker.lat, foundMarker.lng], 15);
+        L.popup()
+            .setLatLng([foundMarker.lat, foundMarker.lng])
+            .setContent(
+                `<b>Nama:</b> ${foundMarker.nama}<br>
+                <b>No Telepon:</b> ${foundMarker.notelepon}<br>
+                <b>Alamat:</b> ${foundMarker.alamat}<br>
+                <b>Nama Fasilitas:</b> ${foundMarker.nama_fasilitas}<br>
+                `
+            )
+            .openOn(map);
+    }
+});
+        // Inisialisasi fitur Leaflet.draw
+
+</script>
+
+
+                
+                    
                 </div>
             </div>
             </div>

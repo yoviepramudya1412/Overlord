@@ -9,7 +9,7 @@
             <div class="page-title">
                 <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Data Kerusakan Ringan</h3>
+                    <h3>Data Kerusakan Sedang</h3>
                     <p class="text-subtitle text-muted">
                     Diharapkan untuk mensurvei kerusakan fasilitas 
                     yang dialami sebelum menghapus pelaporan
@@ -25,7 +25,7 @@
                         <a href="index.html">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                        Data Kerusakan Ringan
+                        Data Kerusakan Sedang
                         </li>
                     </ol>
                     </nav>
@@ -34,7 +34,7 @@
             </div>
             <section class="section">
                 <div class="card">
-                <div class="card-header">Masyarakat yang melaporkan titik fasilitas yang rusak ringan</div>
+                <div class="card-header">Masyarakat yang melaporkan titik fasilitas yang mengalami kerusakan</div>
                 <div class="card-body">
                     <table class="table table-striped" id="table1">
                     <thead>
@@ -57,7 +57,7 @@
                             <td>{{ kerusakan.nama_fasilitas }}</td>
                             
                                 <td><a   href="#" class="badges badge bg-success">{{ kerusakan.rusak.tiperusak }}</a></td>
-                                <td><form action="{% url 'delete_kerusakanringan' kerusakan.kerusakanid %}" class="delete-form" data-confirm-text="Apakah Anda yakin ingin menghapus data ini?" method="POST" id="delete-form">
+                                <td><form action="{% url 'delete_kerusakansedang' kerusakan.kerusakanid %}" class="delete-form" data-confirm-text="Apakah Anda yakin ingin menghapus data ini?" method="POST" id="delete-form">
                                     {% csrf_token %}
                                     <button type="submit" class="badges"><p  class="badge bg-danger">DELETE</p></button>
                                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

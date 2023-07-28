@@ -12,6 +12,7 @@ urlpatterns = [
     path('get_jenis_perlengkapan/', views.get_jenis_perlengkapan, name='get_jenis_perlengkapan'),
     path('get_nama_fasilitas/', views.get_nama_fasilitas, name='get_nama_fasilitas'),
     path('create_pengajuan/', views.create_pengajuan, name='create_pengajuan'),
+    path('laporkerusakan/', views.laporkerusakan, name='laporkerusakan'),
     
     # dashboard
     path('dashboard/',login_required(views.dashboardadmin), name='dashboardadmin'),
@@ -39,6 +40,9 @@ urlpatterns = [
     path('delete_pembangunan/<int:pembangunan_id>/',views.delete_pembangunan, name='delete_pembangunan'),
     path('delete_perencanaan/<int:pembangunan_id>/',views.delete_perencanaan, name='delete_perencanaan'),
     path('delete_fasilitas/<int:fasilitas_id>/',views.delete_fasilitas, name='delete_fasilitas'),
+    path('delete_kerusakanringan/<int:kerusakanid>/',views.delete_kerusakanringan, name='delete_kerusakanringan'),
+    path('delete_kerusakanberat/<int:kerusakanid>/',views.delete_kerusakanberat, name='delete_kerusakanberat'),
+    path('delete_kerusakansedang/<int:kerusakanid>/',views.delete_kerusakansedang, name='delete_kerusakansedang'),
     path('dataperencanaan/',views.dataperencanaan, name='dataperencanaan'),
     
     # masukkan data admin
@@ -59,6 +63,7 @@ urlpatterns = [
     
     # kerusakan
     path('kerusakanringan/',views.kerusakanringan, name='kerusakanringan'),
+    path('kerusakansedang/',views.kerusakansedang, name='kerusakansedang'),
     path('kerusakanberat/',views.kerusakanberat, name='kerusakanberat'),
     
     # bantuan
