@@ -1,7 +1,0 @@
-.form-wrapper {
-    height: 500px;
-    /* Atur tinggi kotak form */
-    overflow-y: auto;
-    /* Tambahkan scroll jika konten melebihi tinggi kotak */
-    /* Tambahkan properti CSS lainnya sesuai kebutuhan */
-}
