@@ -1,0 +1,66 @@
+.custom-popup {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.custom-popup .info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.custom-popup .info b {
+    font-weight: bold;
+    width: 100px;
+}
+
+.custom-popup .image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.custom-popup .image img {
+    border-radius: 20px;
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+}
+
+.custom-icon {
+    /* Ganti ukuran ikon sesuai kebutuhan */
+    width: 100px;
+    height: 100px;
+    /* Atur posisi ikon jika diperlukan */
+    margin-top: -15px;
+    margin-left: -15px;
+    /* Atur style lainnya */
+}
+
+/* CSS untuk legenda */
+.legend {
+    position: absolute;
+    bottom: 50px;
+
+    right: 40px;
+    z-index: 1000;
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* CSS untuk gaya marker pada legenda */
+.legend-marker {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
