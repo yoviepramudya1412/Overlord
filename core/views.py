@@ -187,7 +187,15 @@ def Account(request):
     context = {
         'form': form
     }
-    return render(request, 'core/Akun.html',context)
+
+    # Menambahkan cek jika 'gambar' adalah file yang valid
+    if hasattr(admin, 'gambar') and admin.gambar:
+        context['gambar'] = admin.gambar.url
+    else:
+        context['gambar'] = None
+
+    return render(request, 'core/Akun.html', context)
+
 # khusus akun
 
 

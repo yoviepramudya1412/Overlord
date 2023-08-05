@@ -117,11 +117,14 @@
                             
                             <div class="col-md-6 col-12 mb-32">
                             <label for="file_input" class="form-label">Masukkan Gambar Foto Diri Anda</label>
-                            <input class="form-control form-control-sm mb-20" id="file_input" type="file" name="gambar" value="{{ form.gambar.value.url }}" onchange="previewImage(event)" />
+                            <input class="form-control form-control-sm mb-20" id="file_input" type="file" name="gambar"  onchange="previewImage(event)" />
                         </div>
                         <div class="col-md-6 col-12 mb-32">
-                                <img id="image_preview" src="{{ form.gambar.value.url }}" title="gambar profile" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius:20px;" />
-
+                                {% if form.gambar.value %}
+                                    <img id="image_preview" src="{{ form.gambar.value.url }}" title="gambar profile" alt="Preview" style="max-width: 100%; max-height: 200px; border-radius: 20px;" />
+                                {% else %}
+                                    <p>Tidak ada gambar yang dipilih.</p>
+                                {% endif %}
                             </div>
                         <script>
                             function previewImage(event) {
