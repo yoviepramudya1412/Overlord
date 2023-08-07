@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet-control-search@1.5.2/dist/search.min.css" /> 
+
 
 <link
   rel="stylesheet"
@@ -50,8 +50,10 @@
                 </div>
                 <div class="card-body">
                 <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
-
-                    <div id="search-container" class="leaflet-control-search leaflet-bar leaflet-control"></div>
+                    <div id="search-container">
+        <input type="text" id="search-input" placeholder="Cari berdasarkan nama" />
+        <button id="search-button">Cari</button>
+    </div>
                 
                 <div class="layer-selector">
         <label for="layer-select">Select Layer:</label>
@@ -61,6 +63,8 @@
             <option value="satellite">Google Satellite</option>
             <option value="terrain">Google Terrain</option>
         </select>                    
+        
+
     </div>
 
             <div class="legend ">
@@ -74,7 +78,7 @@
         
         
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="https://unpkg.com/leaflet-control-search@1.5.2/dist/search.min.js"></script>
+        
         <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
         <script src="https://unpkg.com/leaflet-draw"></script>
         <script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
@@ -271,42 +275,28 @@ createLegend(markers);
 
 
 
-    // Tambahkan kontrol pencarian ke kontainer pencarian
-    var searchContainer = document.getElementById('search-container');
-    var searchControl = new L.Control.Search({
-        position: 'topleft',
-        layer: L.layerGroup(markers.map(function (marker) {
-            return L.marker([marker.lat, marker.lng]);
-        })),
-        initial: false,
-        zoom: 16,
-    });
+  // Fungsi untuk melakukan pencarian
+        function searchLocation() {
+            var searchText = document.getElementById('search-input').value;
+            var foundMarker = markers.find(function (marker) {
+                return marker.nama.toLowerCase() === searchText.toLowerCase();
+            });
 
-    searchControl.on('search:locationfound', function (e) {
-        var foundMarker = markers.find(function (marker) {
-            return (
-                marker.lat == e.latlng.lat &&
-                marker.lng == e.latlng.lng &&
-                marker.nama.includes(e.text)
-            );
-        });
-
-        if (foundMarker) {
-            map.setView([foundMarker.lat, foundMarker.lng], 15);
-            L.popup()
-                .setLatLng([foundMarker.lat, foundMarker.lng])
-                .setContent(
-                    `<b>Nama:</b> ${foundMarker.nama}<br>
-                    <b>No Telepon:</b> ${foundMarker.notelepon}<br>
-                    <b>Alamat:</b> ${foundMarker.alamat}<br>
-                    <b>Nama Fasilitas:</b> ${foundMarker.nama_fasilitas}<br>
-                    `
-                )
-                .openOn(map);
+            if (foundMarker) {
+                map.setView([foundMarker.lat, foundMarker.lng], 15);
+                L.popup()
+                    .setLatLng([foundMarker.lat, foundMarker.lng])
+                    .setContent(
+                        `<div>
+                            <h2>${foundMarker.nama}</h2>
+                            <p>${foundMarker.deskripsi}</p>
+                        </div>`
+                    )
+                    .openOn(map);
+            }
         }
-    });
 
-    searchContainer.appendChild(searchControl.onAdd(map));
+        document.getElementById('search-button').addEventListener('click', searchLocation);
 </script>
 
 
