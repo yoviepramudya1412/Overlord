@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
 
 
@@ -51,7 +52,7 @@
                 <div class="card-body">
                 <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
                     <div id="search-container">
-        <input type="text" id="search-input" placeholder="Cari berdasarkan nama" />
+        <input id="search-input" class="form-control" data-list="{% for marker in markers %}{{ marker.nama }}{% if not forloop.last %},{% endif %}{% endfor %}" placeholder="Cari Informasi" />
         <button id="search-button">Cari</button>
     </div>
                 
@@ -78,7 +79,7 @@
         
         
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js" async></script>
         <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
         <script src="https://unpkg.com/leaflet-draw"></script>
         <script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
@@ -273,30 +274,44 @@ map.on('draw:created', function (e) {
 // Memanggil fungsi createLegend dengan data markers
 createLegend(markers);
 
+// Inisialisasi pustaka Awesomplete
+    var input = document.getElementById('search-input');
+    var awesomplete = new Awesomplete(input, { list: input.getAttribute('data-list').split(',') });
 
+    
 
-  // Fungsi untuk melakukan pencarian
-        function searchLocation() {
-            var searchText = document.getElementById('search-input').value;
-            var foundMarker = markers.find(function (marker) {
-                return marker.nama.toLowerCase() === searchText.toLowerCase();
-            });
+    // Fungsi untuk melakukan pencarian
+    function searchLocation() {
+        var searchText = document.getElementById('search-input').value;
+        var foundMarker = markers.find(function (marker) {
+        return marker.nama.toLowerCase() === searchText.toLowerCase();
+        });
 
-            if (foundMarker) {
-                map.setView([foundMarker.lat, foundMarker.lng], 15);
-                L.popup()
-                    .setLatLng([foundMarker.lat, foundMarker.lng])
-                    .setContent(
-                        `<div>
-                            <h2>${foundMarker.nama}</h2>
-                            <p>${foundMarker.deskripsi}</p>
-                        </div>`
-                    )
-                    .openOn(map);
-            }
+        if (foundMarker) {
+        map.setView([foundMarker.lat, foundMarker.lng], 15);
+        L.popup()
+            .setLatLng([foundMarker.lat, foundMarker.lng])
+            .setContent(
+            `<div>
+                <h2>${foundMarker.nama}</h2>
+                <p>${foundMarker.deskripsi}</p>
+            </div>`
+            )
+            .openOn(map);
         }
+    }
 
-        document.getElementById('search-button').addEventListener('click', searchLocation);
+    // Tambahkan event listener pada tombol cari
+    document.getElementById('search-button').addEventListener('click', searchLocation);
+
+    // Tambahkan event listener pada input ketika tombol "Enter" ditekan
+    input.addEventListener('keyup', function (event) {
+        if (event.key === 'Enter') {
+        searchLocation();
+        }
+    });
+
+        
 </script>
 
 
