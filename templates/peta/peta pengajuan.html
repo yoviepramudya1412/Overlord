@@ -6,8 +6,12 @@
 <link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/halo.css' %}" />
+
+<link rel="stylesheet" href="{% static 'assets/css/leaflet-measure.css' %}" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-print/dist/leaflet.print.css" />
 
 
 <link
@@ -15,6 +19,62 @@
   href="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/leaflet.fullscreen.css"
 />
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css" />
+
+
+<style>
+.leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-size: 10px 10px;
+    background-image: url("{% static 'assets/image/ruler/rulers.png'%}");
+    
+
+}
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-image: url("{% static 'assets/image/ruler/rulers_@2X.png' %}")
+}
+.leaflet-control-measure a.start {
+    
+    background-image: url("{% static 'assets/image/ruler/start.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.start {
+    background-image: url("{% static 'assets/image/ruler/start_@2X.png' %}")
+}
+.leaflet-control-measure a.cancel {
+    
+    background-image: url("{% static 'assets/image/ruler/cancel.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.cancel {
+    background-image: url("{% static 'assets/image/ruler/cancel_@2X.png' %}")
+}
+.leaflet-control-measure a.finish {
+    
+    background-image: url("{% static 'assets/image/ruler/check.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.finish {
+    background-image: url("{% static 'assets/image/ruler/check_@2X.png' %}")
+}
+.leaflet-measure-resultpopup a.zoomto {
+    
+    background-image: url("{% static 'assets/image/ruler/focus.png' %}");
+    
+}
+.leaflet-retina .leaflet-measure-resultpopup a.zoomto {
+    background-image: url("{% static 'assets/image/ruler/focus_@2X.png' %}")
+}
+.leaflet-measure-resultpopup a.deletemarkup {
+    
+    background-image: url("{% static 'assets/image/ruler/trash.png' %}");
+    
+}
+.leaflet-retina .leaflet-measure-resultpopup a.deletemarkup {
+    background-image: url("{% static 'assets/image/ruler/trash_@2X.png' %}")
+}
+</style>
 
 <div class="page-heading">
     <div class="page-title">
@@ -51,6 +111,12 @@
                 </div>
                 <div class="card-body">
                 <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
+                    <div class="legend " id="legend-container">
+                <h6>Legend</h6>
+                <div class="legend-content">
+                    <!-- Data legenda akan di-generate oleh JavaScript -->
+                </div>
+            </div>
                     <div id="search-container">
         <input id="search-input" class="form-control" data-list="{% for marker in markers %}{{ marker.nama }}{% if not forloop.last %},{% endif %}{% endfor %}" placeholder="Cari Informasi" />
         <button id="search-button">Cari</button>
@@ -68,28 +134,34 @@
 
     </div>
 
-            <div class="legend ">
-                <h6>Legend</h6>
-                <div class="legend-content">
-                    <!-- Data legenda akan di-generate oleh JavaScript -->
-                </div>
-            </div>
+            
         </div>
         
         
         
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js" async></script>
-        <script src="https://unpkg.com/leaflet-control-layers-tree/dist/L.Control.Layers.Tree.js"></script>
         <script src="https://unpkg.com/leaflet-draw"></script>
-        <script src="https://unpkg.com/leaflet-geometryutil@0.9.3/dist/leaflet.geometryutil.min.js"></script>
         <script src="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/Leaflet.fullscreen.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+        <script src="{% static 'assets/js/leaflet.browser.print.min.js' %}"></script>
+        <script src="{% static 'assets/js/leaflet/leaflet-measure.js' %}"></script>
 
 
 <script>
                     // Inisialisasi peta
         var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
+        L.control.scale().addTo(map);
         map.addControl(new L.Control.Fullscreen());
+        L.control.measure({ 
+            position: 'bottomleft',
+            primaryLengthUnit: 'kilometers',
+            secondaryLengthUnit: 'meters',
+            primaryAreaUnit: 'hectares',
+            secondaryAreaUnit: undefined
+        }).addTo(map);
+        L.control.locate().addTo(map);
+
         var drawnItems = new L.FeatureGroup();
 map.addLayer(drawnItems);
 
@@ -115,6 +187,8 @@ map.on('draw:created', function (e) {
     var layer = e.layer;
     drawnItems.addLayer(layer);
 });
+
+
             
         var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
@@ -311,7 +385,58 @@ createLegend(markers);
         }
     });
 
-        
+    
+// Fungsi untuk menampilkan legenda pada peta
+function showLegend() {
+    var legend = document.querySelector('.legend-content');
+    legend.style.display = 'block';
+}
+
+// Fungsi untuk menyembunyikan legenda pada peta
+function hideLegend() {
+    var legend = document.querySelector('.legend-content');
+    legend.style.display = 'none';
+}
+
+// Tambahkan event listener untuk acara browser-print-start
+map.on("browser-print-start", function(e) {
+    // Menampilkan legenda pada peta cetak
+    showLegend();
+    
+    // Membuat kontrol legenda dan menambahkannya ke peta cetak
+    var legendControl = L.control({ position: 'bottomright' });
+    
+    legendControl.onAdd = function(map) {
+        var legendDiv = L.DomUtil.create('div', 'legend');
+        legendDiv.innerHTML = document.querySelector('.legend-content').innerHTML;
+        return legendDiv;
+    };
+
+    legendControl.addTo(e.printMap);
+});
+
+
+
+
+
+L.control.browserPrint({
+    
+    printLayer: L.control.layers(baseLayers, null, { collapsed: false }),
+    onPrintStart: function () {
+        var legendContainer = document.getElementById('legend-container');
+        legendContainer.style.display = 'block'; // Tampilkan legenda saat mencetak
+    },
+    onPrintEnd: function () {
+        var legendContainer = document.getElementById('legend-container');
+        legendContainer.style.display = 'none'; // Sembunyikan legenda setelah mencetak
+    },
+}).addTo(map);
+
+
+
+
+
+
 </script>
 
 
