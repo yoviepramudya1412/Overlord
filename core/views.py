@@ -1,3 +1,6 @@
+from os import truncate
+from django.db.models.functions import TruncDate
+import time
 from django.conf import settings
 from django.shortcuts import redirect, render
 from requests import request
@@ -10,8 +13,258 @@ from django.http import HttpResponseRedirect
 from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
+from datetime import datetime
+from django.db.models.functions import TruncDay
+from django.db.models.functions import TruncMonth
+from collections import defaultdict
 
-# Masyarakat
+# Tampilan statistik
+@login_required(login_url=settings.LOGIN_URL)
+def statistikfasiltas(request):
+    # data = Fasilitas_perlengkapan.objects.annotate(date_count=Count('tanggal_ditambahkan')).values('tanggal_ditambahkan', 'date_count')
+    # chart_data = [{'x': entry['tanggal_ditambahkan'].strftime('%Y-%m-%d'), 'y': entry['date_count']} for entry in data]
+
+    data = Fasilitas_perlengkapan.objects.annotate(date_count=Count('tanggal_ditambahkan')).values('tanggal_ditambahkan', 'date_count')
+    
+    data_bar = {}
+    for entry in data:
+        date = entry['tanggal_ditambahkan'].strftime('%Y-%m-%d')
+        if date in data_bar:
+            data_bar[date] += entry['date_count']
+        else:
+            data_bar[date] = entry['date_count']
+    
+    chart_data = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_bar.items()]
+
+    
+
+
+    total_entries = Fasilitas_perlengkapan.objects.count()
+    max_entries = 50  # Maksimal fasilitas per tahun
+
+    # Hitung persentase pertambahan data
+    percentage_increase = (total_entries / max_entries) * 100
+    
+    
+    radialGradientOptions = {
+        
+        'series': [percentage_increase],
+        'chart': {
+            'height': 350,
+            'type': 'radialBar',
+            'toolbar': {
+                'show': 'true',
+            },
+        },
+        'plotOptions': {
+        'radialBar': {
+            'startAngle': -135,
+            'endAngle': 225,
+            'hollow': {
+                'margin': 0,
+                'size': '70%',
+                'background': '#fff',
+                
+                'imageOffsetX': 0,
+                'imageOffsetY': 0,
+                'position': 'front',
+                'dropShadow': {
+                    'enabled': 'true',
+                    'top': 3,
+                    'left': 0,
+                    'blur': 4,
+                    'opacity': 0.24,
+                },
+            },
+            'track': {
+                'background': '#fff',
+                'strokeWidth': '67%',
+                'margin': 0,  # margin is in pixels
+                'dropShadow': {
+                    'enabled': 'true',
+                    'top': -3,
+                    'left': 0,
+                    'blur': 4,
+                    'opacity': 0.35,
+                },
+            },
+            
+        },
+    },
+        
+        
+        'fill': {
+            'type': 'gradient',
+            'gradient': {
+                'shade': 'dark',
+                'type': 'horizontal',
+                'shadeIntensity': 0.5,
+                'gradientToColors': ['#ABE5A1'],
+                'inverseColors': 'true',
+                'opacityFrom': 1,
+                'opacityTo': 1,
+                'stops': [0, 100],
+            },
+        },
+        'stroke': {
+            'lineCap': 'round',
+        },
+        'labels': ['Percent'],
+    }
+
+    data_area = Fasilitas_perlengkapan.objects.values('jenis_perlengkapan', 'tanggal_ditambahkan').annotate(data_count=Count('jenis_perlengkapan'))
+
+    data_linearea = defaultdict(dict)
+    for entry in data_area:
+        jenis_perlengkapan = entry['jenis_perlengkapan']
+        tanggal_ditambahkan = entry['tanggal_ditambahkan'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        data_linearea[jenis_perlengkapan][tanggal_ditambahkan] = data_count
+
+    categories = sorted(set([tanggal for data in data_linearea.values() for tanggal in data.keys()]))
+
+    series = [{'name': jenis, 'data': [data.get(tanggal, 0) for tanggal in categories]} for jenis, data in data_linearea.items()]
+
+    chart_area = {
+        'categories': categories,
+        'series': series,
+    }
+    
+
+    context = { 
+                'chart_area':chart_area,
+                'data_linearea':data_linearea,
+                'chart_data': chart_data,
+                'radialGradientOptions': radialGradientOptions,
+                }
+    
+    return render(request, 'statistik/statistik fasilitas.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def statistikkerusakan(request):
+    rusak_choices = dict(Rusak.RUSAK_CHOICES)  # Mengakses RUSAK_CHOICES dari model Rusak
+
+    data = Kerusakan.objects.values('rusak__tiperusak', 'tanggal_laporkan').annotate(data_count=Count('rusak__tiperusak'))
+
+    data_linearea = defaultdict(lambda: defaultdict(int))  # Menggunakan defaultdict untuk menghitung total tiap tipe rusak
+    for entry in data:
+        rusak_tipe = entry['rusak__tiperusak']
+        tanggal_laporkan = entry['tanggal_laporkan'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        data_linearea[rusak_tipe][tanggal_laporkan] += data_count
+
+    chart_categories = sorted(set([tanggal for data in data_linearea.values() for tanggal in data.keys()]))
+
+    chart_data = [{'name': rusak_choices[rusak], 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for rusak, data in data_linearea.items()]
+
+
+    # untuk chart lain 
+    total_entries = Kerusakan.objects.count()
+    max_entries = 100  # Maksimal kerusakan per tahun
+
+    # Hitung persentase pertambahan data
+    percentage_increase = (total_entries / max_entries) * 100
+    
+    # untuk chart lain 
+    data_inline = Kerusakan.objects.values('jenis_perlengkapan__jenis_perlengkapan', 'tanggal_laporkan').annotate(data_inline_count=Count('jenis_perlengkapan__jenis_perlengkapan'))
+
+    data_line = defaultdict(lambda: defaultdict(int))
+    for entry in data_inline:
+        jenis_perlengkapan = entry['jenis_perlengkapan__jenis_perlengkapan']
+        tanggal_laporkan = entry['tanggal_laporkan'].strftime('%Y-%m-%d')
+        data_inline_count = entry['data_inline_count']
+
+        data_line[jenis_perlengkapan][tanggal_laporkan] += data_inline_count
+
+    categories = [{'name': jenis_perlengkapan, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis_perlengkapan, data in data_line.items()]
+
+    chart_data_line = {
+        'series1': categories,
+        'categories1': chart_categories,
+    }
+    
+    # charlain
+    data_line = Kerusakan.objects.annotate(date_count=Count('tanggal_laporkan')).values('tanggal_laporkan', 'date_count')
+    data_line_plot = {}
+    for entry in data_line:
+        date = entry['tanggal_laporkan'].strftime('%Y-%m-%d')
+        if date in data_line_plot:
+            data_line_plot[date] += entry['date_count']
+        else:
+            data_line_plot[date] = entry['date_count']
+    chart_data_bar = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+    
+    context = {
+        'chart_data_bar' : chart_data_bar,
+        'chart_data_line': chart_data_line,
+        'chart_data': {
+            'series': chart_data,
+            'categories': chart_categories,
+        },
+        'percentage_increase': percentage_increase,
+    }
+
+
+    
+    return render(request, 'statistik/statistik kerusakan.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def statistikpembangunan(request):
+    return render(request, 'statistik/statistik pembangunan.html')
+
+@login_required(login_url=settings.LOGIN_URL)
+def statistikpengajuan(request):
+    data = Pengajuan.objects.values('jenis_perlengkapan__jenis_perlengkapan', 'tanggal_ajukan').annotate(data_count=Count('jenis_perlengkapan__jenis_perlengkapan'))
+    
+
+    data_line = defaultdict(lambda: defaultdict(int))
+    for entry in data:
+        jenis_perlengkapan = entry['jenis_perlengkapan__jenis_perlengkapan']
+        tanggal_ajukan = entry['tanggal_ajukan'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        data_line[jenis_perlengkapan][tanggal_ajukan] += data_count
+
+    chart_categories = sorted(set([tanggal for data in data_line.values() for tanggal in data.keys()]))
+
+    chart_data = [{'name': jenis_perlengkapan, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis_perlengkapan, data in data_line.items()]
+
+    # untuk chart lain 
+    total_entries = Pengajuan.objects.count()
+    max_entries = 100  # Maksimal kerusakan per tahun
+
+    # Hitung persentase pertambahan data
+    percentage_increase = (total_entries / max_entries) * 100
+    # data_line = Pengajuan.objects.values('tanggal_ajukan').annotate(total_count=Count('tanggal_ajukan'))
+    data_line = Pengajuan.objects.annotate(date_count=Count('tanggal_ajukan')).values('tanggal_ajukan', 'date_count')
+    data_line_plot = {}
+    for entry in data_line:
+        date = entry['tanggal_ajukan'].strftime('%Y-%m-%d')
+        if date in data_line_plot:
+            data_line_plot[date] += entry['date_count']
+        else:
+            data_line_plot[date] = entry['date_count']
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+        
+    context = {
+        'chart_data_line':chart_data_line,
+        'percentage_increase':percentage_increase,
+        'chart_data': {
+            'series': chart_data,
+            'categories': chart_categories,
+        },
+    }
+    return render(request, 'statistik/statistik pengajuan.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def statistikperencanaan(request):
+    return render(request, 'statistik/statistik perencanaan.html')
+
+
+
 
 
 def maps(request):
@@ -308,26 +561,7 @@ def petaadperencanaan(request):
 
 
 
-# Peta statistik
-@login_required(login_url=settings.LOGIN_URL)
-def statistikfasiltas(request):
-    return render(request, 'statistik/statistik fasilitas.html')
 
-@login_required(login_url=settings.LOGIN_URL)
-def statistikkerusakan(request):
-    return render(request, 'statistik/statistik kerusakan.html')
-
-@login_required(login_url=settings.LOGIN_URL)
-def statistikpembangunan(request):
-    return render(request, 'statistik/statistik pembangunan.html')
-
-@login_required(login_url=settings.LOGIN_URL)
-def statistikpengajuan(request):
-    return render(request, 'statistik/statistik pengajuan.html')
-
-@login_required(login_url=settings.LOGIN_URL)
-def statistikperencanaan(request):
-    return render(request, 'statistik/statistik perencanaan.html')
 
 # Data tables
 @login_required(login_url=settings.LOGIN_URL)
@@ -356,6 +590,7 @@ def datapembangunan(request):
         'success_message': success_message,
         'error_message': error_message,
     }
+    print(context)
     
     return render(request, 'datatables/pembangunan.html',context)
 
@@ -757,6 +992,7 @@ def editdatapembangunan(request,pembangunan_id):
         'kondisi_choices': kondisi_choices,
         'status_choices': status_choices,
     }
+    
     return render(request, 'create/Edit data.html', context)
 
     
@@ -908,6 +1144,7 @@ def editdataperlengkapan(request, fasilitas_id):
         'perlengkapan_list': perlengkapan_list,
     }
     return render(request, 'create/Edit data Perlengkapan.html', context)
+
 
         
 @login_required(login_url=settings.LOGIN_URL)

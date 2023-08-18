@@ -79,7 +79,7 @@ class Fasilitas_perlengkapan(models.Model):
     tipekhusus = models.CharField(max_length=200,blank=True,null=True)
     namakhusus = models.CharField(max_length=200,blank=True,null=True)
     nama_fasilitas = models.CharField(max_length=200,unique=True,blank=True,null=True)
-    tanggal_ditambahkan = models.CharField(max_length=200,blank=True,null=True)
+    tanggal_ditambahkan = models.DateTimeField(null=True,blank=True)
     volume= models.IntegerField(blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan")    
     gambar = models.ImageField(upload_to=upload_to,null=True, blank=True)
@@ -104,6 +104,7 @@ def mirage(instance, filename):
 
 class Pengajuan(models.Model):
     pengajuanid = models.BigAutoField(primary_key=True)
+    tanggal_ajukan= models.DateTimeField(auto_now_add=True,null=True,blank=True)
     masyarakatid = models.ForeignKey(Masyarakat,on_delete=models.CASCADE)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
@@ -122,8 +123,8 @@ def cringe(instance, filename):
 
 class Pembangunan(models.Model):
     pembangunanid = models.BigAutoField(primary_key=True)
-    tanggal_bangun = models.CharField(max_length=200,null=True,blank=True)
-    konstruksi_selesai = models.CharField(max_length=200,null=True,blank=True)
+    tanggal_bangun = models.DateTimeField(null=True,blank=True)
+    konstruksi_selesai = models.DateTimeField(null=True,blank=True)
     ruasjalan = models.CharField(max_length=400,null=True,blank=True)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",blank=True)    
@@ -144,6 +145,7 @@ def demonslayer(instance, filename):
 
 class Kerusakan(models.Model):
     kerusakanid = models.BigAutoField(primary_key=True)
+    tanggal_laporkan= models.DateTimeField(auto_now_add=True,null=True,blank=True)
     masyarakatid = models.ForeignKey(Masyarakat,on_delete=models.CASCADE)
     nama_fasilitas = models.ForeignKey(Fasilitas_perlengkapan,on_delete=models.CASCADE,to_field="nama_fasilitas",null=True,blank=True)
     jenis_perlengkapan = models.ForeignKey(Perlengkapan_jalan, on_delete=models.CASCADE, to_field="jenis_perlengkapan",null=True,blank=True)    

@@ -22,7 +22,7 @@
                     >
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                        <a href="index.html">Dashboard</a>
+                        <a href="{% url 'dashboardadmin' %}">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
                         Data Pembangunan Fasilitas
@@ -53,8 +53,8 @@
                         {% for pembangunan in pembangunan_data %}
                         <tr>
                             <td>{{ pembangunan.nama_fasilitas }}</td>
-                            <td>{{ pembangunan.tanggal_bangun }}</td>
-                            <td>{{ pembangunan.konstruksi_selesai }}</td>
+                            <td>{{ pembangunan.tanggal_bangun|date:"M. d, Y" }}</td>
+                            <td>{{ pembangunan.konstruksi_selesai|date:"M. d, Y" }}</td>
                             <td>{{ pembangunan.volume}}</td>
                             <td>{{ pembangunan.kondisi.tipekondisi}}</td>
                             

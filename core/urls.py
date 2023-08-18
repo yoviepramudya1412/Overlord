@@ -7,6 +7,9 @@ urlpatterns = [
     path('peta/',views.maps, name='maps'),
     path('jenisperlengkapan/',views.jenisperlengkapan, name='jenisperlengkapan'),
     # khuusus baru
+    # path grafik
+    
+    
     # path('pengajuan/',views.pengajuan, name='pengajuan'),
     path('perlengkapanjalandata/',views.get_json_datafpj, name='perlengkapanjalandata'),
     path('get_jenis_perlengkapan/', views.get_jenis_perlengkapan, name='get_jenis_perlengkapan'),

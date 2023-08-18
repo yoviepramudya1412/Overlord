@@ -3,4 +3,296 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
+
+        
+<link rel="stylesheet" href="{% static 'assets/compiled/css/app.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/compiled/css/app-dark.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/compiled/css/iconly.css' %}" />
+<!--Admin punya-->
+
+<div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Apexcharts</h3>
+                    <p class="text-subtitle text-muted">
+                    A chart says more than a thousand words.
+                    </p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav
+                    aria-label="breadcrumb"
+                    class="breadcrumb-header float-start float-lg-end"
+                    >
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                        <a href="{% url 'dashboardadmin' %}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                        Apexcharts
+                        </li>
+                    </ol>
+                    </nav>
+                </div>
+                </div>
+            </div>
+
+            <section class="section">
+                <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4>Line Area Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="area"></div>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4>Radial Gradient Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="radialGradient"></div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4>Line Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="line"></div>
+                    </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4>Bar Chart</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="bar"></div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            
+            </section>
+            </div>
+
+    <script src="{% static 'assets/extensions/dayjs/dayjs.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        var chartData = {{ chart_data.series|safe }};
+        var chartCategories = {{ chart_data.categories|safe }};
+
+        var chartOptions = {
+            series: chartData,
+            chart: {
+                height: 350,
+                type: "area",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah Pengajuan",
+                },
+            },
+            xaxis: {
+                type: "datetime",
+                categories: chartCategories,
+                labels: {
+                    formatter: function(val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#area"), chartOptions);
+        chart.render();
+
+        var chartData = {{ chart_data_line|safe }};
+
+        var lineOptions = {
+            series: [{
+                name: "Jumlah Total",
+                data: chartData,
+            }],
+            chart: {
+                height: 350,
+                type: "line",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah Data",
+                },
+                labels: {
+                    formatter: function (val) {
+                        return parseInt(val).toString();
+                    }
+                }
+            },
+            xaxis: {
+                type: "datetime",
+                labels: {
+                    formatter: function(val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#line"), lineOptions);
+        chart.render();
+
+        var radialGradientOptions = {
+    series: [{{percentage_increase |safe}} ],
+    chart: {
+        height: 350,
+        type: "radialBar",
+        toolbar: {
+        show: true,
+        },
+    },
+    plotOptions: {
+        radialBar: {
+        startAngle: -135,
+        endAngle: 225,
+        hollow: {
+            margin: 0,
+            size: "70%",
+            background: "#fff",
+            image: undefined,
+            imageOffsetX: 0,
+            imageOffsetY: 0,
+            position: "front",
+            dropShadow: {
+            enabled: true,
+            top: 3,
+            left: 0,
+            blur: 4,
+            opacity: 0.24,
+            },
+        },
+        track: {
+            background: "#fff",
+            strokeWidth: "67%",
+            margin: 0, // margin is in pixels
+            dropShadow: {
+            enabled: true,
+            top: -3,
+            left: 0,
+            blur: 4,
+            opacity: 0.35,
+            },
+        },
+
+        dataLabels: {
+            show: true,
+            name: {
+            offsetY: -10,
+            show: true,
+            color: "#888",
+            fontSize: "17px",
+            },
+            value: {
+            formatter: function (val) {
+                return parseInt(val)
+            },
+            color: "#111",
+            fontSize: "36px",
+            show: true,
+            },
+        },
+        },
+    },
+    fill: {
+        type: "gradient",
+        gradient: {
+        shade: "dark",
+        type: "horizontal",
+        shadeIntensity: 0.5,
+        gradientToColors: ["#ABE5A1"],
+        inverseColors: true,
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100],
+        },
+    },
+    stroke: {
+        lineCap: "round",
+    },
+    labels: ["Percent"],
+    }
+var chart = new ApexCharts(document.querySelector("#radialGradient"), radialGradientOptions);
+chart.render();
+
+        var chartData = {{ chart_data.series|safe }};
+        var chartCategories = {{ chart_data.categories|safe }};
+
+        var chartOptions = {
+            series: chartData,
+            chart: {
+                height: 350,
+                type: "bar",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah Pengajuan",
+                },
+            },
+            xaxis: {
+                type: "datetime",
+                categories: chartCategories,
+                labels: {
+                    formatter: function(val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#bar"), chartOptions);
+        chart.render();
+    </script>
+
 {% endblock content %}

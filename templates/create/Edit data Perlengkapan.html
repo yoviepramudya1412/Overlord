@@ -22,7 +22,7 @@
             >
                 <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="index.html">Dashboard</a>
+                    <a href="{% url 'dashboardadmin' %}">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
                     Fasilitas Form
@@ -74,11 +74,11 @@
                                 <div class="form-group">
                                 <label for="tanggal_ditambahkan">Pilih Tanggal Ditambahkan</label>
                                     <input
-                                    type="text"
+                                    type="datetime-local"
                                     class="form-control "
                                     placeholder=""
                                     name="tanggal_ditambahkan"
-                                    value="{{ fasilitas_form.tanggal_ditambahkan.value }}"
+                                    value="{{ fasilitas.tanggal_ditambahkan|date:'Y-m-d\TH:i' }}"
                                     />
                                 </div>
                             </div>

@@ -52,7 +52,7 @@
                             <td>{{ fasilitas.nama_fasilitas }}</td>
                             <td>{{ fasilitas.namakhusus }}</td>
                             <td>{{ fasilitas.tipekhusus }}</td>
-                            <td>{{ fasilitas.tanggal_ditambahkan }}</td>
+                            <td>{{ fasilitas.tanggal_ditambahkan|date:"M. d, Y"  }}</td>
                             <td>{{ fasilitas.volume }}</td>
                             
                                 <td><a   href="{% url 'editdataperlengkapan' fasilitas.fasilitasid %}" class="badges badge bg-yellow-400">{{ fasilitas.jenis_perlengkapan }}</a></td>

@@ -14,9 +14,9 @@
             <div class="page-title">
                 <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Apexcharts</h3>
+                    <h3>Statistik Fasilitas</h3>
                     <p class="text-subtitle text-muted">
-                    A chart says more than a thousand words.
+                    Memuat grafik tentang fasilitas perlengkapan jalan
                     </p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
@@ -26,10 +26,10 @@
                     >
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                        <a href="index.html">Dashboard</a>
+                        <a href="{% url 'dashboardadmin' %}">Dashboard</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page">
-                        Apexcharts
+                        Statistik Fasilitas
                         </li>
                     </ol>
                     </nav>
@@ -42,7 +42,7 @@
                 <div class="col-lg-8">
                     <div class="card">
                     <div class="card-header">
-                        <h4>Line Area Chart</h4>
+                        <h4>Penambahan Berdasarkan Jenis</h4>
                     </div>
                     <div class="card-body">
                         <div id="area"></div>
@@ -52,10 +52,11 @@
                 <div class="col-lg-4">
                     <div class="card">
                     <div class="card-header">
-                        <h4>Radial Gradient Chart</h4>
+                        <h4>Fasilitas Pertahunnya</h4>
                     </div>
                     <div class="card-body">
-                        <div id="radialGradient"></div>
+                        <div id="radialGradient">
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -64,7 +65,7 @@
                 <div class="col-md-6">
                     <div class="card">
                     <div class="card-header">
-                        <h4>Line Chart</h4>
+                        <h4>Penambahan Fasilitas</h4>
                     </div>
                     <div class="card-body">
                         <div id="line"></div>
@@ -74,7 +75,7 @@
                 <div class="col-md-6">
                     <div class="card">
                     <div class="card-header">
-                        <h4>Bar Chart</h4>
+                        <h4>Pertumbuhan Fasilitas</h4>
                     </div>
                     <div class="card-body">
                         <div id="bar"></div>
@@ -82,24 +83,213 @@
                     </div>
                 </div>
                 </div>
-                <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                    <div class="card-header">
-                        <h4>Radial Gradient Chart</h4>
-                    </div>
-                    <div class="card-body">
-                        <div id="candle"></div>
-                    </div>
-                    </div>
-                </div>
-                </div>
+                
             </section>
             </div>
-
+            <div id="chart">
+    <apexchart type="bar" width="500" :options="barOptions"></apexchart>
+</div>
     <script src="{% static 'assets/extensions/dayjs/dayjs.min.js' %}"></script>
-    <script src="{% static 'assets/extensions/apexcharts/apexcharts.min.js' %}"></script>
-    <script src="{% static 'assets/extensions/apexcharts/apexcharts.js' %}"></script>
-    <script src="{% static 'assets/js/pages/ui-apexchart.js' %}"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+            <script>
+            var chartData = {{ chart_area.series|safe }};
+            var chartCategories = {{ chart_area.categories|safe }};
+
+            var chartOptions = {
+                series: chartData,
+                chart: {
+                height: 350,
+                type: "area",
+                },
+                dataLabels: {
+                enabled: true,
+                },
+                stroke: {
+                curve: "smooth",
+                },
+                yaxis: {
+                    title: {
+                        text: "Data yang ditambahkan",
+                    },
+                    min: 0, 
+                    labels: {
+                        formatter: function (val) {
+                            return parseInt(val).toString(); // Mengubah nilai desimal menjadi bilangan bulat
+                        }
+                    }
+                    
+                },
+                xaxis: {
+                type: "datetime",
+                categories: chartCategories,
+                min: new Date('2023-07-14').getTime(),
+                labels: {
+                    formatter: function(val) {
+                    return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                },
+                
+                },
+                tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+                },
+            };
+
+    var chart = new ApexCharts(document.querySelector("#area"), chartOptions);
+    chart.render();
+
+
+    var barOptions = {
+    series: [
+        {
+            name: "Jumlah Data",
+            data: [{% for entry in chart_data %}{{ entry.y }},{% endfor %}],
+        },
+    ],
+    chart: {
+        type: "bar",
+        height: 350,
+    },
+    plotOptions: {
+        bar: {
+            horizontal: false,
+            columnWidth: "55%",
+            endingShape: "rounded",
+        },
+    },
+    dataLabels: {
+        enabled: false,
+    },
+    stroke: {
+        show: true,
+        width: 2,
+        colors: ["transparent"],
+    },
+    xaxis: {
+        categories: [{% for entry in chart_data %}"{{ entry.x }}",{% endfor %}],
+        labels: {
+            datetimeFormatter: {
+                year: 'yyyy',
+                month: "MMM",
+                day: "dd",
+            }
+        }
+    },
+    yaxis: {
+        title: {
+            text: "Data yang ditambahkan",
+        },
+        labels: {
+            formatter: function (val) {
+                return parseInt(val).toString(); // Mengubah nilai desimal menjadi bilangan bulat
+            }
+        }
+        
+    },
+    fill: {
+        opacity: 1,
+    },
+    tooltip: {
+        y: {
+            formatter: function (val) {
+                return " " + val;
+            },
+        },
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#bar"), barOptions);
+chart.render();
+
+    var lineOptions = {
+    series: [
+        {
+            name: "Jumlah Data",
+            data: [{% for entry in chart_data %}{{ entry.y }},{% endfor %}],
+        },
+    ],
+    chart: {
+        type: "line",
+        
+    },
+    stroke: {
+    curve: 'smooth',
+    },
+    
+    dataLabels: {
+        enabled: false,
+    },
+    
+    xaxis: {
+        categories: [{% for entry in chart_data %}"{{ entry.x }}",{% endfor %}],
+        labels: {
+            datetimeFormatter: {
+                year: 'yyyy',
+                month: "MMM",
+                day: "dd",
+            }
+        }
+    },
+    yaxis: {
+        title: {
+            text: "Data yang ditambahkan",
+        },
+        
+        labels: {
+            formatter: function (val) {
+                return parseInt(val).toString(); // Mengubah nilai desimal menjadi bilangan bulat
+            }
+        }
+        
+    },
+    fill: {
+        opacity: 1,
+    },
+    tooltip: {
+        y: {
+            formatter: function (val) {
+                return " " + val;
+            },
+        },
+    },
+};
+
+var chart = new ApexCharts(document.querySelector("#line"), lineOptions);
+chart.render();
+                
+                
+var chart = new ApexCharts(document.querySelector("#radialGradient"), {{ radialGradientOptions | safe }});
+chart.render().then(function() {
+    chart.updateOptions({
+        plotOptions: {
+            radialBar: {
+                dataLabels: {
+                    show: true,
+                    name: {
+                        offsetY: -10,
+                        show: true,
+                        color: "#888",
+                        fontSize: "17px",
+                    },
+                    value: {
+                        formatter: function (val) {
+                            return parseInt(val)
+                        },
+                        color: "#111",
+                        fontSize: "36px",
+                        show: true,
+                    },
+                },
+            },
+        },
+    });
+});
+
+            </script>
+    
+    
 
 {% endblock content %}
