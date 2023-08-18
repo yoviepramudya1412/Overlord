@@ -539,7 +539,10 @@ def petaadkerusakan(request):
     kerusakan_data = Kerusakan.objects.all().exclude(location=None)
     markers = []
     for kerusakan in kerusakan_data:
+    
         if kerusakan.location is not None:
+            fasilitas = kerusakan.nama_fasilitas
+            color = fasilitas.color 
             marker = {
                 'lat': kerusakan.location.latitude,
                 'lng': kerusakan.location.longitude,
@@ -548,6 +551,7 @@ def petaadkerusakan(request):
                 'alamat': kerusakan.masyarakatid.alamat,
                 'nama_fasilitas': kerusakan.nama_fasilitas,
                 'tiperusak':kerusakan.rusak.tiperusak,
+                'color': color,
             }
             if kerusakan.gambar:
                 marker['gambar'] = kerusakan.gambar.url
@@ -565,18 +569,23 @@ def petaadpembangunan(request):
     markers = []
     for pembangunan in pembangunan_perencanaan:
         if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
             marker = {
                 'lat': pembangunan.location.latitude,
                 'lng': pembangunan.location.longitude,
                 'nama_fasilitas': pembangunan.nama_fasilitas,
-                'konstruksi_selesai': pembangunan.konstruksi_selesai,
-                
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'color': color,
             }
             if pembangunan.gambar:
                 marker['gambar'] = pembangunan.gambar.url
             else:
                 marker['gambar'] = None
             markers.append(marker)
+            
     context = {
         'markers': markers
     }
@@ -623,12 +632,16 @@ def petaadperencanaan(request):
     markers = []
     for pembangunan in pembangunan_perencanaan:
         if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
             marker = {
                 'lat': pembangunan.location.latitude,
                 'lng': pembangunan.location.longitude,
                 'nama_fasilitas': pembangunan.nama_fasilitas,
-                'konstruksi_selesai': pembangunan.konstruksi_selesai,
-                
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'color': color,
             }
             if pembangunan.gambar:
                 marker['gambar'] = pembangunan.gambar.url
@@ -1281,6 +1294,8 @@ def penggunaan(request):
 # def login(request):
 #     return render(request, 'core/login.html')
 
+
+
 # Admin
 @login_required(login_url=settings.LOGIN_URL)
 def dashboardadmin(request):
@@ -1320,9 +1335,30 @@ def dashboardadmin(request):
         masyarakat = kerusakandata.masyarakatid
         latest_masyarakat_kerusakan.append(masyarakat)
 
-
+    pembangunan_perencanaan = Pembangunan.objects.filter(kondisi__tipekondisi='BURUK').exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'kondisi': pembangunan.kondisi.tipekondisi,
+                'color': color,
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
     
     context = {
+        'markers': markers,
         'latest_masyarakat_kerusakan':latest_masyarakat_kerusakan,
         'latest_masyarakat': latest_masyarakat,
         'data_perencanaan' : data_perencanaan,
