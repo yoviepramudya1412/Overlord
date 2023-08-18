@@ -90,7 +90,221 @@
     <script src="{% static 'assets/extensions/dayjs/dayjs.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
-        
+
+        var chartData = {{ chart_data_line|safe }};
+
+        var lineOptions = {
+            series: [{
+                name: "Jumlah Total",
+                data: chartData,
+            }],
+            chart: {
+                height: 350,
+                type: "line",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah Data",
+                },
+                labels: {
+                    formatter: function (val) {
+                        return parseInt(val).toString();
+                    }
+                }
+            },
+            xaxis: {
+                type: "datetime",
+                labels: {
+                    formatter: function(val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#line"), lineOptions);
+        chart.render();
+
+
+    var radialGradientOptions = {
+    series: [{{percentage_increase |safe}} ],
+    chart: {
+        height: 350,
+        type: "radialBar",
+        toolbar: {
+        show: true,
+        },
+    },
+    plotOptions: {
+        radialBar: {
+        startAngle: -135,
+        endAngle: 225,
+        hollow: {
+            margin: 0,
+            size: "70%",
+            background: "#fff",
+            image: undefined,
+            imageOffsetX: 0,
+            imageOffsetY: 0,
+            position: "front",
+            dropShadow: {
+            enabled: true,
+            top: 3,
+            left: 0,
+            blur: 4,
+            opacity: 0.24,
+            },
+        },
+        track: {
+            background: "#fff",
+            strokeWidth: "67%",
+            margin: 0, // margin is in pixels
+            dropShadow: {
+            enabled: true,
+            top: -3,
+            left: 0,
+            blur: 4,
+            opacity: 0.35,
+            },
+        },
+
+        dataLabels: {
+            show: true,
+            name: {
+            offsetY: -10,
+            show: true,
+            color: "#888",
+            fontSize: "17px",
+            },
+            value: {
+            formatter: function (val) {
+                return parseInt(val)
+            },
+            color: "#111",
+            fontSize: "36px",
+            show: true,
+            },
+        },
+        },
+    },
+    fill: {
+        type: "gradient",
+        gradient: {
+        shade: "dark",
+        type: "horizontal",
+        shadeIntensity: 0.5,
+        gradientToColors: ["#ABE5A1"],
+        inverseColors: true,
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100],
+        },
+    },
+    stroke: {
+        lineCap: "round",
+    },
+    labels: ["Percent"],
+    }
+var chart = new ApexCharts(document.querySelector("#radialGradient"), radialGradientOptions);
+chart.render();
+
+        var chartData = {{ chart_data|safe }};
+        var chartCategories = {{ chart_categories|safe }};
+
+        var chartOptions = {
+            series: chartData,
+            chart: {
+                height: 350,
+                type: "area",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah",
+                },
+                labels: {
+                    formatter: function (val) {
+                        return parseInt(val).toString();
+                    }
+                }
+            },
+            xaxis: {
+                type: "datetime",
+                categories: chartCategories,
+                labels: {
+                    formatter: function (val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#area"), chartOptions);
+        chart.render();
+        var chartData = {{ chart_data|safe }};
+        var chartCategories = {{ chart_categories|safe }};
+
+        var chartOptions = {
+            series: chartData,
+            chart: {
+                height: 350,
+                type: "bar",
+            },
+            dataLabels: {
+                enabled: true,
+            },
+            stroke: {
+                curve: "smooth",
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah",
+                },
+                labels: {
+                    formatter: function (val) {
+                        return parseInt(val).toString();
+                    }
+                }
+            },
+            xaxis: {
+                type: "datetime",
+                categories: chartCategories,
+                labels: {
+                    formatter: function (val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            tooltip: {
+                x: {
+                    format: "dd MMM yyyy",
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#bar"), chartOptions);
+        chart.render();
     </script>
 
 {% endblock content %}

@@ -213,7 +213,47 @@ def statistikkerusakan(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def statistikpembangunan(request):
-    return render(request, 'statistik/statistik pembangunan.html')
+    total_entries = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').count()
+    max_entries = 100  # Maksimal kerusakan per tahun
+
+    # Hitung persentase pertambahan data
+    percentage_increase = (total_entries / max_entries) * 100
+    data = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').values('jenis_perlengkapan__jenis_perlengkapan', 'konstruksi_selesai').annotate(data_count=Count('jenis_perlengkapan__jenis_perlengkapan')).order_by('konstruksi_selesai')
+
+    data_line = defaultdict(dict)
+    jenis_perlengkapan_choices = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
+
+    for entry in data:
+        jenis_perlengkapan = entry['jenis_perlengkapan__jenis_perlengkapan']
+        konstruksi_selesai = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        if jenis_perlengkapan not in data_line:
+            data_line[jenis_perlengkapan] = {}
+
+        data_line[jenis_perlengkapan][konstruksi_selesai] = data_count
+
+    chart_categories = sorted(set([tanggal for data in data_line.values() for tanggal in data.keys()]))
+
+    chart_data = [{'name': jenis, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis, data in data_line.items()]
+
+    data_line = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+    data_line_plot = {}
+    for entry in data_line:
+        date = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
+        if date in data_line_plot:
+            data_line_plot[date] += entry['date_count']
+        else:
+            data_line_plot[date] = entry['date_count']
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+    
+    context = {
+        'chart_data_line':chart_data_line,
+        'percentage_increase':percentage_increase,
+        'chart_data': chart_data,
+        'chart_categories': chart_categories,
+    }
+    return render(request, 'statistik/statistik pembangunan.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def statistikpengajuan(request):
@@ -261,7 +301,48 @@ def statistikpengajuan(request):
 
 @login_required(login_url=settings.LOGIN_URL)
 def statistikperencanaan(request):
-    return render(request, 'statistik/statistik perencanaan.html')
+    
+    total_entries = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').count()
+    max_entries = 100  # Maksimal kerusakan per tahun
+
+    # Hitung persentase pertambahan data
+    percentage_increase = (total_entries / max_entries) * 100
+    data = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').values('jenis_perlengkapan__jenis_perlengkapan', 'konstruksi_selesai').annotate(data_count=Count('jenis_perlengkapan__jenis_perlengkapan')).order_by('konstruksi_selesai')
+
+    data_line = defaultdict(dict)
+    jenis_perlengkapan_choices = Perlengkapan_jalan.objects.values_list('jenis_perlengkapan', flat=True)
+
+    for entry in data:
+        jenis_perlengkapan = entry['jenis_perlengkapan__jenis_perlengkapan']
+        konstruksi_selesai = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        if jenis_perlengkapan not in data_line:
+            data_line[jenis_perlengkapan] = {}
+
+        data_line[jenis_perlengkapan][konstruksi_selesai] = data_count
+
+    chart_categories = sorted(set([tanggal for data in data_line.values() for tanggal in data.keys()]))
+
+    chart_data = [{'name': jenis, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis, data in data_line.items()]
+
+    data_line = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+    data_line_plot = {}
+    for entry in data_line:
+        date = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
+        if date in data_line_plot:
+            data_line_plot[date] += entry['date_count']
+        else:
+            data_line_plot[date] = entry['date_count']
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+    
+    context = {
+        'chart_data_line':chart_data_line,
+        'percentage_increase':percentage_increase,
+        'chart_data': chart_data,
+        'chart_categories': chart_categories,
+    }
+    return render(request, 'statistik/statistik perencanaan.html',context)
 
 
 
@@ -1208,12 +1289,50 @@ def dashboardadmin(request):
     data_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').count()
     data_pembangunan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').count()
     admin = request.user
+    
+    kondisi_choices = dict(Kondisi.KONDISI_CHOICES)
+
+    data = Pembangunan.objects.values('kondisi__tipekondisi', 'konstruksi_selesai').annotate(data_count=Count('kondisi__tipekondisi'))
+
+    data_linearea = defaultdict(lambda: defaultdict(int))
+    for entry in data:
+        kondisi_tipe = entry['kondisi__tipekondisi']
+        konstruksi_selesai = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
+        data_count = entry['data_count']
+
+        data_linearea[kondisi_tipe][konstruksi_selesai] += data_count
+
+    chart_categories = sorted(set([tanggal for data in data_linearea.values() for tanggal in data.keys()]))
+
+    chart_data = [{'name': kondisi_choices[kondisi], 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for kondisi, data in data_linearea.items()]
+    
+    latest_pengajuan = Pengajuan.objects.order_by('-tanggal_ajukan')[:5]
+
+    latest_masyarakat = []
+    for pengajuan in latest_pengajuan:
+        masyarakat = pengajuan.masyarakatid
+        latest_masyarakat.append(masyarakat)
+        
+    latest_kerusakan = Kerusakan.objects.order_by('-tanggal_laporkan')[:5]
+
+    latest_masyarakat_kerusakan = []
+    for kerusakandata in latest_kerusakan:
+        masyarakat = kerusakandata.masyarakatid
+        latest_masyarakat_kerusakan.append(masyarakat)
+
+
+    
     context = {
+        'latest_masyarakat_kerusakan':latest_masyarakat_kerusakan,
+        'latest_masyarakat': latest_masyarakat,
         'data_perencanaan' : data_perencanaan,
         'data_pembangunan' : data_pembangunan,
         'jumlah_data': jumlah_data,
         'kerusakan': kerusakan,
         'admin': admin,
+        'chart_data': chart_data,
+        'chart_categories': chart_categories,
+        
         }
     return render(request, 'core/dashboard.html',context)
 

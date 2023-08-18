@@ -97,6 +97,7 @@
 
             
 <li class="sidebar-item has-sub 
+{% if request.resolver_match.url_name == 'statistikpembangunan' %}active{% endif %}
 {% if request.resolver_match.url_name == 'statistikperencanaan' %}active{% endif %}
 {% if request.resolver_match.url_name == 'statistikpengajuan' %}active{% endif %}
 {% if request.resolver_match.url_name == 'statistikkerusakan' %}active{% endif %}
@@ -107,6 +108,9 @@
         <span>Statistik</span>
     </a>
     <ul class="submenu">
+        <li class="submenu-item {% if request.resolver_match.url_name == 'statistikpembangunan' %}active{% endif %}">
+            <a href="{% url 'statistikpembangunan' %}" class="submenu-link">Pembangunan</a>
+        </li>
         <li class="submenu-item {% if request.resolver_match.url_name == 'statistikperencanaan' %}active{% endif %}">
             <a href="{% url 'statistikperencanaan' %}" class="submenu-link">Perencanaan</a>
         </li>

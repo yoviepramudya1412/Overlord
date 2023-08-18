@@ -4,6 +4,10 @@
 {% include 'layout/sidebaradmin.html' %}
 <link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
 <link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/compiled/css/app.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/compiled/css/app-dark.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/compiled/css/iconly.css' %}" />
+<!--Admin punya-->
 
 
 {% if user.is_authenticated %}
@@ -184,21 +188,31 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-12 col-xl-4">
-            <div id="chart-profile-visit"></div>
+    <div class="col-lg-8">
+            
             <div class="card">
             <div class="card-header">
-                <h4>Profile Visit</h4>
+                <h4>Halo , Selamat Datang {{ admin.nama_admin }}</h4>
 
             </div>
-            <div class="card-body">
-                <h2>halo</h2>
-            </div>
-            </div>
+
+
+
+
+
+            
+
+
+
         </div>
         
         </div>
     </div>
+    
+    
+            </div>
+
+
     <div class="col-12 col-lg-3">
         <div class="card">
         <div class="card-body py-4 px-4">
@@ -218,8 +232,13 @@
         </div>
         <div class="card">
         <div class="card-header">
-            <h4>Recent Messages</h4>
+            <h4>Pengajuan Baru</h4>
         </div>
+        <ul style="list-style: none; justify-self: center;">
+                {% for masyarakat in latest_masyarakat %}
+                    <li style="center">{{ masyarakat.nama }}</li>
+                {% endfor %}
+                </ul>
         <div class="card-content pb-4">
             <div class="recent-message d-flex px-4 py-3">
             
@@ -227,18 +246,78 @@
         </div>
         <div class="card">
         <div class="card-header">
-            <h4>Visitors Profile</h4>
+            <h4>Kerusakan Baru</h4>
         </div>
-        <div class="card-body">
-            <div id="chart-visitors-profile"></div>
-        </div>
+        <ul style="list-style: none; justify-self: center;">
+                {% for masyarakat in latest_masyarakat_kerusakan %}
+                    <li style="center">{{ masyarakat.nama }}</li>
+                {% endfor %}
+                </ul>
+        
+
+        
+
         </div>
     </div>
     </section>
+    <div class="row">
+        <div class="col-12">
+                    <div class="card">
+                    <div class="card-header">
+                        <h4>Statistik Pembangunan berdasarkan Kondisi</h4>
+                    </div>
+                    <div class="card-body">
+                        <div id="area"></div>
+                    </div>
+                    </div>
+                </div>
+    </div>
 </div>
 
 {% else %}
     <!-- Arahkan pengguna ke halaman login -->
     <p>Silakan <a href="{% url 'masuk' %}">login</a> untuk mengakses halaman ini.</p>
 {% endif %}
+<script src="{% static 'assets/extensions/dayjs/dayjs.min.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    var chartData = {{ chart_data|safe }};
+        var chartCategories = {{ chart_categories|safe }};
+
+        var options = {
+            series: chartData,
+            chart: {
+                height: 350,
+                type: 'area'
+            },
+            dataLabels: {
+            enabled: false,
+        },
+            xaxis: {
+                categories: chartCategories,
+                type: "datetime",
+                labels: {
+                    formatter: function(val) {
+                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                    }
+                }
+            },
+            yaxis: {
+                title: {
+                    text: "Jumlah Data",
+                },
+                labels: {
+                    formatter: function (val) {
+                        return parseInt(val).toString();
+                    }
+                }
+            },
+            
+        };
+
+        var chart = new ApexCharts(document.querySelector("#area"), options);
+        chart.render();
+</script>
+
+
 {% endblock content %}
