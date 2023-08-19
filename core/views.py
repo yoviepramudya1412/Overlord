@@ -349,14 +349,44 @@ def statistikperencanaan(request):
 
 
 def maps(request):
-    return render(request, 'masyarakat/maps.html')
+    pembangunan_perencanaan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'color': color,
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+            
+    context = {
+        'markers': markers
+    }
+    return render(request, 'masyarakat/maps.html',context)
 
 
 def beranda(request):
     return render(request, 'masyarakat/landingpage.html')
 
+# hola
 def jenisperlengkapan(request):
-    return render(request, 'masyarakat/jenis perlengkapan.html')
+    fasilitas_data = Fasilitas_perlengkapan.objects.all()
+    context = {
+        
+        'fasilitas_data': fasilitas_data,
+    }
+    return render(request, 'masyarakat/jenis perlengkapan.html',context)
 
 
 # def pengajuan(request):

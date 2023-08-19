@@ -1,27 +1,315 @@
 {% extends 'base.html' %}
 {% block content %} 
+{% load static %}
 {% include 'layout/navbar.html' %}
 
+<link rel="stylesheet" href="{% static 'assets/css/decorate.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/peta.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/search.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/halo.css' %}" />
+
+<link rel="stylesheet" href="{% static 'assets/css/leaflet-measure.css' %}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-print/dist/leaflet.print.css" />
+
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/leaflet.fullscreen.css"
+/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css" />
+
+
+<style>
+.leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-size: 10px 10px;
+    background-image: url("{% static 'assets/image/ruler/rulers.png'%}");
+    
+
+}
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle,
+.leaflet-retina .leaflet-control-measure .leaflet-control-measure-toggle:hover {
+    background-image: url("{% static 'assets/image/ruler/rulers_@2X.png' %}")
+}
+.leaflet-control-measure a.start {
+    
+    background-image: url("{% static 'assets/image/ruler/start.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.start {
+    background-image: url("{% static 'assets/image/ruler/start_@2X.png' %}")
+}
+.leaflet-control-measure a.cancel {
+    
+    background-image: url("{% static 'assets/image/ruler/cancel.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.cancel {
+    background-image: url("{% static 'assets/image/ruler/cancel_@2X.png' %}")
+}
+.leaflet-control-measure a.finish {
+    
+    background-image: url("{% static 'assets/image/ruler/check.png' %}");
+    
+}
+.leaflet-retina .leaflet-control-measure a.finish {
+    background-image: url("{% static 'assets/image/ruler/check_@2X.png' %}")
+}
+.leaflet-measure-resultpopup a.zoomto {
+    
+    background-image: url("{% static 'assets/image/ruler/focus.png' %}");
+    
+}
+.leaflet-retina .leaflet-measure-resultpopup a.zoomto {
+    background-image: url("{% static 'assets/image/ruler/focus_@2X.png' %}")
+}
+.leaflet-measure-resultpopup a.deletemarkup {
+    
+    background-image: url("{% static 'assets/image/ruler/trash.png' %}");
+    
+}
+.leaflet-retina .leaflet-measure-resultpopup a.deletemarkup {
+    background-image: url("{% static 'assets/image/ruler/trash_@2X.png' %}")
+}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
 <!--Maps untuk masyarakat-->
 <section class="ml-1 pt-32">
     <div class="container">
         <div class="flex flex-wrap ">
             <div class="w-full self-center">
                 <div class="border-4 border-art rounded-xl">
-                    <div id="map" class="h-[480px] rounded-xl relative z-10   ">
                     
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script>
-        // Inisialisasi peta
-        var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 13);
-        
-        // Tambahkan layer peta
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
-        }).addTo(myMap);
-    </script>
-                    </div>
+                    <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
+                    <div class="legend " id="legend-container">
+                <h6>Legend</h6>
+                <div class="legend-content">
+                    <!-- Data legenda akan di-generate oleh JavaScript -->
                 </div>
+            </div>
+                    
+                
+                <div class="layer-selector">
+        <label for="layer-select">Select Layer:</label>
+        <select id="layer-select">
+            <option value="streets">Google Streets</option>
+            <option value="hybrid">Google Hybrid</option>
+            <option value="satellite">Google Satellite</option>
+            <option value="terrain">Google Terrain</option>
+        </select>                    
+
+    </div>
+
+    
+        
+            
+        </div>
+        
+        
+        
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.min.js" async></script>
+        <script src="https://unpkg.com/leaflet-draw"></script>
+        <script src="https://unpkg.com/leaflet-fullscreen@1.0.2/dist/Leaflet.fullscreen.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
+        <script src="{% static 'assets/js/leaflet/leaflet-measure.js' %}"></script>
+
+
+<script>
+        // Inisialisasi peta
+        var map = L.map('map').setView([5.549037601496668, 95.31928497494027], 10);
+        L.control.scale().addTo(map);
+        map.addControl(new L.Control.Fullscreen());
+        L.control.measure({ 
+            position: 'bottomleft',
+            primaryLengthUnit: 'kilometers',
+            secondaryLengthUnit: 'meters',
+            primaryAreaUnit: 'hectares',
+            secondaryAreaUnit: undefined
+        }).addTo(map);
+        L.control.locate().addTo(map);
+
+        
+
+
+            
+        var googleStreets = L.tileLayer('http://{s}.google.com/vt?lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleHybrid = L.tileLayer('http://{s}.google.com/vt?lyrs=s,h&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleSatellite = L.tileLayer('http://{s}.google.com/vt?lyrs=s&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var googleTerrain = L.tileLayer('http://{s}.google.com/vt?lyrs=p&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+
+        var baseLayers = {
+            'Google Streets': googleStreets,
+            'Google Hybrid': googleHybrid,
+            'Google Satellite': googleSatellite,
+            'Google Terrain': googleTerrain
+        };
+
+        
+
+        var layerSelect = document.getElementById('layer-select');
+        layerSelect.addEventListener('change', function () {
+            var selectedLayer = layerSelect.value;
+            if (selectedLayer === 'streets') {
+                map.addLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'hybrid') {
+                map.addLayer(googleHybrid);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleSatellite);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'satellite') {
+                map.addLayer(googleSatellite);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleTerrain);
+            } else if (selectedLayer === 'terrain') {
+                map.addLayer(googleTerrain);
+                map.removeLayer(googleStreets);
+                map.removeLayer(googleHybrid);
+                map.removeLayer(googleSatellite);
+            }
+        });
+        map.addLayer(googleStreets);
+        
+        function tampilkanMarker(markers) {
+            markers.forEach(function(marker) {
+                var latitude = marker.lat;
+                var longitude = marker.lng;
+                var konstruksi_selesai = marker.konstruksi_selesai;
+                var nama_fasilitas = marker.nama_fasilitas;
+                var ruasjalan = marker.ruasjalan;
+                var gambar = marker.gambar;
+                var color = marker.color;
+
+                if (!gambar) {
+                    // Gambar pengganti
+                    gambar = '/assets/image/samples/banana.jpg' ;
+                }
+                var customIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: `<i class="fa-solid fa-location-dot fa-2xl" style="color: ${color}; "></i>`
+                });
+
+                var popupContent = `
+                    <div class="custom-popup">
+                        <div class="info">
+                            <b>Nama Fasilitas</b>
+                            <span>: ${nama_fasilitas}</span>
+                        </div>
+                        <div class="info">
+                            <b>Ruas Jalan</b>
+                            <span>: ${ruasjalan}</span>
+                        </div>
+                        <div class="info">
+                            <b>Tanggal Selesai</b>
+                            <span>: ${new Date(konstruksi_selesai).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                        </div>
+                        
+                        
+                        <div class="image">
+                            <img src="${gambar}" alt="Pengguna tidak mengupload image" title="Gambar Pengajuan">
+                        </div>
+                    </div>
+                `;
+
+                L.marker([latitude, longitude], { icon: customIcon })
+                    .bindPopup(popupContent)
+                    .addTo(map);
+            });
+        }
+        
+
+        // Data markers yang diteruskan dari Django
+        var markers = [
+            {% for marker in markers %}
+                {
+                    lat: {{ marker.lat }},
+                    lng: {{ marker.lng }},
+                    nama_fasilitas : '{{ marker.nama_fasilitas }}',
+                    ruasjalan : '{{ marker.ruasjalan }}',
+                    konstruksi_selesai : '{{ marker.konstruksi_selesai }}',
+                    gambar: '{{ marker.gambar }}',
+                    color: '{{ marker.color }}',
+                },
+            {% endfor %}
+        ];
+
+        // Memanggil fungsi tampilkanMarker dengan data markers
+        tampilkanMarker(markers);
+
+                
+        function createLegend(markers) {
+        var legendContent = document.querySelector('.legend-content');
+        var addedFasilitas = {}; // Objek untuk melacak nama fasilitas yang sudah ditambahkan ke legend
+
+        markers.forEach(function (marker) {
+            var nama_fasilitas = marker.nama_fasilitas;
+            var color = marker.color;
+
+            // Cek apakah nama fasilitas sudah ada dalam objek addedFasilitas
+            if (!addedFasilitas[nama_fasilitas]) {
+            var legendItem = document.createElement('div');
+            legendItem.classList.add('legend-item');
+
+            var legendMarker = document.createElement('span');
+            legendMarker.classList.add('legend-marker');
+            legendMarker.style.backgroundColor = color;
+
+            var legendText = document.createElement('span');
+            legendText.innerText = nama_fasilitas;
+
+            legendItem.appendChild(legendMarker);
+            legendItem.appendChild(legendText);
+            legendContent.appendChild(legendItem);
+
+            addedFasilitas[nama_fasilitas] = true; // Tandai bahwa nama fasilitas sudah ditambahkan ke legend
+            }
+        });
+        }
+// Memanggil fungsi createLegend dengan data markers
+createLegend(markers);
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+</script>
+                </div>
+                
+
+
             </div>
         </div>
     </div>    

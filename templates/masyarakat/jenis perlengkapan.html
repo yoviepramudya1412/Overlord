@@ -1,14 +1,65 @@
 {% extends 'base.html' %}
-{% block content %} 
+{% block content %}
+{% load static %} 
 {% include 'layout/navbar.html' %}
+<link rel="stylesheet" href="{% static 'assets/compiled/css/table-datatable.css' %}" />
+
+<section class="ml-1 pt-36">
+
+    
+</section> 
+
+
 <section id="denone" class="ml-1 pt-36">
     <div class="container">
         <div class="flex flex-wrap">
             <div class="w-full self-center px-4 ">
-                <h2>Tipe Perlengkapan</h2>
+                <section class="section">
+                <div class="card">
+                <div class="card-header">Informasi Fasilitas Perlengkapan</div>
+                <div class="card-body">
+                    <table class="table table-striped" id="table1">
+                    <thead>
+                        <tr>
+                        <th>Nama Fasilitas</th>
+                        <th>Nama Khusus</th>
+                        <th>Tipe Khusus</th>
+                        <th>Tanggal Ditambahkan</th>
+                        <th>Jenis Perlengkapan</th>
+                        <th>Gambar</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for fasilitas in fasilitas_data %}
+                        <tr>
+                            <td>{{ fasilitas.nama_fasilitas }}</td>
+                            <td>{{ fasilitas.namakhusus }}</td>
+                            <td>{{ fasilitas.tipekhusus }}</td>
+                            <td>{{ fasilitas.tanggal_ditambahkan|date:"M. d, Y"  }}</td>
+                            
+                            <td>{{ fasilitas.jenis_perlengkapan }}</td>
+                            <td>
+                        {% if fasilitas.gambar %}
+                            <img src="{{ fasilitas.gambar.url }}" alt="Gambar Fasilitas" style="max-width: 100px; max-height: 100px;">
+                        {% else %}
+                            Gambar Tidak Tersedia
+                        {% endif %}
+                            </td>
+                                
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </section>
             </div>
         </div>
     </div>
 </section>
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %} "></script>
+<script src="{% static 'assets/js/pages/simple-datatables.js' %} "></script>
+
 {% include 'layout/footer.html' %}
 {% endblock content %}
