@@ -3,4 +3,74 @@
 {% block content %} 
 {% include 'layout/sidebaradmin.html' %}
 
+<link rel="stylesheet" href="{% static 'assets/compiled/css/table-datatable.css' %}" />
+
+<div class="page-heading">
+            <div class="page-title">
+                <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Monitoring Kondisi Fasilitas</h3>
+                    <p class="text-subtitle text-muted">
+                    Memberikan Informasi Dari Data Fasilitas Berkondisi Buruk
+                    </p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav
+                    aria-label="breadcrumb"
+                    class="breadcrumb-header float-start float-lg-end"
+                    >
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                        <a href="{% url 'dashboardadmin' %}">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page">
+                        TRV Monitor Repairs
+                        </li>
+                    </ol>
+                    </nav>
+                </div>
+                </div>
+            </div>
+            <section class="section">
+                <div class="card">
+                <div class="card-header">Data fasilitas yang berkondisi buruk</div>
+                <div class="card-body">
+                    <table class="table table-striped" id="table1">
+                    <thead>
+                        <tr>
+                        <th>Nama Fasilitas</th>
+                        <th>Tanggal Bangun</th>
+                        <th>Tanggal Selesai</th>
+                        <th>Volume</th>
+                        <th>Status</th>
+                        <th>Kondisi</th>
+                        
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pembangunan in pembangunan_data %}
+                        <tr>
+                            <td>{{ pembangunan.nama_fasilitas }}</td>
+                            <td><a href="{% url 'petaroutingpembangunan' pembangunan.pembangunanid %}" style="color: #000000">{{ pembangunan.tanggal_bangun|date:"M. d, Y" }}</a></td>
+                            <td>{{ pembangunan.konstruksi_selesai|date:"M. d, Y" }}</td>
+                            <td>{{ pembangunan.volume}}</td>
+                            <td>{{ pembangunan.status.tipestatus }}</td>
+                            
+                                <td><a href="{% url 'editdatapembangunan' pembangunan.pembangunanid %}" class="badges badge bg-art">{{ pembangunan.kondisi.tipekondisi}}</a></td>
+                            
+                            
+                        </tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                    </table>
+                </div>
+                </div>
+            </section>
+        </div>
+
+<script src="{% static 'assets/extensions/simple-datatables/umd/simple-datatables.js' %} "></script>
+<script src="{% static 'assets/js/pages/simple-datatables.js' %} "></script>
+{% include 'layout/footeradmin.html' %}
 {% endblock content %}

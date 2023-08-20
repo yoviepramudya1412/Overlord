@@ -1051,11 +1051,31 @@ def dataperencanaan(request):
 # seleksi
 @login_required(login_url=settings.LOGIN_URL)
 def seleksidibawah(request):
-    return render(request, 'seleksi/dibawah standar.html')
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN',kondisi__tipekondisi='BURUK')
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'pembangunan_data': pembangunan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    return render(request, 'seleksi/dibawah standar.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def seleksimemenuhi(request):
-    return render(request, 'seleksi/memenuhi standar.html')
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN',kondisi__tipekondisi='BAIK')
+    success_messages = messages.get_messages(request)
+    success_message = next((m.message for m in success_messages if m.level == messages.SUCCESS), None)
+    error_messages = messages.get_messages(request)
+    error_message = next((m.message for m in error_messages if m.level == messages.ERROR), None)
+    context = {
+        'pembangunan_data': pembangunan_data,
+        'success_message': success_message,
+        'error_message': error_message,
+    }
+    return render(request, 'seleksi/memenuhi standar.html',context)
 
 # pelaporan 
 @login_required(login_url=settings.LOGIN_URL)
