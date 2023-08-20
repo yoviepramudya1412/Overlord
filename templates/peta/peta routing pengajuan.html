@@ -9,7 +9,10 @@
 <link rel="stylesheet" href="{% static 'assets/css/halo.css' %}" />
 
 <link rel="stylesheet" href="{% static 'assets/css/leaflet-measure.css' %}" />
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/awesomplete/1.1.5/awesomplete.css" />
+
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw/dist/leaflet.draw.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet-print/dist/leaflet.print.css" />
 
@@ -20,6 +23,7 @@
 />
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
 
 
 <style>
@@ -74,15 +78,21 @@
 .leaflet-retina .leaflet-measure-resultpopup a.deletemarkup {
     background-image: url("{% static 'assets/image/ruler/trash_@2X.png' %}")
 }
+
+        
+.leaflet-routing-container .leaflet-routing-geocoders {
+    display: none;
+}
+   
 </style>
 
 <div class="page-heading">
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-            <h3>Peta Perencanaan</h3>
+            <h3>Peta Routing Current Location Pengajuan</h3>
             <p class="text-subtitle text-muted">
-                Menampilkan peta perencanaan dari masyarakat
+                Menampilkan peta untuk jalur yang dapat diikuti
             </p>
             </div>
             <div class="col-12 col-md-6 order-md-2 order-first">
@@ -95,7 +105,7 @@
                     <a href="{% url 'dashboardadmin' %}">Dashboard</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page">
-                    Google Map exclipse
+                    Google Map TresHX
                 </li>
                 </ol>
             </nav>
@@ -107,7 +117,7 @@
             <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                <h5 class="card-title">Perencanaan Provinsi Aceh</h5>
+                <h5 class="card-title">Roadmap Provinsi Aceh</h5>
                 </div>
                 <div class="card-body">
                 <div id="map" class="h-[580px] rounded-xl relative z-10   ">   
@@ -143,6 +153,9 @@
         <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.79.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
         <script src="{% static 'assets/js/leaflet.browser.print.min.js' %}"></script>
         <script src="{% static 'assets/js/leaflet/leaflet-measure.js' %}"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
 
 
 <script>
@@ -159,31 +172,7 @@
         }).addTo(map);
         L.control.locate().addTo(map);
 
-        var drawnItems = new L.FeatureGroup();
-map.addLayer(drawnItems);
-
-var drawControl = new L.Control.Draw({
-    draw: {
-        polyline: true,
-        polygon: true,
-        circle: true,
-        marker: false,
-        circlemarker: false,
-    },
-    edit: {
-        featureGroup: drawnItems,
-        edit: true,
-        remove: true,
-    },
-});
-
-map.addControl(drawControl);
-
-// Event listener untuk menangani ketika pengukuran selesai
-map.on('draw:created', function (e) {
-    var layer = e.layer;
-    drawnItems.addLayer(layer);
-});
+        
 
 
             
@@ -247,9 +236,10 @@ map.on('draw:created', function (e) {
             markers.forEach(function(marker) {
                 var latitude = marker.lat;
                 var longitude = marker.lng;
-                var konstruksi_selesai = marker.konstruksi_selesai;
+                var nama = marker.nama;
+                var notelepon = marker.notelepon;
+                var alamat = marker.alamat;
                 var nama_fasilitas = marker.nama_fasilitas;
-                var ruasjalan = marker.ruasjalan;
                 var gambar = marker.gambar;
                 var color = marker.color;
 
@@ -265,19 +255,21 @@ map.on('draw:created', function (e) {
                 var popupContent = `
                     <div class="custom-popup">
                         <div class="info">
+                            <b>Nama</b>
+                            <span>: ${nama}</span>
+                        </div>
+                        <div class="info">
+                            <b>No Telepon</b>
+                            <span>: ${notelepon}</span>
+                        </div>
+                        <div class="info">
+                            <b>Alamat</b>
+                            <span>: ${alamat}</span>
+                        </div>
+                        <div class="info">
                             <b>Nama Fasilitas</b>
                             <span>: ${nama_fasilitas}</span>
                         </div>
-                        <div class="info">
-                            <b>Ruas Jalan</b>
-                            <span>: ${ruasjalan}</span>
-                        </div>
-                        <div class="info">
-                            <b>Tanggal target selesai</b>
-                            <span>: ${new Date(konstruksi_selesai).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-                        </div>
-                        
-                        
                         <div class="image">
                             <img src="${gambar}" alt="Pengguna tidak mengupload image" title="Gambar Pengajuan">
                         </div>
@@ -297,9 +289,10 @@ map.on('draw:created', function (e) {
                 {
                     lat: {{ marker.lat }},
                     lng: {{ marker.lng }},
+                    nama: '{{ marker.nama }}',
+                    notelepon: '{{ marker.notelepon }}',
+                    alamat: '{{ marker.alamat }}',
                     nama_fasilitas : '{{ marker.nama_fasilitas }}',
-                    ruasjalan : '{{ marker.ruasjalan }}',
-                    konstruksi_selesai : '{{ marker.konstruksi_selesai }}',
                     gambar: '{{ marker.gambar }}',
                     color: '{{ marker.color }}',
                 },
@@ -341,13 +334,7 @@ map.on('draw:created', function (e) {
 // Memanggil fungsi createLegend dengan data markers
 createLegend(markers);
 
-// Inisialisasi pustaka Awesomplete
-    var input = document.getElementById('search-input');
-    var awesomplete = new Awesomplete(input, { list: input.getAttribute('data-list').split(',') });
 
-    
-
-    
 
     
 // Fungsi untuk menampilkan legenda pada peta
@@ -396,8 +383,43 @@ L.control.browserPrint({
     },
 }).addTo(map);
 
+  // Your existing script content here
+        
+        // Create a variable to store the user's location
+        var userLocation;
 
+        // Get user's location
+        map.locate({
+            setView: true,
+            maxZoom: 8,
+            watch: false,  // Continuously watch user's location
+            enableHighAccuracy: true, // Use high accuracy mode
+        });
 
+        // Handle user's location found
+        map.on('locationfound', function (e) {
+            userLocation = e.latlng;
+
+            // Add user's location marker
+            L.marker(userLocation)
+                .addTo(map);
+            
+            // Create routing control and add it to the map
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(userLocation), // User's location
+                    L.latLng(markers[0].lat, markers[0].lng) // Marker's location
+                ],
+                routeWhileDragging: false,
+            }).addTo(map);
+        });
+
+        // Handle user's location error
+        map.on('locationerror', function (e) {
+            console.log("Error getting user's location: " + e.message);
+        });
+
+        // Rest of your existing script content here
 
 
 

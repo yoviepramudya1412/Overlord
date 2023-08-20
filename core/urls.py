@@ -26,6 +26,10 @@ urlpatterns = [
     path('petaadpembangunan/',views.petaadpembangunan, name='petaadpembangunan'),
     path('petaadpengajuan/',views.petaadpengajuan, name='petaadpengajuan'),
     path('petaadperencanaan/',views.petaadperencanaan, name='petaadperencanaan'),
+    path('petaroutingpengajuan/<int:pengajuan_id>/',views.petaroutingpengajuan, name='petaroutingpengajuan'),
+    path('petaroutingpembangunan/<int:pembangunan_id>/',views.petaroutingpembangunan, name='petaroutingpembangunan'),
+    path('petaroutingperencanaan/<int:pembangunan_id>/',views.petaroutingperencanaan, name='petaroutingperencanaan'),
+    path('petaroutingkerusakan/<int:kerusakan_id>/',views.petaroutingkerusakan, name='petaroutingkerusakan'),
     
     # staistik
     path('statistikfasilitas/',views.statistikfasiltas, name='statistikfasilitas'),

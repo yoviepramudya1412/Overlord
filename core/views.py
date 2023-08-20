@@ -564,6 +564,125 @@ def Account(request):
 
 
 # Peta admin
+
+@login_required(login_url=settings.LOGIN_URL)
+def petaroutingpembangunan(request,pembangunan_id):
+    pembangunan_perencanaan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN',pk=pembangunan_id).exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'color': color,
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+            
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta routing pembangunan.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def petaroutingperencanaan(request,pembangunan_id):
+    pembangunan_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN',pk=pembangunan_id).exclude(location=None)
+    markers = []
+    for pembangunan in pembangunan_perencanaan:
+        if pembangunan.location is not None:
+            fasilitas = pembangunan.nama_fasilitas
+            color = fasilitas.color
+            konstruksi_selesai_formatted = pembangunan.konstruksi_selesai.strftime('%b %d, %Y')
+            marker = {
+                'lat': pembangunan.location.latitude,
+                'lng': pembangunan.location.longitude,
+                'nama_fasilitas': pembangunan.nama_fasilitas,
+                'konstruksi_selesai': konstruksi_selesai_formatted,
+                'ruasjalan': pembangunan.ruasjalan,
+                'color': color,
+            }
+            if pembangunan.gambar:
+                marker['gambar'] = pembangunan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+            
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta routing perencanaan.html',context)
+
+@login_required(login_url=settings.LOGIN_URL)
+def petaroutingpengajuan(request,pengajuan_id):
+    pengajuan_data = Pengajuan.objects.filter(pk=pengajuan_id, location__isnull=False)
+    markers = []
+
+    for pengajuan in pengajuan_data:
+        fasilitas = pengajuan.nama_fasilitas
+        color = fasilitas.color  # Mengambil warna dari fasilitas perlengkapan
+
+        marker = {
+            'lat': pengajuan.location.latitude,
+            'lng': pengajuan.location.longitude,
+            'nama': pengajuan.masyarakatid.nama,
+            'notelepon': pengajuan.masyarakatid.notelepon,
+            'alamat': pengajuan.masyarakatid.alamat,
+            'nama_fasilitas': pengajuan.nama_fasilitas,
+            'color': color,  # Menambahkan warna ke data marker
+        }
+
+        if pengajuan.gambar:
+            marker['gambar'] = pengajuan.gambar.url
+        else:
+            marker['gambar'] = None
+
+        markers.append(marker)
+
+    context = {
+        'markers': markers
+    }
+
+    return render(request, 'peta/peta routing pengajuan.html', context)
+
+
+@login_required(login_url=settings.LOGIN_URL)
+def petaroutingkerusakan(request,kerusakan_id):
+    kerusakan_data = Kerusakan.objects.filter(pk=kerusakan_id, location__isnull=False)
+    markers = []
+    for kerusakan in kerusakan_data:
+    
+        if kerusakan.location is not None:
+            fasilitas = kerusakan.nama_fasilitas
+            color = fasilitas.color 
+            marker = {
+                'lat': kerusakan.location.latitude,
+                'lng': kerusakan.location.longitude,
+                'nama': kerusakan.masyarakatid.nama,
+                'notelepon': kerusakan.masyarakatid.notelepon,
+                'alamat': kerusakan.masyarakatid.alamat,
+                'nama_fasilitas': kerusakan.nama_fasilitas,
+                'tiperusak':kerusakan.rusak.tiperusak,
+                'color': color,
+            }
+            if kerusakan.gambar:
+                marker['gambar'] = kerusakan.gambar.url
+            else:
+                marker['gambar'] = None
+            markers.append(marker)
+    context = {
+        'markers': markers
+    }
+    return render(request, 'peta/peta routing kerusakan.html', context)
+
 @login_required(login_url=settings.LOGIN_URL)
 def petaadkerusakan(request):
     kerusakan_data = Kerusakan.objects.all().exclude(location=None)
@@ -714,7 +833,7 @@ def datapembangunan(request):
         'success_message': success_message,
         'error_message': error_message,
     }
-    print(context)
+
     
     return render(request, 'datatables/pembangunan.html',context)
 

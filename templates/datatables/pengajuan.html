@@ -51,7 +51,7 @@
                     <tbody>
                         {% for pengajuan in pengajuan_data %}
                         <tr>
-                            <td>{{ pengajuan.masyarakatid.nama }}</td>
+                            <td><a href="{% url 'petaroutingpengajuan' pengajuan.pengajuanid %}"   style="color: #000000">{{ pengajuan.masyarakatid.nama }}</a></td>
                             <td>{{ pengajuan.masyarakatid.alamat }}</td>
                             <td>{{ pengajuan.masyarakatid.notelepon }}</td>
                             <td>{{ pengajuan.nama_fasilitas }}</td>

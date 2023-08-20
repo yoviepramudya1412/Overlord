@@ -51,7 +51,7 @@
                     <tbody>
                         {% for kerusakan in kerusakan_data %}
                         <tr>
-                            <td>{{ kerusakan.masyarakatid.nama }}</td>
+                            <td><a href="{% url 'petaroutingkerusakan' kerusakan.kerusakanid %}" style="color: #000000">{{ kerusakan.masyarakatid.nama }}</a></td>
                             <td>{{ kerusakan.masyarakatid.alamat }}</td>
                             <td>{{ kerusakan.masyarakatid.notelepon }}</td>
                             <td>{{ kerusakan.nama_fasilitas }}</td>

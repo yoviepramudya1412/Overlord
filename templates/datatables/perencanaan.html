@@ -40,8 +40,8 @@
                     <thead>
                         <tr>
                         <th>Nama Fasilitas</th>
-                        <th>Tanggal Bangun</th>
-                        <th>Tanggal Selesai</th>
+                        <th>Tanggal Rancang</th>
+                        <th>Tanggal Target</th>
                         <th>Volume</th>
                         <th>Kondisi</th>
                         <th>Status</th>
@@ -53,7 +53,7 @@
                         {% for pembangunan in pembangunan_data %}
                         <tr>
                             <td>{{ pembangunan.nama_fasilitas }}</td>
-                            <td>{{ pembangunan.tanggal_bangun|date:"M. d, Y" }}</td>
+                            <td><a href="{% url 'petaroutingperencanaan' pembangunan.pembangunanid %}" style="color: #000000">{{ pembangunan.tanggal_bangun|date:"M. d, Y" }}</a></td>
                             <td>{{ pembangunan.konstruksi_selesai|date:"M. d, Y" }}</td>
                             <td>{{ pembangunan.volume}}</td>
                             <td>{{ pembangunan.kondisi.tipekondisi}}</td>
