@@ -526,8 +526,8 @@ L.control.browserPrint({
             <h4>Pengajuan Baru</h4>
         </div>
         <ul style="list-style: none; justify-self: center;">
-                {% for masyarakat in latest_masyarakat %}
-                    <li style="center">{{ masyarakat.nama }}</li>
+                {% for pengajuan in latest_pengajuan %}
+                    <li style="center"><a href="{% url 'petaroutingpengajuan' pengajuan.pengajuanid %}"   style="color: #000000">{{ pengajuan.masyarakatid.nama }}</a></li>
                 {% endfor %}
                 </ul>
         <div class="card-content pb-4">
@@ -540,8 +540,8 @@ L.control.browserPrint({
             <h4>Kerusakan Baru</h4>
         </div>
         <ul style="list-style: none; justify-self: center;">
-                {% for masyarakat in latest_masyarakat_kerusakan %}
-                    <li style="center">{{ masyarakat.nama }}</li>
+                {% for kerusakan in latest_kerusakan %}
+                    <li style="center"><a href="{% url 'petaroutingkerusakan' kerusakan.kerusakanid %}" style="color: #000000">{{ kerusakan.masyarakatid.nama }}</a></li>
                 {% endfor %}
                 </ul>
         

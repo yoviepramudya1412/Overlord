@@ -1470,11 +1470,14 @@ def dashboardadmin(request):
 
     chart_data = [{'name': kondisi_choices[kondisi], 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for kondisi, data in data_linearea.items()]
     
+    
+    # ini bagian notif
     latest_pengajuan = Pengajuan.objects.order_by('-tanggal_ajukan')[:5]
 
     latest_masyarakat = []
     for pengajuan in latest_pengajuan:
         masyarakat = pengajuan.masyarakatid
+        
         latest_masyarakat.append(masyarakat)
         
     latest_kerusakan = Kerusakan.objects.order_by('-tanggal_laporkan')[:5]
@@ -1508,6 +1511,8 @@ def dashboardadmin(request):
     
     context = {
         'markers': markers,
+        'latest_kerusakan':latest_kerusakan,
+        'latest_pengajuan':latest_pengajuan,
         'latest_masyarakat_kerusakan':latest_masyarakat_kerusakan,
         'latest_masyarakat': latest_masyarakat,
         'data_perencanaan' : data_perencanaan,
