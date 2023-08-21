@@ -382,9 +382,14 @@ def beranda(request):
 # hola
 def jenisperlengkapan(request):
     fasilitas_data = Fasilitas_perlengkapan.objects.all()
+    perlengkapan_list = Perlengkapan_jalan.objects.all()
+
+    
+
     context = {
         
         'fasilitas_data': fasilitas_data,
+        'perlengkapan_list': perlengkapan_list,
     }
     return render(request, 'masyarakat/jenis perlengkapan.html',context)
 
