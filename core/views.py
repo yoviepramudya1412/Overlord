@@ -1085,7 +1085,11 @@ def seleksimemenuhi(request):
 # pelaporan 
 @login_required(login_url=settings.LOGIN_URL)
 def pelaporan(request):
-    return render(request, 'kerusakan/pelaporan.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'kerusakan/pelaporan.html',context)
 
 # kerusakan
 @login_required(login_url=settings.LOGIN_URL)
@@ -1133,15 +1137,27 @@ def kerusakanringan(request):
 # bantuan
 @login_required(login_url=settings.LOGIN_URL)
 def kontakoperator(request):
-    return render(request, 'bantuan/kontak operator.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'bantuan/kontak operator.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def layanandinas(request):
-    return render(request, 'bantuan/layanandinas.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'bantuan/layanandinas.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def permasalahan(request):
-    return render(request, 'bantuan/pengajuan permasalahan.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'bantuan/pengajuan permasalahan.html',context)
 
 # masukkan data buat admin
 @login_required(login_url=settings.LOGIN_URL)
@@ -1459,11 +1475,19 @@ def masukdataperlengkapan(request):
 # panduan 
 @login_required(login_url=settings.LOGIN_URL)
 def pemandu(request):
-    return render(request, 'panduan/pemandu penambahan.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'panduan/pemandu penambahan.html',context)
 
 @login_required(login_url=settings.LOGIN_URL)
 def penggunaan(request):
-    return render(request, 'panduan/penggunaan.html')
+    admin = request.user
+    context={
+        'admin':admin,
+    }
+    return render(request, 'panduan/penggunaan.html',context)
 
 # def login(request):
 #     return render(request, 'core/login.html')
