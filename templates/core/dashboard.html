@@ -102,9 +102,9 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">
+                    <a href="{% url 'export_kerusakan_to_excel' %}"><h6 class="text-muted font-semibold">
                     Kerusakan
-                    </h6>
+                    </h6></a>
                     <h6 class="font-extrabold mb-0">{{kerusakan}}</h6>
                 </div>
                 </div>
@@ -123,7 +123,7 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Pengajuan</h6>
+                    <a href="{% url 'export_pengajuan_to_excel' %}"><h6 class="text-muted font-semibold">Pengajuan</h6></a>
                     <h6 class="font-extrabold mb-0">{{jumlah_data}}</h6>
                 </div>
                 </div>
@@ -142,7 +142,7 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Perencanaan</h6>
+                    <a href="{% url 'export_to_excelper' %}"><h6 class="text-muted font-semibold">Perencanaan</h6></a>
                     <h6 class="font-extrabold mb-0">{{data_perencanaan}}</h6>
                 </div>
                 </div>
@@ -161,7 +161,7 @@
                     </div>
                 </div>
                 <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                    <h6 class="text-muted font-semibold">Pembangunan</h6>
+                    <a href="{% url 'export_to_excel' %}"><h6 class="text-muted font-semibold">Pembangunan</h6></a>
                     <h6 class="font-extrabold mb-0">{{data_pembangunan}}</h6>
                 </div>
                 </div>
@@ -217,7 +217,7 @@
         L.control.scale().addTo(map);
         map.addControl(new L.Control.Fullscreen());
         L.control.measure({ 
-            position: 'bottomleft',
+            position: 'topright',
             primaryLengthUnit: 'kilometers',
             secondaryLengthUnit: 'meters',
             primaryAreaUnit: 'hectares',
@@ -413,9 +413,6 @@ map.on('draw:created', function (e) {
 // Memanggil fungsi createLegend dengan data markers
 createLegend(markers);
 
-// Inisialisasi pustaka Awesomplete
-    var input = document.getElementById('search-input');
-    var awesomplete = new Awesomplete(input, { list: input.getAttribute('data-list').split(',') });
 
     
 

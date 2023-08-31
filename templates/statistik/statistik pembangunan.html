@@ -93,48 +93,48 @@
 
         var chartData = {{ chart_data_line|safe }};
 
-        var lineOptions = {
-            series: [{
-                name: "Jumlah Total",
-                data: chartData,
-            }],
-            chart: {
-                height: 350,
-                type: "line",
+    var lineOptions = {
+        series: [{
+            name: "Jumlah Total",
+            data: chartData,
+        }],
+        chart: {
+            height: 350,
+            type: "line",
+        },
+        dataLabels: {
+            enabled: false,
+        },
+        stroke: {
+            curve: "smooth",
+        },
+        yaxis: {
+            title: {
+                text: "Jumlah Data",
             },
-            dataLabels: {
-                enabled: true,
-            },
-            stroke: {
-                curve: "smooth",
-            },
-            yaxis: {
-                title: {
-                    text: "Jumlah Data",
-                },
-                labels: {
-                    formatter: function (val) {
-                        return parseInt(val).toString();
-                    }
+            labels: {
+                formatter: function (val) {
+                    return parseInt(val).toString();
                 }
-            },
-            xaxis: {
-                type: "datetime",
-                labels: {
-                    formatter: function(val) {
-                        return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-                    }
+            }
+        },
+        xaxis: {
+            type: "datetime",
+            labels: {
+                formatter: function(val) {
+                    return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
                 }
+            }
+        },
+        tooltip: {
+            x: {
+                format: "dd MMM yyyy",
             },
-            tooltip: {
-                x: {
-                    format: "dd MMM yyyy",
-                },
-            },
-        };
+        },
+    };
 
-        var chart = new ApexCharts(document.querySelector("#line"), lineOptions);
-        chart.render();
+    var chart = new ApexCharts(document.querySelector("#line"), lineOptions);
+    chart.render();
 
 
     var radialGradientOptions = {
@@ -229,7 +229,7 @@ chart.render();
                 type: "area",
             },
             dataLabels: {
-                enabled: true,
+                enabled: false,
             },
             stroke: {
                 curve: "smooth",
@@ -269,7 +269,7 @@ chart.render();
             series: chartData,
             chart: {
                 height: 350,
-                type: "bar",
+                type: "line",
             },
             dataLabels: {
                 enabled: true,

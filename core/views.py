@@ -14,10 +14,231 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from django.shortcuts import get_object_or_404
 from django.db.models import Count
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models.functions import TruncDay
 from django.db.models.functions import TruncMonth
 from collections import defaultdict
+from django.http import HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Border, Side, Alignment, Font
+from openpyxl.utils import get_column_letter
+
+
+
+
+
+# fitur tambahan
+
+def export_kerusakan_to_excel(request):
+    kerusakan_data = Kerusakan.objects.all()
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="kerusakan_data_FPJ.xlsx"'
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Kerusakan Data'
+
+    headers = [ 'Tanggal Laporkan', 'Nama Masyarakat','No Telepon', 'Nama Fasilitas', 'Jenis Perlengkapan', 'Rusak']
+
+    # Set title
+    title_cell = ws.cell(row=1, column=1, value="Data Kerusakan")
+    title_cell.alignment = Alignment(horizontal='center')
+    title_cell.font = Font(size=16, bold=True)
+
+    # Set headers
+    ws.append(headers)
+
+    max_lengths = [len(header) for header in headers]  # Initialize max_lengths list
+
+    for kerusakan in kerusakan_data:
+        row = [
+            
+            kerusakan.tanggal_laporkan.strftime('%Y-%m-%d') if kerusakan.tanggal_laporkan else '',
+            kerusakan.masyarakatid.nama,
+            kerusakan.masyarakatid.notelepon,
+            kerusakan.nama_fasilitas.nama_fasilitas if kerusakan.nama_fasilitas else '',
+            kerusakan.jenis_perlengkapan.jenis_perlengkapan if kerusakan.jenis_perlengkapan else '',
+            kerusakan.rusak.tiperusak ,
+        ]
+        ws.append(row)
+
+        # Update max_lengths based on current row data
+        for i, cell_value in enumerate(row):
+            max_lengths[i] = max(max_lengths[i], len(str(cell_value)))
+
+    # Set column widths based on max_lengths
+    for i, max_length in enumerate(max_lengths):
+        ws.column_dimensions[chr(65 + i)].width = max_length + 2  # +2 for some padding
+
+    # Set borders for all cells
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+
+    wb.save(response)
+    return response
+
+
+
+
+def export_pengajuan_to_excel(request):
+    pengajuan_data = Pengajuan.objects.all()
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="pengajuan_data_FPJ.xlsx"'
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Pengajuan Data'
+
+    headers = [ 'Tanggal Ajukan', 'Nama Masyarakat', 'Nomor Telepon','Nama Fasilitas','Jenis Perlengkapan','Fasilitas Khusus','Latitude','Longitude','Status']
+
+    # Set title
+    title_cell = ws.cell(row=1, column=1, value="Data Pengajuan")
+    title_cell.alignment = Alignment(horizontal='center')
+    title_cell.font = Font(size=16, bold=True)
+
+    # Set headers
+    ws.append(headers)
+
+    max_lengths = [len(header) for header in headers]  # Initialize max_lengths list
+
+    for pengajuan in pengajuan_data:
+        row = [
+            
+            pengajuan.tanggal_ajukan.strftime('%Y-%m-%d') if pengajuan.tanggal_ajukan else '',
+            pengajuan.masyarakatid.nama,
+            pengajuan.masyarakatid.notelepon,
+            pengajuan.nama_fasilitas.nama_fasilitas if pengajuan.nama_fasilitas else '',
+            pengajuan.jenis_perlengkapan.jenis_perlengkapan if pengajuan.jenis_perlengkapan else '',
+            pengajuan.Fasilitas_khusus,
+            pengajuan.location.latitude if pengajuan.location else '',
+            pengajuan.location.longitude if pengajuan.location else '',
+            pengajuan.statuspengajuan.tipestatus if pengajuan.statuspengajuan else '',
+        ]
+        ws.append(row)
+
+        # Update max_lengths based on current row data
+        for i, cell_value in enumerate(row):
+            max_lengths[i] = max(max_lengths[i], len(str(cell_value)))
+
+    # Set column widths based on max_lengths
+    for i, max_length in enumerate(max_lengths):
+        ws.column_dimensions[chr(65 + i)].width = max_length + 2  # +2 for some padding
+
+    # Set borders for all cells
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+
+    wb.save(response)
+    return response
+
+
+
+
+def export_to_excel(request):
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="pembangunan_data_FPJ.xlsx"'
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Pembangunan Data'
+
+    headers = ['Tanggal Bangun', 'Konstruksi Selesai', 'Ruas Jalan', 'Nama Fasilitas', 'Jenis Perlengkapan', 'Kondisi', 'Volume', 'Latitude', 'Longitude', 'Status']
+
+    # Set title
+    title_cell = ws.cell(row=1, column=1, value="Pembangunan Alat Fasilitas Perlengkapan Aceh")
+    title_cell.alignment = Alignment(horizontal='center')
+    title_cell.font = Font(size=16, bold=True)
+
+    # Set headers
+    ws.append(headers)
+
+    for pembangunan in pembangunan_data:
+        row = [
+            pembangunan.tanggal_bangun.strftime('%Y-%m-%d') if pembangunan.tanggal_bangun else '',
+            pembangunan.konstruksi_selesai.strftime('%Y-%m-%d') if pembangunan.konstruksi_selesai else '',
+            pembangunan.ruasjalan,
+            pembangunan.nama_fasilitas.nama_fasilitas if pembangunan.nama_fasilitas else '',
+            pembangunan.jenis_perlengkapan.jenis_perlengkapan if pembangunan.jenis_perlengkapan else '',
+            pembangunan.kondisi.tipekondisi if pembangunan.kondisi else '',
+            pembangunan.volume if pembangunan.volume else '',
+            pembangunan.location.latitude if pembangunan.location else '',
+            pembangunan.location.longitude if pembangunan.location else '',
+            pembangunan.status.tipestatus if pembangunan.status else '',
+        ]
+        ws.append(row)
+
+    # Set borders for all cells
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+
+    wb.save(response)
+    return response
+
+
+
+
+
+
+
+
+
+
+
+def export_to_excelper(request):
+    pembangunan_data = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN')
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="perencanaan_data_FPJ.xlsx"'
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Pembangunan Data'
+
+    headers = ['Tanggal Bangun', 'Konstruksi Selesai', 'Ruas Jalan', 'Nama Fasilitas', 'Jenis Perlengkapan', 'Kondisi', 'Volume', 'Latitude', 'Longitude', 'Status']
+
+    # Set title
+    title_cell = ws.cell(row=1, column=1, value="Pembangunan Alat Fasilitas Perlengkapan Aceh")
+    title_cell.alignment = Alignment(horizontal='center')
+    title_cell.font = Font(size=16, bold=True)
+
+    # Set headers
+    ws.append(headers)
+
+    for pembangunan in pembangunan_data:
+        row = [
+            pembangunan.tanggal_bangun.strftime('%Y-%m-%d') if pembangunan.tanggal_bangun else '',
+            pembangunan.konstruksi_selesai.strftime('%Y-%m-%d') if pembangunan.konstruksi_selesai else '',
+            pembangunan.ruasjalan,
+            pembangunan.nama_fasilitas.nama_fasilitas if pembangunan.nama_fasilitas else '',
+            pembangunan.jenis_perlengkapan.jenis_perlengkapan if pembangunan.jenis_perlengkapan else '',
+            pembangunan.kondisi.tipekondisi if pembangunan.kondisi else '',
+            pembangunan.volume if pembangunan.volume else '',
+            pembangunan.location.latitude if pembangunan.location else '',
+            pembangunan.location.longitude if pembangunan.location else '',
+            pembangunan.status.tipestatus if pembangunan.status else '',
+        ]
+        ws.append(row)
+
+    # Set borders for all cells
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, min_col=1, max_col=ws.max_column):
+        for cell in row:
+            cell.border = thin_border
+
+    wb.save(response)
+    return response
+
+
 
 # Tampilan statistik
 @login_required(login_url=settings.LOGIN_URL)
@@ -27,14 +248,16 @@ def statistikfasiltas(request):
 
     data = Fasilitas_perlengkapan.objects.annotate(date_count=Count('tanggal_ditambahkan')).values('tanggal_ditambahkan', 'date_count')
     
+    sorted_data = sorted(data, key=lambda entry: entry['tanggal_ditambahkan'])
+
     data_bar = {}
-    for entry in data:
+    for entry in sorted_data:
         date = entry['tanggal_ditambahkan'].strftime('%Y-%m-%d')
         if date in data_bar:
             data_bar[date] += entry['date_count']
         else:
             data_bar[date] = entry['date_count']
-    
+        
     chart_data = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_bar.items()]
 
     
@@ -187,7 +410,7 @@ def statistikkerusakan(request):
     }
     
     # charlain
-    data_line = Kerusakan.objects.annotate(date_count=Count('tanggal_laporkan')).values('tanggal_laporkan', 'date_count')
+    data_line = Kerusakan.objects.annotate(date_count=Count('tanggal_laporkan')).values('tanggal_laporkan', 'date_count').order_by('tanggal_laporkan')
     data_line_plot = {}
     for entry in data_line:
         date = entry['tanggal_laporkan'].strftime('%Y-%m-%d')
@@ -237,15 +460,25 @@ def statistikpembangunan(request):
 
     chart_data = [{'name': jenis, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis, data in data_line.items()]
 
-    data_line = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+    data_line_a = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+
+# Membuat dictionary untuk menyimpan data sesuai dengan tanggal
     data_line_plot = {}
-    for entry in data_line:
+    for entry in data_line_a:
         date = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
-        if date in data_line_plot:
-            data_line_plot[date] += entry['date_count']
-        else:
-            data_line_plot[date] = entry['date_count']
-    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+        data_line_plot[date] = data_line_plot.get(date, 0) + entry['date_count']
+
+    # Mendapatkan rentang tanggal yang diinginkan
+    start_date = min(data_line_plot.keys())
+    end_date = max(data_line_plot.keys())
+    date_range = [start_date]
+    current_date = datetime.strptime(start_date, '%Y-%m-%d')
+    while current_date < datetime.strptime(end_date, '%Y-%m-%d'):
+        current_date += timedelta(days=1)
+        date_range.append(current_date.strftime('%Y-%m-%d'))
+
+    # Mengisi data yang kosong dengan nilai nol (0)
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': data_line_plot.get(date, 0)} for date in date_range]
     
     context = {
         'chart_data_line':chart_data_line,
@@ -279,15 +512,23 @@ def statistikpengajuan(request):
     # Hitung persentase pertambahan data
     percentage_increase = (total_entries / max_entries) * 100
     # data_line = Pengajuan.objects.values('tanggal_ajukan').annotate(total_count=Count('tanggal_ajukan'))
-    data_line = Pengajuan.objects.annotate(date_count=Count('tanggal_ajukan')).values('tanggal_ajukan', 'date_count')
+    data_line_a = Pengajuan.objects.annotate(date_count=Count('tanggal_ajukan')).values('tanggal_ajukan', 'date_count').order_by('tanggal_ajukan')
     data_line_plot = {}
-    for entry in data_line:
+    for entry in data_line_a:
         date = entry['tanggal_ajukan'].strftime('%Y-%m-%d')
-        if date in data_line_plot:
-            data_line_plot[date] += entry['date_count']
-        else:
-            data_line_plot[date] = entry['date_count']
-    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+        data_line_plot[date] = data_line_plot.get(date, 0) + entry['date_count']
+
+    # Mendapatkan rentang tanggal yang diinginkan
+    start_date = min(data_line_plot.keys())
+    end_date = max(data_line_plot.keys())
+    date_range = [start_date]
+    current_date = datetime.strptime(start_date, '%Y-%m-%d')
+    while current_date < datetime.strptime(end_date, '%Y-%m-%d'):
+        current_date += timedelta(days=1)
+        date_range.append(current_date.strftime('%Y-%m-%d'))
+
+    # Mengisi data yang kosong dengan nilai nol (0)
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': data_line_plot.get(date, 0)} for date in date_range]
         
     context = {
         'chart_data_line':chart_data_line,
@@ -326,15 +567,25 @@ def statistikperencanaan(request):
 
     chart_data = [{'name': jenis, 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for jenis, data in data_line.items()]
 
-    data_line = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+    data_line_a = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').annotate(date_count=Count('konstruksi_selesai')).values('konstruksi_selesai', 'date_count')
+
+# Membuat dictionary untuk menyimpan data sesuai dengan tanggal
     data_line_plot = {}
-    for entry in data_line:
+    for entry in data_line_a:
         date = entry['konstruksi_selesai'].strftime('%Y-%m-%d')
-        if date in data_line_plot:
-            data_line_plot[date] += entry['date_count']
-        else:
-            data_line_plot[date] = entry['date_count']
-    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': count} for date, count in data_line_plot.items()]
+        data_line_plot[date] = data_line_plot.get(date, 0) + entry['date_count']
+
+    # Mendapatkan rentang tanggal yang diinginkan
+    start_date = min(data_line_plot.keys())
+    end_date = max(data_line_plot.keys())
+    date_range = [start_date]
+    current_date = datetime.strptime(start_date, '%Y-%m-%d')
+    while current_date < datetime.strptime(end_date, '%Y-%m-%d'):
+        current_date += timedelta(days=1)
+        date_range.append(current_date.strftime('%Y-%m-%d'))
+
+    # Mengisi data yang kosong dengan nilai nol (0)
+    chart_data_line = [{'x': datetime.strptime(date, '%Y-%m-%d').strftime('%d %b %Y'), 'y': data_line_plot.get(date, 0)} for date in date_range]
     
     context = {
         'chart_data_line':chart_data_line,
@@ -1502,7 +1753,10 @@ def dashboardadmin(request):
     data_perencanaan = Pembangunan.objects.filter(status__tipestatus='PERENCANAAN').count()
     data_pembangunan = Pembangunan.objects.filter(status__tipestatus='PEMBANGUNAN').count()
     admin = request.user
-    
+    kondisi_choices = {
+    'BAIK': 'Kondisi Baik',
+    'BURUK': 'Kondisi Buruk',
+}
     kondisi_choices = dict(Kondisi.KONDISI_CHOICES)
 
     data = Pembangunan.objects.values('kondisi__tipekondisi', 'konstruksi_selesai').annotate(data_count=Count('kondisi__tipekondisi'))
@@ -1517,7 +1771,10 @@ def dashboardadmin(request):
 
     chart_categories = sorted(set([tanggal for data in data_linearea.values() for tanggal in data.keys()]))
 
-    chart_data = [{'name': kondisi_choices[kondisi], 'data': [data.get(tanggal, 0) for tanggal in chart_categories]} for kondisi, data in data_linearea.items()]
+    chart_data = [
+    {'name': kondisi_choices[kondisi], 'data': [data.get(tanggal, 0) for tanggal in chart_categories]}
+    for kondisi, data in data_linearea.items() if kondisi
+]
     
     
     # ini bagian notif

@@ -268,10 +268,7 @@ map.on('draw:created', function (e) {
                             <b>Nama Fasilitas</b>
                             <span>: ${nama_fasilitas}</span>
                         </div>
-                        <div class="info">
-                            <b>Ruas Jalan</b>
-                            <span>: ${ruasjalan}</span>
-                        </div>
+                        
                         <div class="info">
                             <b>Tanggal Selesai</b>
                             <span>: ${new Date(konstruksi_selesai).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
@@ -341,9 +338,7 @@ map.on('draw:created', function (e) {
 // Memanggil fungsi createLegend dengan data markers
 createLegend(markers);
 
-// Inisialisasi pustaka Awesomplete
-    var input = document.getElementById('search-input');
-    var awesomplete = new Awesomplete(input, { list: input.getAttribute('data-list').split(',') });
+
 
     
 

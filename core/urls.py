@@ -3,6 +3,17 @@ from . import views
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
+    
+    
+    
+    # urlbaru
+    path('export-to-excel/', views.export_to_excel, name='export_to_excel'),
+    path('export-to-excelper/', views.export_to_excelper, name='export_to_excelper'),
+    path('export_pengajuan_to_excel/', views.export_pengajuan_to_excel, name='export_pengajuan_to_excel'),
+    path('export_kerusakan_to_excel/', views.export_kerusakan_to_excel, name='export_kerusakan_to_excel'),
+    
+    
+    
     path('',views.beranda,name='beranda'),
     path('peta/',views.maps, name='maps'),
     path('jenisperlengkapan/',views.jenisperlengkapan, name='jenisperlengkapan'),
