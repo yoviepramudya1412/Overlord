@@ -611,6 +611,7 @@ def maps(request):
                 'lat': pembangunan.location.latitude,
                 'lng': pembangunan.location.longitude,
                 'nama_fasilitas': pembangunan.nama_fasilitas,
+                'jenis_perlengkapan': pembangunan.jenis_perlengkapan,
                 'konstruksi_selesai': konstruksi_selesai_formatted,
                 'ruasjalan': pembangunan.ruasjalan,
                 'color': color,

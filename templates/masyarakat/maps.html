@@ -200,6 +200,7 @@
                 var longitude = marker.lng;
                 var konstruksi_selesai = marker.konstruksi_selesai;
                 var nama_fasilitas = marker.nama_fasilitas;
+                var jenis_perlengkapan = marker.jenis_perlengkapan;
                 var ruasjalan = marker.ruasjalan;
                 var gambar = marker.gambar;
                 var color = marker.color;
@@ -220,8 +221,8 @@
                             <span>: ${nama_fasilitas}</span>
                         </div>
                         <div class="info">
-                            <b>Ruas Jalan</b>
-                            <span>: ${ruasjalan}</span>
+                            <b>Jenis Perlengkapan</b>
+                            <span>: ${jenis_perlengkapan}</span>
                         </div>
                         <div class="info">
                             <b>Tanggal Selesai</b>
@@ -249,6 +250,7 @@
                     lat: {{ marker.lat }},
                     lng: {{ marker.lng }},
                     nama_fasilitas : '{{ marker.nama_fasilitas }}',
+                    jenis_perlengkapan : '{{ marker.jenis_perlengkapan}}',
                     ruasjalan : '{{ marker.ruasjalan }}',
                     konstruksi_selesai : '{{ marker.konstruksi_selesai }}',
                     gambar: '{{ marker.gambar }}',
