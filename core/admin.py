@@ -30,14 +30,7 @@ class CustomUserAdmin(UserAdmin):
 
 admin.site.register(Admin,CustomUserAdmin)
 admin.site.register(Fasilitas_perlengkapan,FasilitasAdmin)
-admin.site.register(Status,Statusadmin)
-admin.site.register(Location,LocationAdmin)
 admin.site.register(Perlengkapan_jalan,PerlengkapanJalanAdmin)
-admin.site.register(Masyarakat,MasyarakatAdmin)
-admin.site.register(Pengajuan,PengajuanAdmin)
-admin.site.register(Pembangunan,PembangunanAdmin)
 
-admin.site.register(Kerusakan,KerusakanAdmin)
-# admin.site.register(Admin,Adminadmin)
-admin.site.register(Beranda,BerandaAdmin)
+
 

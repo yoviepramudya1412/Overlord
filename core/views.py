@@ -39,7 +39,7 @@ def export_kerusakan_to_excel(request):
     ws = wb.active
     ws.title = 'Kerusakan Data'
 
-    headers = [ 'Tanggal Laporkan', 'Nama Masyarakat','No Telepon', 'Nama Fasilitas', 'Jenis Perlengkapan', 'Rusak']
+    headers = [ 'Tanggal Laporkan', 'Nama Masyarakat','No Telepon', 'Nama Fasilitas', 'Jenis Perlengkapan', 'Latitude','Longitude','Rusak']
 
     # Set title
     title_cell = ws.cell(row=1, column=1, value="Data Kerusakan")
@@ -59,13 +59,13 @@ def export_kerusakan_to_excel(request):
             kerusakan.masyarakatid.notelepon,
             kerusakan.nama_fasilitas.nama_fasilitas if kerusakan.nama_fasilitas else '',
             kerusakan.jenis_perlengkapan.jenis_perlengkapan if kerusakan.jenis_perlengkapan else '',
+            kerusakan.location.latitude,
+            kerusakan.location.longitude,
             kerusakan.rusak.tiperusak ,
         ]
         ws.append(row)
 
-        # Update max_lengths based on current row data
-        for i, cell_value in enumerate(row):
-            max_lengths[i] = max(max_lengths[i], len(str(cell_value)))
+
 
     # Set column widths based on max_lengths
     for i, max_length in enumerate(max_lengths):
