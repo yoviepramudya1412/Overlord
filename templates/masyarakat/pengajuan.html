@@ -16,7 +16,7 @@
     <script src="{% static 'assets/js/drop.js' %}"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
-    <form action="{% url 'create_pengajuan' %}" method="POST"  enctype="multipart/form-data">
+    <form action="{% url 'create_pengajuan' %}" method="POST"  enctype="multipart/form-data" onsubmit="return validateForm()">
 
         {% csrf_token %}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -98,8 +98,12 @@
                         </label>
                         
                         
-                        <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
-                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="gambar" type="file">
+                        <label for="file_input" class="block mb-3">
+                            <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Upload File</span>
+                        <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="gambar" type="file" >
                         </label>
                         <script>
                             
@@ -107,7 +111,7 @@
                         
                     </div>
 
-
+                    
                     <div class="w-full self-center px-4 mt-10   lg:w-1/2  lg:pt-24 relative z-[8]">
                         
 
@@ -117,6 +121,7 @@
 
 
                             <script>
+                        
                                 var myMap = L.map('map').setView([5.549037601496668, 95.31928497494027], 11);
                                 var marker;
 
@@ -237,6 +242,25 @@
                                         });
 
                                 }
+
+                                function validateForm() {
+                                    var fileInput = document.getElementById('file_input');
+                                    if (fileInput.files.length === 0) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Gambar belum diupload!',
+                                        });
+                                        return false; // Mencegah pengiriman formulir jika gambar tidak diunggah.
+                                    }
+                                    return true; // Lanjutkan pengiriman formulir jika gambar dipilih.
+                                }
+    
+
+
+
+
+
                                 
                                 {% if messages %}
                                 {% for message in messages %}
@@ -284,6 +308,12 @@
                     
                
                 <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
+                
+                    <label for="nama_fasilitas" class="block mb-3">
+                            <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Nama Fasilitas</span></label>
                 <div class="dropdown">
                 <button id="dropdownButton" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                     Pilih Nama Fasilitas
@@ -297,7 +327,11 @@
 
                 </div>
                 <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
-                    
+                    <label for="jenis_perlengkapan" class="block mb-3">
+                            <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Jenis Perlengkapan</span></label>
                     <div class="dropdown">
                 <button id="dropdownButton1" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
                     Pilih Jenis Perlengkapan
@@ -333,6 +367,11 @@
 
     </form>
     
+    
+
+    <script>
+        
+    </script>
     <!-- Modal Sukses -->
 <div class="modal" id="successModal">
   <div class="modal-dialog">

@@ -12,7 +12,7 @@
         <script src="{% static 'assets/js/drop.js' %}"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
-        <form action="{% url 'laporkerusakan' %}" method="POST"  enctype="multipart/form-data">
+        <form action="{% url 'laporkerusakan' %}" method="POST"  enctype="multipart/form-data" onsubmit="return validateForm()">
 
             {% csrf_token %}
             <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -92,7 +92,11 @@
                             </label>
                             
                             
-                            <label class="block mb-6 font-semibold text-slate-700 dark:text-white" for="file_input">Upload file
+                            <label for="file_input" class="block mb-3">
+                            <span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*']
+                        after:text-pink-500 after:ml-0.5
+                        ">Upload File</span>
                             <input class="block shadow w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file_input" name="gambar" type="file">
                             </label>
                             <script>
@@ -250,6 +254,18 @@
                                     {% endif %}
                                     {% endfor %}
                                 {% endif %}
+                                function validateForm() {
+                                    var fileInput = document.getElementById('file_input');
+                                    if (fileInput.files.length === 0) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Oops...',
+                                            text: 'Gambar belum diupload!',
+                                        });
+                                        return false; // Mencegah pengiriman formulir jika gambar tidak diunggah.
+                                    }
+                                    return true; // Lanjutkan pengiriman formulir jika gambar dipilih.
+                                }
                                 </script>
                                 <script src="{% static 'assets/js/cuai.js' %}"></script>
                                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.js"></script>
@@ -277,7 +293,7 @@
                         
                 
                     <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
-                    <div class="btn-group mb-1">
+                    <div class="btn-group mb-24">
                         <div class="dropdown">
                             <button
                                 class="btn bg-blue-700 btn-dark text-white dropdown-toggle"
@@ -300,7 +316,7 @@
                         </div>
                         
                                 
-                                <div class="btn-group mb-1 ml-7">
+                                <div class="btn-group mb-24 ml-7">
                             <div class="dropdown">
                             <button
                                 class="btn bg-blue-700 btn-dark text-white dropdown-toggle"
@@ -328,7 +344,10 @@
 
                     <div class="w-full self-center px-4 mb-5 pt-5 lg:w-1/2">
                     <div class="form-group">
-                                <label for="first-name-column">Pilih Kerusakan Fasilitas :</label>
+                                <label for="first-name-column"><span class="block font-semibold
+                        mb-1 text-slate-700 after:content-['*:']
+                        after:text-pink-500 after:ml-0.5 
+                        ">Pilih Kerusakan Fasilitas </span></label>
                                 
                                 <div class="btn-group mb-1 ml-3">
                         <div class="dropdown">
@@ -362,6 +381,16 @@
                                 />
                             </div>
                         </div>
+                        <div class ="mt-7 text-sm">
+                            <ul>
+                                <li>* kerusakan ringan merupakan kerusakan kecil yang tidak berdampak besar</li>
+                                <li>* kerusakan sedang merpakan kerusakan fasilitas yang perlu diperbaiki</li>
+                                <li>* kerusakan berat merupakan kerusakan fasilitas yang perlu diganti</li>
+                            </ul>
+                    
+                        
+                        
+                    </div>
                                 </div>
                     </div>
                 </div>
@@ -382,6 +411,7 @@
                         </div>
 
                     </div>
+                    
                 </div>
             </div>
         
